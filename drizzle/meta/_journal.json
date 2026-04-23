@@ -1,0 +1,48 @@
+{
+  "version": "7",
+  "dialect": "mysql",
+  "entries": [
+    {
+      "idx": 0,
+      "version": "5",
+      "when": 1774152981203,
+      "tag": "0000_sparkling_iron_monger",
+      "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "5",
+      "when": 1774153123454,
+      "tag": "0001_silly_gateway",
+      "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "5",
+      "when": 1774157271386,
+      "tag": "0002_strong_kylun",
+      "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "5",
+      "when": 1774942062678,
+      "tag": "0003_powerful_richard_fisk",
+      "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "5",
+      "when": 1775090000000,
+      "tag": "0004_archive_bookings",
+      "breakpoints": true
+    },
+    {
+      "idx": 5,
+      "version": "5",
+      "when": 1775151289201,
+      "tag": "0005_big_quentin_quire",
+      "breakpoints": true
+    }
+  ]
+}

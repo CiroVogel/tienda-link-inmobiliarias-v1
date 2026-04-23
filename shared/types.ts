@@ -1,0 +1,21 @@
+/**
+ * Unified type exports
+ * Import shared types from this single entry point.
+ */
+
+export type * from "../drizzle/schema";
+export * from "./_core/errors";
+
+export type PropertyOperation = "sale" | "rent";
+
+export type PropertyStatus = "available" | "reserved" | "sold" | "rented" | "hidden";
+
+export type VisitRequestInput = {
+  slug: string;
+  propertyId: string;
+  name: string;
+  whatsapp: string;
+  preferredDate: string;
+  preferredTime: string;
+  comment?: string;
+};
