@@ -69,9 +69,8 @@ const demoVisitRequests: Array<{
   propertyTitle: string;
   name: string;
   whatsapp: string;
-  preferredDate: string;
-  preferredTime: string;
-  comment?: string;
+  email?: string;
+  message: string;
   createdAt: string;
 }> = [];
 
@@ -453,9 +452,8 @@ export const appRouter = router({
           propertyTitle: z.string().min(1).max(240),
           name: z.string().min(1).max(200),
           whatsapp: z.string().min(6).max(40),
-          preferredDate: z.string().regex(/^\d{4}-\d{2}-\d{2}$/),
-          preferredTime: z.string().regex(/^\d{2}:\d{2}$/),
-          comment: z.string().max(800).optional(),
+          email: z.string().email().max(320).optional(),
+          message: z.string().min(1).max(800),
         })
       )
       .mutation(async ({ input }) => {

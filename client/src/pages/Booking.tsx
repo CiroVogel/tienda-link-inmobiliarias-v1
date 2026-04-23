@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { ArrowLeft, Calendar, CheckCircle2, Clock, MessageCircle, Phone, User } from "lucide-react";
+import { ArrowLeft, CheckCircle2, Mail, MessageCircle, Phone, User } from "lucide-react";
 import { Link, useParams } from "wouter";
 import { toast } from "sonner";
 import { trpc } from "@/lib/trpc";
@@ -16,6 +16,9 @@ function whatsappHref(propertyTitle: string) {
   )}`;
 }
 
+const defaultMessage =
+  "Hola, me interesa esta propiedad y quisiera recibir más información o coordinar una visita.";
+
 export default function Booking() {
   const { slug, propertyId } = useParams<{ slug: string; propertyId: string }>();
   const safeSlug = slug ?? realEstateProfile.slug;
@@ -25,9 +28,8 @@ export default function Booking() {
   const [form, setForm] = useState({
     name: "",
     whatsapp: "",
-    preferredDate: "",
-    preferredTime: "",
-    comment: "",
+    email: "",
+    message: defaultMessage,
   });
   const [reference, setReference] = useState("");
 
@@ -59,8 +61,8 @@ export default function Booking() {
       return;
     }
 
-    if (!form.name.trim() || !form.whatsapp.trim() || !form.preferredDate || !form.preferredTime) {
-      toast.error("Completa nombre, WhatsApp, fecha y horario preferido.");
+    if (!form.name.trim() || !form.whatsapp.trim() || !form.message.trim()) {
+      toast.error("Dejanos nombre y apellido, WhatsApp y un mensaje.");
       return;
     }
 
@@ -71,9 +73,8 @@ export default function Booking() {
         propertyTitle: currentProperty.title,
         name: form.name.trim(),
         whatsapp: form.whatsapp.trim(),
-        preferredDate: form.preferredDate,
-        preferredTime: form.preferredTime,
-        comment: form.comment.trim() || undefined,
+        email: form.email.trim() || undefined,
+        message: form.message.trim(),
       });
 
       setReference(result.reference);
@@ -100,7 +101,7 @@ export default function Booking() {
         </div>
       </header>
 
-      <main className="mx-auto grid max-w-4xl gap-6 px-5 py-8 md:grid-cols-[0.9fr_1.1fr] md:py-12">
+      <main className="mx-auto grid max-w-4xl gap-6 px-5 py-6 md:grid-cols-[0.9fr_1.1fr] md:py-8">
         <aside className="bg-white">
           <img
             src={property.images[0]}
@@ -130,7 +131,7 @@ export default function Booking() {
                 Ya tenemos tu solicitud de visita.
               </h2>
               <p className="mt-4 text-sm leading-7 text-zinc-500">
-                La inmobiliaria revisara la fecha preferida y te contactara por
+                La inmobiliaria revisara tu consulta y te contactara por
                 WhatsApp. Referencia: <strong className="text-zinc-950">{reference}</strong>
               </p>
               <div className="mt-7 flex flex-col gap-3 sm:flex-row">
@@ -153,14 +154,14 @@ export default function Booking() {
           ) : (
             <form onSubmit={handleSubmit}>
               <p className="mb-3 text-xs font-bold uppercase tracking-[0.18em] text-zinc-400">
-                Formulario V1
+                Datos de contacto
               </p>
               <h2 className="text-3xl font-black tracking-tight text-zinc-950">
-                Solicitar visita
+                Consultá por esta propiedad
               </h2>
               <p className="mt-3 text-sm leading-7 text-zinc-500">
-                Completa tus datos y una preferencia horaria. WhatsApp acompana,
-                pero la solicitud queda ordenada desde este formulario.
+                Dejanos tus datos y te contactamos para brindarte más información
+                o coordinar una visita.
               </p>
 
               {!requestable ? (
@@ -173,7 +174,7 @@ export default function Booking() {
               <div className="mt-7 space-y-4">
                 <label className="block">
                   <span className="mb-2 block text-xs font-black uppercase tracking-[0.14em] text-zinc-500">
-                    Nombre
+                    Nombre y apellido
                   </span>
                   <div className="relative">
                     <User className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-zinc-400" />
@@ -181,7 +182,7 @@ export default function Booking() {
                       value={form.name}
                       onChange={(event) => setForm((current) => ({ ...current, name: event.target.value }))}
                       className="h-12 w-full border border-zinc-300 bg-white pl-10 pr-3 text-sm outline-none focus:border-zinc-950"
-                      placeholder="Tu nombre"
+                      placeholder="Tu nombre y apellido"
                       disabled={!requestable}
                     />
                   </div>
@@ -203,53 +204,31 @@ export default function Booking() {
                   </div>
                 </label>
 
-                <div className="grid gap-4 sm:grid-cols-2">
-                  <label className="block">
-                    <span className="mb-2 block text-xs font-black uppercase tracking-[0.14em] text-zinc-500">
-                      Fecha preferida
-                    </span>
-                    <div className="relative">
-                      <Calendar className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-zinc-400" />
-                      <input
-                        type="date"
-                        value={form.preferredDate}
-                        onChange={(event) =>
-                          setForm((current) => ({ ...current, preferredDate: event.target.value }))
-                        }
-                        className="h-12 w-full border border-zinc-300 bg-white pl-10 pr-3 text-sm outline-none focus:border-zinc-950"
-                        disabled={!requestable}
-                      />
-                    </div>
-                  </label>
-
-                  <label className="block">
-                    <span className="mb-2 block text-xs font-black uppercase tracking-[0.14em] text-zinc-500">
-                      Horario preferido
-                    </span>
-                    <div className="relative">
-                      <Clock className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-zinc-400" />
-                      <input
-                        type="time"
-                        value={form.preferredTime}
-                        onChange={(event) =>
-                          setForm((current) => ({ ...current, preferredTime: event.target.value }))
-                        }
-                        className="h-12 w-full border border-zinc-300 bg-white pl-10 pr-3 text-sm outline-none focus:border-zinc-950"
-                        disabled={!requestable}
-                      />
-                    </div>
-                  </label>
-                </div>
+                <label className="block">
+                  <span className="mb-2 block text-xs font-black uppercase tracking-[0.14em] text-zinc-500">
+                    Email (opcional)
+                  </span>
+                  <div className="relative">
+                    <Mail className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-zinc-400" />
+                    <input
+                      type="email"
+                      value={form.email}
+                      onChange={(event) => setForm((current) => ({ ...current, email: event.target.value }))}
+                      className="h-12 w-full border border-zinc-300 bg-white pl-10 pr-3 text-sm outline-none focus:border-zinc-950"
+                      placeholder="tu@email.com"
+                      disabled={!requestable}
+                    />
+                  </div>
+                </label>
 
                 <label className="block">
                   <span className="mb-2 block text-xs font-black uppercase tracking-[0.14em] text-zinc-500">
-                    Comentario breve
+                    Mensaje
                   </span>
                   <textarea
-                    value={form.comment}
-                    onChange={(event) => setForm((current) => ({ ...current, comment: event.target.value }))}
+                    value={form.message}
+                    onChange={(event) => setForm((current) => ({ ...current, message: event.target.value }))}
                     className="min-h-28 w-full resize-none border border-zinc-300 bg-white px-3 py-3 text-sm outline-none focus:border-zinc-950"
-                    placeholder="Contanos si preferis manana, tarde o si tenes alguna consulta puntual."
                     disabled={!requestable}
                   />
                 </label>
