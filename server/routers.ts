@@ -52,11 +52,14 @@ import {
   createStoredProperty,
   deleteStoredPropertyImage,
   getPublicProperty,
+  getStoredBusinessImageOverrides,
   listPublicProperties,
   listStoredProperties,
   listStoredVisitRequests,
   mapStoredPropertyToPublic,
+  removeStoredBusinessImage,
   reorderStoredPropertyImages,
+  setStoredBusinessImage,
   setStoredPropertyPrimaryImage,
   storagePut,
   updateStoredVisitRequestStatus,
@@ -152,11 +155,37 @@ function buildLocalBusinessProfile(userId: number): BusinessProfile {
 async function getAdminBusinessProfile(user: User): Promise<BusinessProfile | null> {
   const profile = await getBusinessProfile(user.id);
   if (profile) {
-    return profile;
+    return applyStoredBusinessImages(profile);
   }
 
   if (user.openId === "local-admin") {
-    return buildLocalBusinessProfile(user.id);
+    return applyStoredBusinessImages(buildLocalBusinessProfile(user.id));
+  }
+
+  return null;
+}
+
+async function applyStoredBusinessImages(profile: BusinessProfile): Promise<BusinessProfile> {
+  const overrides = await getStoredBusinessImageOverrides(profile.slug);
+  const nextProfile: BusinessProfile = { ...profile };
+
+  (["heroImageUrl", "logoUrl", "ownerImageUrl"] as const).forEach((field) => {
+    if (Object.prototype.hasOwnProperty.call(overrides, field)) {
+      nextProfile[field] = overrides[field]?.url ?? null;
+    }
+  });
+
+  return nextProfile;
+}
+
+async function getResolvedPublicBusinessProfile(slug: string): Promise<BusinessProfile | null> {
+  const profile = await getPublicBusinessProfile(slug);
+  if (profile) {
+    return applyStoredBusinessImages(profile);
+  }
+
+  if (slug.trim().toLowerCase() === realEstateProfile.slug) {
+    return applyStoredBusinessImages(buildLocalBusinessProfile(0));
   }
 
   return null;
@@ -730,7 +759,7 @@ export const appRouter = router({
     getPublic: publicProcedure
       .input(z.object({ slug: slugSchema }))
       .query(async ({ input }) => {
-        return getPublicBusinessProfile(input.slug);
+        return getResolvedPublicBusinessProfile(input.slug);
       }),
 
     listAll: publicProcedure.query(async () => {
@@ -813,33 +842,38 @@ export const appRouter = router({
         })
       )
       .mutation(async ({ ctx, input }) => {
-        const { storagePut } = await import("./storage");
+        const profile = await getAdminBusinessProfile(ctx.user);
+        if (!profile) {
+          throw new TRPCError({ code: "NOT_FOUND", message: "Perfil no encontrado" });
+        }
+
         const buffer = Buffer.from(input.base64, "base64");
-        const ext = input.mimeType.split("/")[1] ?? "jpg";
-        const key = `business/${ctx.user.id}/${input.field}-${Date.now()}.${ext}`;
-        const { url } = await storagePut(key, buffer, input.mimeType);
-        await upsertBusinessProfile(ctx.user.id, { [input.field]: url });
+        const rawExtension = input.mimeType.split("/")[1] ?? "jpg";
+        const extension = rawExtension.toLowerCase().replace(/[^a-z0-9]/g, "") || "jpg";
+        const key = `real-estate/${profile.slug}/business/${input.field}-${Date.now()}-${randomBytes(4).toString("hex")}.${extension}`;
+        const { url, key: fileKey } = await storagePut(key, buffer, input.mimeType);
+
+        await setStoredBusinessImage(profile.slug, input.field, {
+          url,
+          fileKey,
+        });
+
         return { url };
       }),
 
     removeImage: adminProcedure
       .input(
         z.object({
-          field: z.enum(["heroImageUrl", "ownerImageUrl"]),
+          field: z.enum(["heroImageUrl", "logoUrl", "ownerImageUrl"]),
         })
       )
       .mutation(async ({ ctx, input }) => {
-        const profile = await getBusinessProfile(ctx.user.id);
-        if (!profile) throw new TRPCError({ code: "NOT_FOUND", message: "Perfil no encontrado" });
+        const profile = await getAdminBusinessProfile(ctx.user);
+        if (!profile) {
+          throw new TRPCError({ code: "NOT_FOUND", message: "Perfil no encontrado" });
+        }
 
-        const { getDb } = await import("./db");
-        const { businessProfile: bpTable } = await import("../drizzle/schema");
-        const { eq } = await import("drizzle-orm");
-        const db = await getDb();
-        if (!db) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR" });
-
-        await db.update(bpTable).set({ [input.field]: null }).where(eq(bpTable.userId, ctx.user.id));
-        return { success: true };
+        return removeStoredBusinessImage(profile.slug, input.field);
       }),
   }),
 

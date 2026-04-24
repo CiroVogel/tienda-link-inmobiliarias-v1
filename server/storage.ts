@@ -140,6 +140,21 @@ type VisitRequestStore = {
   requests: StoredVisitRequest[];
 };
 
+export type StoredBusinessImageField = "heroImageUrl" | "logoUrl" | "ownerImageUrl";
+
+export type StoredBusinessImageAsset = {
+  url: string;
+  fileKey?: string;
+  updatedAt: string;
+};
+
+type BusinessMediaStore = {
+  version: 1;
+  slug: string;
+  updatedAt: string;
+  fields: Partial<Record<StoredBusinessImageField, StoredBusinessImageAsset | null>>;
+};
+
 const STORE_VERSION = 1 as const;
 
 function normalizeSlug(slug: string) {
@@ -152,6 +167,10 @@ function buildStoreKey(slug: string) {
 
 function buildVisitRequestStoreKey(slug: string) {
   return `real-estate/${normalizeSlug(slug)}/visit-requests.json`;
+}
+
+function buildBusinessMediaStoreKey(slug: string) {
+  return `real-estate/${normalizeSlug(slug)}/business-media.json`;
 }
 
 function sortImages(images: StoredPropertyImage[]) {
@@ -324,6 +343,53 @@ async function readVisitRequestStore(slug: string): Promise<VisitRequestStore> {
     };
 
     await writeVisitRequestStore(normalizedSlug, initialStore);
+    return initialStore;
+  }
+}
+
+async function writeBusinessMediaStore(slug: string, store: BusinessMediaStore) {
+  ensureUploadsDir();
+  const normalizedSlug = normalizeSlug(slug);
+  const { diskPath } = getUploadDiskPath(buildBusinessMediaStoreKey(normalizedSlug));
+  const nextStore: BusinessMediaStore = {
+    version: STORE_VERSION,
+    slug: normalizedSlug,
+    updatedAt: new Date().toISOString(),
+    fields: { ...store.fields },
+  };
+
+  await fs.promises.mkdir(path.dirname(diskPath), { recursive: true });
+  const tempPath = `${diskPath}.tmp`;
+  await fs.promises.writeFile(tempPath, JSON.stringify(nextStore, null, 2), "utf8");
+  await fs.promises.rename(tempPath, diskPath);
+}
+
+async function readBusinessMediaStore(slug: string): Promise<BusinessMediaStore> {
+  ensureUploadsDir();
+  const normalizedSlug = normalizeSlug(slug);
+  const { diskPath } = getUploadDiskPath(buildBusinessMediaStoreKey(normalizedSlug));
+
+  try {
+    const raw = await fs.promises.readFile(diskPath, "utf8");
+    const parsed = JSON.parse(raw) as BusinessMediaStore;
+
+    return {
+      version: STORE_VERSION,
+      slug: normalizedSlug,
+      updatedAt: parsed.updatedAt ?? new Date().toISOString(),
+      fields: { ...(parsed.fields ?? {}) },
+    };
+  } catch (error) {
+    if ((error as NodeJS.ErrnoException).code !== "ENOENT") throw error;
+
+    const initialStore: BusinessMediaStore = {
+      version: STORE_VERSION,
+      slug: normalizedSlug,
+      updatedAt: new Date().toISOString(),
+      fields: {},
+    };
+
+    await writeBusinessMediaStore(normalizedSlug, initialStore);
     return initialStore;
   }
 }
@@ -664,4 +730,66 @@ export async function updateStoredVisitRequestStatus(
   });
 
   return nextRequest;
+}
+
+export async function getStoredBusinessImageOverrides(slug: string) {
+  const store = await readBusinessMediaStore(slug);
+  return { ...store.fields };
+}
+
+export async function setStoredBusinessImage(
+  slug: string,
+  field: StoredBusinessImageField,
+  asset: { url: string; fileKey?: string },
+) {
+  const normalizedSlug = normalizeSlug(slug);
+  const store = await readBusinessMediaStore(normalizedSlug);
+  const currentAsset = store.fields[field];
+
+  if (
+    currentAsset &&
+    currentAsset.fileKey &&
+    currentAsset.fileKey !== asset.fileKey
+  ) {
+    await storageDelete(currentAsset.fileKey);
+  }
+
+  const nextAsset: StoredBusinessImageAsset = {
+    url: asset.url,
+    fileKey: asset.fileKey,
+    updatedAt: new Date().toISOString(),
+  };
+
+  await writeBusinessMediaStore(normalizedSlug, {
+    ...store,
+    fields: {
+      ...store.fields,
+      [field]: nextAsset,
+    },
+  });
+
+  return nextAsset;
+}
+
+export async function removeStoredBusinessImage(
+  slug: string,
+  field: StoredBusinessImageField,
+) {
+  const normalizedSlug = normalizeSlug(slug);
+  const store = await readBusinessMediaStore(normalizedSlug);
+  const currentAsset = store.fields[field];
+
+  if (currentAsset && currentAsset.fileKey) {
+    await storageDelete(currentAsset.fileKey);
+  }
+
+  await writeBusinessMediaStore(normalizedSlug, {
+    ...store,
+    fields: {
+      ...store.fields,
+      [field]: null,
+    },
+  });
+
+  return { success: true } as const;
 }
