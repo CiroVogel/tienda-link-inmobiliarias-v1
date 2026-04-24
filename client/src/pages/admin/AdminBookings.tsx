@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+﻿import { useMemo, useState } from "react";
 import { trpc } from "@/lib/trpc";
 import AdminLayout from "@/components/AdminLayout";
 import { Button } from "@/components/ui/button";
@@ -46,22 +46,22 @@ type BookingItem = {
 
 const STATUS_CONFIG = {
   pending: {
-    label: "Pendiente",
+    label: "Nueva",
     color: "bg-yellow-100 text-yellow-800 border-yellow-200",
     icon: AlertCircle,
   },
   confirmed: {
-    label: "Confirmada",
+    label: "Contactada",
     color: "bg-green-100 text-green-800 border-green-200",
     icon: CheckCircle2,
   },
   cancelled: {
-    label: "Cancelada",
+    label: "Descartada",
     color: "bg-red-100 text-red-800 border-red-200",
     icon: XCircle,
   },
   completed: {
-    label: "Completada",
+    label: "Cerrada",
     color: "bg-blue-100 text-blue-800 border-blue-200",
     icon: CheckCircle2,
   },
@@ -69,19 +69,14 @@ const STATUS_CONFIG = {
 
 const VIEW_CONFIG: Record<BookingView, { title: string; description: string }> = {
   active: {
-    title: "Principal",
-    description: "Todo lo que sigue visible en la gestión diaria.",
+    title: "Abiertas",
+    description: "Consultas visibles para el seguimiento diario.",
   },
   archived: {
     title: "Archivadas",
-    description: "Lo que ocultaste del listado principal manualmente.",
+    description: "Consultas que sacaste del listado principal.",
   },
 };
-
-function formatPrice(price: string | number, currency = "ARS") {
-  const num = typeof price === "string" ? parseFloat(price) : price;
-  return `${currency} ${num.toLocaleString("es-AR", { minimumFractionDigits: 0 })}`;
-}
 
 export default function AdminBookings() {
   const [statusFilter, setStatusFilter] = useState<BookingStatus>("all");
@@ -89,8 +84,6 @@ export default function AdminBookings() {
   const [view, setView] = useState<BookingView>("active");
 
   const { data: bookings = [], isLoading, refetch } = trpc.bookings.list.useQuery();
-  const { data: profile } = trpc.business.get.useQuery();
-
   const updateStatus = trpc.bookings.updateStatus.useMutation({
     onSuccess: () => {
       toast.success("Estado actualizado");
@@ -101,21 +94,20 @@ export default function AdminBookings() {
 
   const archiveBooking = trpc.bookings.archive.useMutation({
     onSuccess: () => {
-      toast.success("Reserva archivada");
+      toast.success("Consulta archivada");
       refetch();
     },
-    onError: (error) => toast.error(error.message || "No se pudo archivar la reserva"),
+    onError: (error) => toast.error(error.message || "No se pudo archivar la consulta"),
   });
 
   const restoreBooking = trpc.bookings.restore.useMutation({
     onSuccess: () => {
-      toast.success("Reserva restaurada");
+      toast.success("Consulta restaurada");
       refetch();
     },
-    onError: () => toast.error("No se pudo restaurar la reserva"),
+    onError: () => toast.error("No se pudo restaurar la consulta"),
   });
 
-  const currency = profile?.currency ?? "ARS";
   const bookingItems = bookings as BookingItem[];
 
   const activeBookings = useMemo(
@@ -161,9 +153,9 @@ export default function AdminBookings() {
       <div className="mx-auto max-w-5xl p-6">
         <div className="mb-6 flex items-center justify-between gap-3">
           <div>
-            <h1 className="text-2xl font-black tracking-tight text-black">Reservas</h1>
+            <h1 className="text-2xl font-black tracking-tight text-black">Consultas</h1>
             <p className="mt-0.5 text-sm text-muted-foreground">
-              {activeBookings.length} en principal · {archivedBookings.length} archivadas
+              {activeBookings.length} en seguimiento · {archivedBookings.length} archivadas
             </p>
           </div>
 
@@ -268,7 +260,7 @@ export default function AdminBookings() {
         <div className="relative mb-6">
           <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
           <Input
-            placeholder="Buscar por nombre, email o teléfono..."
+            placeholder="Buscar por nombre, email o WhatsApp..."
             value={search}
             onChange={(event) => setSearch(event.target.value)}
             className="pl-9"
@@ -282,13 +274,13 @@ export default function AdminBookings() {
         ) : filtered.length === 0 ? (
           <div className="py-16 text-center text-muted-foreground">
             <Calendar className="mx-auto mb-3 h-10 w-10 opacity-30" />
-            <p className="font-medium">No hay reservas</p>
+            <p className="font-medium">No hay consultas</p>
             <p className="mt-1 text-sm">
               {search || statusFilter !== "all"
-                ? "No se encontraron reservas con los filtros aplicados."
+                ? "No se encontraron consultas con los filtros aplicados."
                 : view === "active"
-                  ? "No hay reservas visibles en el listado principal."
-                  : "Todavía no archivaste reservas."}
+                  ? "No hay consultas visibles en el listado principal."
+                  : "Todavia no archivaste consultas."}
             </p>
           </div>
         ) : (
@@ -342,14 +334,9 @@ export default function AdminBookings() {
                       </div>
 
                       <div className="flex items-center gap-4 text-xs">
-                        <span className="font-medium text-foreground">{booking.serviceName ?? "Servicio"}</span>
+                        <span className="font-medium text-foreground">{booking.serviceName ?? "Consulta recibida"}</span>
                         <span className="text-muted-foreground">·</span>
-                        <span className="font-black text-black">{formatPrice(booking.totalAmount, currency)}</span>
-                        {booking.paymentType === "deposit" && (
-                          <span className="text-muted-foreground">
-                            (Seña: {formatPrice(booking.depositAmount ?? 0, currency)})
-                          </span>
-                        )}
+                        <span className="text-muted-foreground">Seguimiento comercial</span>
                       </div>
 
                       {booking.notes && (
@@ -371,10 +358,10 @@ export default function AdminBookings() {
                           <SelectValue />
                         </SelectTrigger>
                         <SelectContent>
-                          <SelectItem value="pending">Pendiente</SelectItem>
-                          <SelectItem value="confirmed">Confirmada</SelectItem>
-                          <SelectItem value="completed">Completada</SelectItem>
-                          <SelectItem value="cancelled">Cancelada</SelectItem>
+                          <SelectItem value="pending">Nueva</SelectItem>
+                          <SelectItem value="confirmed">Contactada</SelectItem>
+                          <SelectItem value="completed">Cerrada</SelectItem>
+                          <SelectItem value="cancelled">Descartada</SelectItem>
                         </SelectContent>
                       </Select>
 
@@ -414,3 +401,4 @@ export default function AdminBookings() {
     </AdminLayout>
   );
 }
+

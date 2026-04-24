@@ -1,4 +1,11 @@
-import { ArrowRight, Building2, CheckCircle2, HomeIcon, MapPin, MessageCircle } from "lucide-react";
+import {
+  ArrowRight,
+  Building2,
+  CheckCircle2,
+  HomeIcon,
+  MapPin,
+  MessageCircle,
+} from "lucide-react";
 import { Link, useParams } from "wouter";
 import { PropertyCard } from "@/components/PropertyCard";
 import { usePublicProperties } from "@/lib/propertyData";
@@ -7,33 +14,49 @@ import {
   realEstateProfile,
   type DemoProperty,
 } from "@/lib/realEstateDemo";
+import { trpc } from "@/lib/trpc";
 
 type HomeProps = {
   forcedSlug?: string;
 };
 
-function whatsappHref(message: string) {
-  return `https://wa.me/${realEstateProfile.whatsapp.replace(/\D/g, "")}?text=${encodeURIComponent(message)}`;
+function whatsappHref(whatsapp: string, message: string) {
+  return `https://wa.me/${whatsapp.replace(/\D/g, "")}?text=${encodeURIComponent(message)}`;
 }
 
-function Header({ slug }: { slug: string }) {
+function getCityLabel(address?: string | null) {
+  const parts = address
+    ?.split(",")
+    .map((item) => item.trim())
+    .filter(Boolean);
+
+  return parts?.at(-1) ?? realEstateProfile.city;
+}
+
+function Header({
+  slug,
+  businessName,
+}: {
+  slug: string;
+  businessName: string;
+}) {
   return (
-    <header className="sticky top-0 z-50 border-b border-zinc-200 bg-white/95 backdrop-blur">
+    <header className="sticky top-0 z-50 border-b border-white/10 bg-black/95 text-white backdrop-blur">
       <div className="mx-auto flex h-16 max-w-6xl items-center justify-between gap-4 px-5">
         <Link href={`/${slug}`}>
-          <span className="block whitespace-nowrap text-[11px] font-black uppercase tracking-[0.1em] text-zinc-950 sm:text-sm sm:tracking-[0.18em]">
-            {realEstateProfile.name}
+          <span className="block whitespace-nowrap text-[11px] font-black uppercase tracking-[0.1em] text-white sm:text-sm sm:tracking-[0.18em]">
+            {businessName}
           </span>
         </Link>
 
-        <nav className="hidden items-center gap-7 text-xs font-bold uppercase tracking-[0.16em] text-zinc-500 md:flex">
+        <nav className="hidden items-center gap-7 text-xs font-bold uppercase tracking-[0.16em] text-white/70 md:flex">
           <Link href={`/${slug}/propiedades`}>Propiedades</Link>
-          <a href="#como-funciona">Cómo funciona</a>
+          <a href="#como-funciona">Como funciona</a>
           <a href="#contacto">Contacto</a>
         </nav>
 
         <Link href={`/${slug}/propiedades`}>
-          <span className="hidden bg-zinc-950 px-4 py-2 text-xs font-black uppercase tracking-[0.16em] text-white sm:inline-flex">
+          <span className="hidden bg-[#81856a] px-4 py-2 text-xs font-black uppercase tracking-[0.16em] text-white sm:inline-flex">
             Ver propiedades
           </span>
         </Link>
@@ -42,63 +65,77 @@ function Header({ slug }: { slug: string }) {
   );
 }
 
-function Hero({ featured, slug }: { featured?: DemoProperty; slug: string }) {
-  const coverImage = getPropertyCoverImage(featured);
+function Hero({
+  featured,
+  slug,
+  businessName,
+  cityLabel,
+  tagline,
+  description,
+  whatsapp,
+  heroImageUrl,
+}: {
+  featured?: DemoProperty;
+  slug: string;
+  businessName: string;
+  cityLabel: string;
+  tagline: string;
+  description: string;
+  whatsapp: string;
+  heroImageUrl?: string | null;
+}) {
+  const coverImage = heroImageUrl?.trim() || getPropertyCoverImage(featured);
 
   return (
-    <section className="overflow-hidden bg-zinc-950 text-white">
-      <div className="mx-auto grid max-w-6xl items-center gap-8 px-5 py-12 md:min-h-[560px] md:grid-cols-[0.95fr_0.9fr] md:py-14 lg:min-h-[600px]">
-        <div className="min-w-0">
-          <p className="mb-5 text-xs font-bold uppercase tracking-[0.22em] text-white/45">
-            Inmobiliaria urbana en {realEstateProfile.city}
+    <section className="relative isolate overflow-hidden bg-zinc-950 text-white">
+      <img
+        src={coverImage}
+        alt={featured?.title ?? businessName}
+        className="absolute inset-0 h-full w-full object-cover object-center"
+      />
+      <div className="absolute inset-0 bg-gradient-to-r from-black/75 via-black/60 to-black/20" />
+      <div className="absolute inset-0 bg-black/18" />
+
+      <div className="relative mx-auto flex min-h-[620px] max-w-6xl items-center px-5 py-16 sm:min-h-[680px] lg:min-h-[720px]">
+        <div className="max-w-2xl">
+          <p className="text-xs font-bold uppercase tracking-[0.24em] text-white/70">
+            Inmobiliaria urbana en {cityLabel}
           </p>
 
-          <h1 className="max-w-3xl break-words text-4xl font-black leading-[0.98] tracking-tight sm:text-5xl lg:text-6xl">
-            Propiedades claras para encontrar tu proximo lugar.
+          <h1 className="mt-6 max-w-xl text-5xl font-black leading-[0.9] tracking-tight text-white sm:text-6xl lg:text-[5.5rem]">
+            {businessName}
           </h1>
 
-          <p className="mt-6 max-w-xl text-base leading-7 text-white/62">
-            Departamentos, casas y espacios comerciales en Rosario y alrededores.
-            Recorre opciones en venta y alquiler, revisa cada ficha y solicita
-            una visita cuando una propiedad te interese.
+          <p className="mt-5 max-w-2xl text-2xl font-medium leading-tight text-white/90 sm:text-3xl">
+            {tagline}
           </p>
 
-          <div className="mt-8 flex flex-col gap-3 sm:flex-row">
+          <p className="mt-5 max-w-xl text-base leading-8 text-white/72 sm:text-lg">
+            {description}
+          </p>
+
+          <div className="mt-10 flex flex-col gap-3 sm:flex-row">
             <Link href={`/${slug}/propiedades`}>
-              <span className="inline-flex items-center justify-center gap-2 bg-white px-6 py-4 text-xs font-black uppercase tracking-[0.16em] text-zinc-950">
+              <span className="inline-flex items-center justify-center gap-2 bg-[#81856a] px-7 py-4 text-xs font-black uppercase tracking-[0.16em] text-white">
                 Ver propiedades
                 <ArrowRight className="h-4 w-4" />
               </span>
             </Link>
 
             <a
-              href={whatsappHref("Hola, quiero consultar por propiedades de Clave Urbana.")}
+              href={whatsappHref(
+                whatsapp,
+                "Hola, quiero consultar por propiedades de Clave Urbana.",
+              )}
               target="_blank"
               rel="noreferrer"
-              className="inline-flex items-center justify-center gap-2 border border-white/25 px-6 py-4 text-xs font-black uppercase tracking-[0.16em] text-white/80 transition hover:border-white/60 hover:text-white"
+              className="inline-flex items-center justify-center gap-2 border border-white/25 bg-black/15 px-7 py-4 text-xs font-black uppercase tracking-[0.16em] text-white backdrop-blur-sm transition hover:border-white/40 hover:bg-black/25"
             >
               <MessageCircle className="h-4 w-4" />
               WhatsApp
             </a>
           </div>
         </div>
-
-        {featured ? (
-          <div className="relative min-w-0 overflow-hidden border border-white/10 bg-white/5">
-            <img
-              src={coverImage}
-              alt={featured.title}
-              className="aspect-[4/3] w-full max-w-full object-cover opacity-95"
-            />
-            <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/80 to-transparent p-5">
-              <p className="mb-1 text-xs font-bold uppercase tracking-[0.16em] text-white/55">
-                Destacada
-              </p>
-              <p className="text-xl font-black">{featured.title}</p>
-              <p className="mt-1 text-sm text-white/65">{featured.location}</p>
-            </div>
-          </div>
-        ) : null}
       </div>
     </section>
   );
@@ -136,7 +173,13 @@ function ValueBlock() {
   );
 }
 
-function FeaturedProperties({ properties, slug }: { properties: DemoProperty[]; slug: string }) {
+function FeaturedProperties({
+  properties,
+  slug,
+}: {
+  properties: DemoProperty[];
+  slug: string;
+}) {
   return (
     <section id="propiedades" className="bg-zinc-50 py-14 md:py-18">
       <div className="mx-auto max-w-6xl px-5">
@@ -170,9 +213,18 @@ function FeaturedProperties({ properties, slug }: { properties: DemoProperty[]; 
 
 function HowItWorks({ slug }: { slug: string }) {
   const steps = [
-    ["Explorá propiedades", "Recorré opciones en venta y alquiler según zona, precio y tipo de propiedad."],
-    ["Revisá la ficha", "Mirá fotos, ubicación, medidas, ambientes y detalles principales antes de consultar."],
-    ["Solicitá visita", "Dejá tus datos y tu disponibilidad para que podamos coordinar contigo."],
+    [
+      "Explora propiedades",
+      "Recorre opciones en venta y alquiler segun zona, precio y tipo de propiedad.",
+    ],
+    [
+      "Revisa la ficha",
+      "Mira fotos, ubicacion, medidas, ambientes y detalles principales antes de consultar.",
+    ],
+    [
+      "Solicita visita",
+      "Deja tus datos y tu disponibilidad para que podamos coordinar contigo.",
+    ],
   ];
 
   return (
@@ -180,7 +232,7 @@ function HowItWorks({ slug }: { slug: string }) {
       <div className="mx-auto max-w-6xl px-5">
         <div className="mb-8 max-w-2xl">
           <p className="mb-3 text-xs font-bold uppercase tracking-[0.18em] text-zinc-400">
-            Cómo funciona
+            Como funciona
           </p>
           <h2 className="text-4xl font-black tracking-tight text-zinc-950">
             Del primer vistazo a la visita, sin vueltas.
@@ -212,7 +264,21 @@ function HowItWorks({ slug }: { slug: string }) {
   );
 }
 
-function Contact({ slug }: { slug: string }) {
+function Contact({
+  slug,
+  businessName,
+  address,
+  phone,
+  email,
+  whatsapp,
+}: {
+  slug: string;
+  businessName: string;
+  address: string;
+  phone: string;
+  email: string;
+  whatsapp: string;
+}) {
   return (
     <section id="contacto" className="bg-zinc-950 py-14 text-white md:py-18">
       <div className="mx-auto grid max-w-6xl gap-10 px-5 md:grid-cols-[1fr_0.85fr]">
@@ -236,7 +302,10 @@ function Contact({ slug }: { slug: string }) {
               </span>
             </Link>
             <a
-              href={whatsappHref("Hola, quiero hacer una consulta sobre una propiedad.")}
+              href={whatsappHref(
+                whatsapp,
+                "Hola, quiero hacer una consulta sobre una propiedad.",
+              )}
               target="_blank"
               rel="noreferrer"
               className="inline-flex items-center justify-center gap-2 border border-white/25 px-6 py-4 text-xs font-black uppercase tracking-[0.16em] text-white/80"
@@ -251,14 +320,14 @@ function Contact({ slug }: { slug: string }) {
           <div className="space-y-5 text-sm">
             <p className="flex items-start gap-3 text-white/70">
               <Building2 className="mt-0.5 h-4 w-4 text-white/35" />
-              <span>{realEstateProfile.name}</span>
+              <span>{businessName}</span>
             </p>
             <p className="flex items-start gap-3 text-white/70">
               <MapPin className="mt-0.5 h-4 w-4 text-white/35" />
-              <span>{realEstateProfile.address}</span>
+              <span>{address}</span>
             </p>
-            <p className="text-white/45">{realEstateProfile.phone}</p>
-            <p className="text-white/45">{realEstateProfile.email}</p>
+            <p className="text-white/45">{phone}</p>
+            <p className="text-white/45">{email}</p>
           </div>
         </div>
       </div>
@@ -266,14 +335,22 @@ function Contact({ slug }: { slug: string }) {
   );
 }
 
-function Footer({ slug }: { slug: string }) {
+function Footer({
+  slug,
+  businessName,
+  instagram,
+}: {
+  slug: string;
+  businessName: string;
+  instagram: string;
+}) {
   return (
     <footer className="border-t border-zinc-200 bg-white py-8">
       <div className="mx-auto flex max-w-6xl flex-col gap-4 px-5 text-sm text-zinc-500 md:flex-row md:items-center md:justify-between">
-        <p className="font-bold text-zinc-950">{realEstateProfile.name}</p>
+        <p className="font-bold text-zinc-950">{businessName}</p>
         <div className="flex flex-wrap gap-4">
           <Link href={`/${slug}/propiedades`}>Propiedades</Link>
-          <a href={realEstateProfile.instagram} target="_blank" rel="noreferrer">
+          <a href={instagram} target="_blank" rel="noreferrer">
             Instagram
           </a>
         </div>
@@ -286,21 +363,53 @@ export default function Home({ forcedSlug }: HomeProps) {
   const params = useParams<{ slug: string }>();
   const slug = forcedSlug ?? params.slug ?? realEstateProfile.slug;
   const { properties } = usePublicProperties(slug);
-  const featuredProperties = properties.filter((property) => property.featured).slice(0, 3);
-  const featuredCards = featuredProperties.length > 0 ? featuredProperties : properties.slice(0, 3);
+  const { data: publicProfile } = trpc.business.getPublic.useQuery(
+    { slug },
+    { enabled: Boolean(slug) },
+  );
+
+  const businessName =
+    publicProfile?.businessName?.trim() || realEstateProfile.name;
+  const tagline =
+    publicProfile?.tagline?.trim() ||
+    "Propiedades claras para encontrar tu proximo lugar.";
+  const description =
+    publicProfile?.description?.trim() || realEstateProfile.description;
+  const whatsapp = publicProfile?.whatsapp?.trim() || realEstateProfile.whatsapp;
+  const phone = publicProfile?.phone?.trim() || realEstateProfile.phone;
+  const email = publicProfile?.email?.trim() || realEstateProfile.email;
+  const address = publicProfile?.address?.trim() || realEstateProfile.address;
+  const instagram =
+    publicProfile?.instagram?.trim() || realEstateProfile.instagram;
+  const cityLabel = getCityLabel(address);
+  const featuredProperties = properties
+    .filter((property) => property.featured)
+    .slice(0, 3);
+  const featuredCards =
+    featuredProperties.length > 0 ? featuredProperties : properties.slice(0, 3);
   const heroProperty = featuredProperties[0] ?? properties[0];
   const visibleCount = properties.length;
 
   return (
     <div className="min-h-screen bg-white">
-      <Header slug={slug} />
-      <Hero featured={heroProperty} slug={slug} />
+      <Header slug={slug} businessName={businessName} />
+      <Hero
+        featured={heroProperty}
+        slug={slug}
+        businessName={businessName}
+        cityLabel={cityLabel}
+        tagline={tagline}
+        description={description}
+        whatsapp={whatsapp}
+        heroImageUrl={publicProfile?.heroImageUrl}
+      />
       <ValueBlock />
       <FeaturedProperties properties={featuredCards} slug={slug} />
       <section className="bg-white py-10">
         <div className="mx-auto flex max-w-6xl flex-col gap-4 px-5 sm:flex-row sm:items-center sm:justify-between">
           <p className="text-sm text-zinc-500">
-            {visibleCount} propiedades publicadas entre venta, alquiler y operaciones recientes.
+            {visibleCount} propiedades publicadas entre venta, alquiler y
+            operaciones recientes.
           </p>
           <Link href={`/${slug}/propiedades`}>
             <span className="inline-flex items-center gap-2 text-xs font-black uppercase tracking-[0.16em] text-zinc-950">
@@ -311,8 +420,15 @@ export default function Home({ forcedSlug }: HomeProps) {
         </div>
       </section>
       <HowItWorks slug={slug} />
-      <Contact slug={slug} />
-      <Footer slug={slug} />
+      <Contact
+        slug={slug}
+        businessName={businessName}
+        address={address}
+        phone={phone}
+        email={email}
+        whatsapp={whatsapp}
+      />
+      <Footer slug={slug} businessName={businessName} instagram={instagram} />
     </div>
   );
 }

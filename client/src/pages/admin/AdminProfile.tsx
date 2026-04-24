@@ -1,4 +1,4 @@
-import { useState, useRef } from "react";
+﻿import { useState, useRef } from "react";
 import { trpc } from "@/lib/trpc";
 import AdminLayout from "@/components/AdminLayout";
 import { Input } from "@/components/ui/input";
@@ -273,10 +273,10 @@ export default function AdminProfile() {
         <div className="flex items-center justify-between mb-8">
           <div>
             <h1 className="text-2xl font-black text-black tracking-tight">
-              Perfil del negocio
+              Perfil de la inmobiliaria
             </h1>
             <p className="text-black/40 text-sm mt-0.5">
-              Información que se muestra en tu web pública
+              Informacion que se muestra en tu web publica
             </p>
           </div>
 
@@ -302,7 +302,7 @@ export default function AdminProfile() {
 
             <div className="grid gap-5">
               <ImageUploader
-                label="Imagen de portada (Hero)"
+                label="Imagen de portada"
                 currentUrl={profile?.heroImageUrl}
                 field="heroImageUrl"
                 onUpload={handleImageUpload}
@@ -312,15 +312,15 @@ export default function AdminProfile() {
 
               <div>
                 <ImageUploader
-                  label="Foto del profesional"
+                  label="Logo o imagen institucional"
                   currentUrl={profile?.ownerImageUrl}
                   field="ownerImageUrl"
                   onUpload={handleImageUpload}
                   onRemove={handleImageRemove}
                 />
                 <p className="text-xs text-black/40 mt-2 leading-relaxed">
-                  Opcional. Si no querés mostrar una foto personal, esta sección se
-                  verá en una versión más compacta y centrada en el texto.
+                  Opcional. Usala para reforzar la identidad visual de la
+                  inmobiliaria sin cambiar la estructura actual de la pantalla.
                 </p>
               </div>
             </div>
@@ -372,7 +372,7 @@ export default function AdminProfile() {
 
           <section className="bg-white p-6">
             <h2 className="text-xs font-bold uppercase tracking-widest text-black/40 mb-5">
-              Información del negocio
+              Informacion de la inmobiliaria
             </h2>
 
             <div className="space-y-4">
@@ -403,18 +403,18 @@ export default function AdminProfile() {
                 </div>
 
                 <p className="text-xs text-black/30 mt-1">
-                  Solo letras minúsculas, números y guiones. Ej: studio-belleza
+                  Solo letras minusculas, numeros y guiones. Ej: clave-urbana-propiedades
                 </p>
               </div>
 
               <div>
                 <Label className="text-xs font-bold uppercase tracking-widest text-black/50 mb-2 block">
-                  Nombre del negocio *
+                  Nombre de la inmobiliaria *
                 </Label>
                 <Input
                   value={getValue("businessName")}
                   onChange={(e) => handleChange("businessName", e.target.value)}
-                  placeholder="Ej: Studio Belleza"
+                  placeholder="Ej: Clave Urbana Propiedades"
                 />
               </div>
 
@@ -425,18 +425,18 @@ export default function AdminProfile() {
                 <Input
                   value={getValue("tagline")}
                   onChange={(e) => handleChange("tagline", e.target.value)}
-                  placeholder="Ej: Profesionalismo y dedicación en cada servicio"
+                  placeholder="Ej: Venta y alquiler de propiedades en Rosario"
                 />
               </div>
 
               <div>
                 <Label className="text-xs font-bold uppercase tracking-widest text-black/50 mb-2 block">
-                  Descripción del negocio
+                  Descripcion de la inmobiliaria
                 </Label>
                 <textarea
                   value={getValue("description")}
                   onChange={(e) => handleChange("description", e.target.value)}
-                  placeholder="Describí tu negocio en pocas palabras..."
+                  placeholder="Presenta en pocas palabras a tu inmobiliaria..."
                   className="w-full border border-black/20 bg-white px-3 py-2.5 text-sm placeholder:text-black/30 focus:outline-none focus:border-black resize-none"
                   rows={3}
                 />
@@ -446,42 +446,42 @@ export default function AdminProfile() {
 
           <section className="bg-white p-6">
             <h2 className="text-xs font-bold uppercase tracking-widest text-black/40 mb-5">
-              Información del profesional
+              Presentacion institucional
             </h2>
 
             <div className="space-y-4">
               <div className="grid sm:grid-cols-2 gap-4">
                 <div>
                   <Label className="text-xs font-bold uppercase tracking-widest text-black/50 mb-2 block">
-                    Nombre
+                    Responsable o equipo
                   </Label>
                   <Input
                     value={getValue("ownerName")}
                     onChange={(e) => handleChange("ownerName", e.target.value)}
-                    placeholder="Tu nombre"
+                    placeholder="Ej: Equipo comercial"
                   />
                 </div>
 
                 <div>
                   <Label className="text-xs font-bold uppercase tracking-widest text-black/50 mb-2 block">
-                    Título / Especialidad
+                    Rol o enfoque
                   </Label>
                   <Input
                     value={getValue("ownerTitle")}
                     onChange={(e) => handleChange("ownerTitle", e.target.value)}
-                    placeholder="Ej: Masajista terapéutica"
+                    placeholder="Ej: Tasaciones, ventas y alquileres"
                   />
                 </div>
               </div>
 
               <div>
                 <Label className="text-xs font-bold uppercase tracking-widest text-black/50 mb-2 block">
-                  Biografía
+                  Presentacion
                 </Label>
                 <textarea
                   value={getValue("ownerBio")}
                   onChange={(e) => handleChange("ownerBio", e.target.value)}
-                  placeholder="Contá tu historia, tu experiencia, tu propuesta..."
+                  placeholder="Conta brevemente como trabaja tu inmobiliaria y que tipo de propiedades gestiona..."
                   className="w-full border border-black/20 bg-white px-3 py-2.5 text-sm placeholder:text-black/30 focus:outline-none focus:border-black resize-none"
                   rows={4}
                 />

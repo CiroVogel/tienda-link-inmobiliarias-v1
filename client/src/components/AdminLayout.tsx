@@ -7,14 +7,12 @@ import { toast } from "sonner";
 import {
   Briefcase,
   Images,
-  Clock,
   CalendarCheck,
   Settings,
   LogOut,
   Menu,
   X,
   ExternalLink,
-  PlusSquare,
 } from "lucide-react";
 
 type NavItemConfig = {
@@ -58,29 +56,19 @@ export default function AdminLayout({ children }: { children: ReactNode }) {
 
   const isPlatformAdmin = user?.openId === "local-admin";
 
-  const navItems = useMemo<NavItemConfig[]>(() => {
-    const base: NavItemConfig[] = [
-      { href: "/admin", label: "Reservas", icon: CalendarCheck, exact: true },
-      { href: "/admin/profile", label: "Perfil del negocio", icon: Settings },
+  const navItems = useMemo<NavItemConfig[]>(
+    () => [
+      { href: "/admin", label: "Consultas", icon: CalendarCheck, exact: true },
+      { href: "/admin/profile", label: "Perfil de la inmobiliaria", icon: Settings },
       { href: "/admin/services", label: "Propiedades", icon: Briefcase },
-      { href: "/admin/gallery", label: "Galería", icon: Images },
-      { href: "/admin/availability", label: "Disponibilidad", icon: Clock },
-    ];
-
-    if (isPlatformAdmin) {
-      base.push({
-        href: "/admin/create-page",
-        label: "Nueva página",
-        icon: PlusSquare,
-      });
-    }
-
-    return base;
-  }, [isPlatformAdmin]);
+      { href: "/admin/gallery", label: "Galeria", icon: Images },
+    ],
+    [],
+  );
 
   const handleLogout = async () => {
     await logout();
-    toast.success("Sesión cerrada");
+    toast.success("Sesion cerrada");
     window.location.href = getLoginUrl();
   };
 
@@ -101,17 +89,17 @@ export default function AdminLayout({ children }: { children: ReactNode }) {
           </div>
           <h1 className="text-3xl font-black text-black mb-2 tracking-tight">Panel Admin</h1>
           <p className="text-sm text-black/50 mb-8">
-            Iniciá sesión para acceder al panel de gestión de tu negocio.
+            Inicia sesion para acceder al panel de gestion de tu inmobiliaria.
           </p>
           <a href={getLoginUrl()}>
             <button className="w-full py-4 bg-black text-white text-xs font-bold uppercase tracking-widest hover:bg-black/80 transition-colors">
-              Iniciar sesión
+              Iniciar sesion
             </button>
           </a>
           <div className="mt-4">
             <Link href="/">
               <button className="text-xs font-bold uppercase tracking-widest text-black/30 hover:text-black transition-colors">
-                ← Volver al inicio
+                Volver al inicio
               </button>
             </Link>
           </div>
@@ -128,11 +116,11 @@ export default function AdminLayout({ children }: { children: ReactNode }) {
             Acceso restringido
           </h1>
           <p className="text-sm text-black/50 mb-6">
-            No tenés permisos para acceder al panel de administración.
+            No tenes permisos para acceder al panel de administracion.
           </p>
           <Link href="/">
             <button className="text-xs font-bold uppercase tracking-widest text-black border-b border-black pb-1 hover:opacity-60 transition-opacity">
-              ← Volver al inicio
+              Volver al inicio
             </button>
           </Link>
         </div>
@@ -146,7 +134,7 @@ export default function AdminLayout({ children }: { children: ReactNode }) {
         <div className="flex items-center justify-between">
           <div>
             <p className="text-white font-black text-sm tracking-widest uppercase leading-tight">
-              {profile?.businessName ?? (isPlatformAdmin ? "Admin Central" : "Mi Negocio")}
+              {profile?.businessName ?? (isPlatformAdmin ? "Admin Central" : "Mi inmobiliaria")}
             </p>
             <p className="text-white/30 text-xs mt-0.5 uppercase tracking-widest">
               Panel Admin
@@ -197,7 +185,7 @@ export default function AdminLayout({ children }: { children: ReactNode }) {
           <button
             onClick={handleLogout}
             className="text-white/30 hover:text-white transition-colors"
-            title="Cerrar sesión"
+            title="Cerrar sesion"
           >
             <LogOut className="w-4 h-4" />
           </button>
