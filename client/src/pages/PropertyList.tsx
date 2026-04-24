@@ -1,17 +1,17 @@
 import { ArrowLeft, Building2 } from "lucide-react";
 import { Link, useParams } from "wouter";
 import { PropertyCard } from "@/components/PropertyCard";
+import { usePublicProperties } from "@/lib/propertyData";
 import {
   getOperationLabel,
   getStatusLabel,
-  getVisibleProperties,
   realEstateProfile,
 } from "@/lib/realEstateDemo";
 
 export default function PropertyList() {
   const { slug } = useParams<{ slug: string }>();
   const safeSlug = slug ?? realEstateProfile.slug;
-  const properties = getVisibleProperties();
+  const { properties } = usePublicProperties(safeSlug);
 
   return (
     <div className="min-h-screen bg-zinc-50">

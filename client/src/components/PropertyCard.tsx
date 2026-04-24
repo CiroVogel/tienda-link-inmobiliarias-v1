@@ -2,6 +2,7 @@ import { Bath, BedDouble, Building2, MapPin, Ruler, Tag } from "lucide-react";
 import { Link } from "wouter";
 import {
   DemoProperty,
+  getPropertyCoverImage,
   getOperationLabel,
   getStatusLabel,
   isPropertyRequestable,
@@ -14,13 +15,14 @@ type PropertyCardProps = {
 
 export function PropertyCard({ property, slug }: PropertyCardProps) {
   const requestable = isPropertyRequestable(property);
+  const coverImage = getPropertyCoverImage(property);
 
   return (
     <article className="group overflow-hidden border border-zinc-200 bg-white">
       <Link href={`/${slug}/propiedades/${property.id}`}>
         <div className="relative aspect-[4/3] overflow-hidden bg-zinc-100">
           <img
-            src={property.images[0]}
+            src={coverImage}
             alt={property.title}
             className="h-full w-full object-cover transition duration-500 group-hover:scale-[1.03]"
           />

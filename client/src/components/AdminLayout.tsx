@@ -62,7 +62,7 @@ export default function AdminLayout({ children }: { children: ReactNode }) {
     const base: NavItemConfig[] = [
       { href: "/admin", label: "Reservas", icon: CalendarCheck, exact: true },
       { href: "/admin/profile", label: "Perfil del negocio", icon: Settings },
-      { href: "/admin/services", label: "Servicios", icon: Briefcase },
+      { href: "/admin/services", label: "Propiedades", icon: Briefcase },
       { href: "/admin/gallery", label: "Galería", icon: Images },
       { href: "/admin/availability", label: "Disponibilidad", icon: Clock },
     ];

@@ -218,6 +218,9 @@ export const demoProperties: DemoProperty[] = [
   },
 ];
 
+export const propertyImageFallback =
+  "https://images.unsplash.com/photo-1484154218962-a197022b5858?auto=format&fit=crop&w=1400&q=82";
+
 export function getVisibleProperties() {
   return demoProperties.filter((property) => property.status !== "hidden");
 }
@@ -229,6 +232,14 @@ export function getFeaturedProperties() {
 export function getPropertyById(id?: string) {
   if (!id) return null;
   return getVisibleProperties().find((property) => property.id === id) ?? null;
+}
+
+export function getPropertyGalleryImages(property?: Pick<DemoProperty, "images"> | null) {
+  return property?.images?.length ? property.images : [propertyImageFallback];
+}
+
+export function getPropertyCoverImage(property?: Pick<DemoProperty, "images"> | null) {
+  return getPropertyGalleryImages(property)[0];
 }
 
 export function isPropertyRequestable(property: DemoProperty) {

@@ -3,8 +3,9 @@ import { ArrowLeft, CheckCircle2, Mail, MessageCircle, Phone, User } from "lucid
 import { Link, useParams } from "wouter";
 import { toast } from "sonner";
 import { trpc } from "@/lib/trpc";
+import { usePublicProperty } from "@/lib/propertyData";
 import {
-  getPropertyById,
+  getPropertyCoverImage,
   getStatusLabel,
   isPropertyRequestable,
   realEstateProfile,
@@ -22,7 +23,7 @@ const defaultMessage =
 export default function Booking() {
   const { slug, propertyId } = useParams<{ slug: string; propertyId: string }>();
   const safeSlug = slug ?? realEstateProfile.slug;
-  const property = getPropertyById(propertyId);
+  const { property, isLoading } = usePublicProperty(safeSlug, propertyId);
   const createVisitRequest = trpc.visitRequests.create.useMutation();
 
   const [form, setForm] = useState({
@@ -32,6 +33,14 @@ export default function Booking() {
     message: defaultMessage,
   });
   const [reference, setReference] = useState("");
+
+  if (isLoading && !property) {
+    return (
+      <div className="flex min-h-screen items-center justify-center bg-white px-5">
+        <p className="text-sm font-medium text-zinc-500">Cargando propiedad...</p>
+      </div>
+    );
+  }
 
   if (!property) {
     return (
@@ -52,6 +61,7 @@ export default function Booking() {
 
   const requestable = isPropertyRequestable(property);
   const currentProperty = property;
+  const coverImage = getPropertyCoverImage(property);
 
   async function handleSubmit(event: React.FormEvent) {
     event.preventDefault();
@@ -104,7 +114,7 @@ export default function Booking() {
       <main className="mx-auto grid max-w-4xl gap-6 px-5 py-6 md:grid-cols-[0.9fr_1.1fr] md:py-8">
         <aside className="bg-white">
           <img
-            src={property.images[0]}
+            src={coverImage}
             alt={property.title}
             className="aspect-[4/3] w-full object-cover"
           />

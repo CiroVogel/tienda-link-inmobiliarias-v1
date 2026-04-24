@@ -10,9 +10,10 @@ import {
   Ruler,
 } from "lucide-react";
 import { Link, useParams } from "wouter";
+import { usePublicProperty } from "@/lib/propertyData";
 import {
+  getPropertyGalleryImages,
   getOperationLabel,
-  getPropertyById,
   getStatusLabel,
   isPropertyRequestable,
   realEstateProfile,
@@ -27,8 +28,17 @@ function whatsappHref(propertyTitle: string) {
 export default function PropertyDetail() {
   const { slug, propertyId } = useParams<{ slug: string; propertyId: string }>();
   const safeSlug = slug ?? realEstateProfile.slug;
-  const property = getPropertyById(propertyId);
+  const { property, isLoading } = usePublicProperty(safeSlug, propertyId);
   const [selectedImage, setSelectedImage] = useState(0);
+  const galleryImages = getPropertyGalleryImages(property);
+
+  if (isLoading && !property) {
+    return (
+      <div className="flex min-h-screen items-center justify-center bg-white px-5">
+        <p className="text-sm font-medium text-zinc-500">Cargando propiedad...</p>
+      </div>
+    );
+  }
 
   if (!property) {
     return (
@@ -69,19 +79,19 @@ export default function PropertyDetail() {
         </div>
       </header>
 
-      <main className="mx-auto max-w-6xl px-5 py-8 md:py-12">
-        <section className="grid gap-8 lg:grid-cols-[1.08fr_0.92fr]">
+      <main className="mx-auto max-w-6xl px-5 py-6 md:py-8">
+        <section className="grid gap-6 lg:grid-cols-[0.95fr_1.05fr]">
           <div>
             <div className="overflow-hidden bg-zinc-100">
               <img
-                src={property.images[selectedImage]}
+                src={galleryImages[selectedImage] ?? galleryImages[0]}
                 alt={property.title}
-                className="aspect-[4/3] w-full object-cover"
+                className="aspect-[16/10] w-full object-cover"
               />
             </div>
 
             <div className="mt-3 grid grid-cols-3 gap-3">
-              {property.images.map((image, index) => (
+              {galleryImages.map((image, index) => (
                 <button
                   key={image}
                   type="button"
@@ -102,7 +112,7 @@ export default function PropertyDetail() {
           </div>
 
           <aside>
-            <div className="mb-5 flex flex-wrap gap-2">
+            <div className="mb-4 flex flex-wrap gap-2">
               <span className="bg-zinc-950 px-3 py-2 text-xs font-black uppercase tracking-[0.14em] text-white">
                 {getOperationLabel(property.operation)}
               </span>
@@ -117,27 +127,27 @@ export default function PropertyDetail() {
               </span>
             </div>
 
-            <h1 className="text-4xl font-black leading-tight tracking-tight text-zinc-950 md:text-5xl">
+            <h1 className="text-4xl font-black leading-tight tracking-tight text-zinc-950 md:text-4xl">
               {property.title}
             </h1>
 
-            <p className="mt-4 flex items-center gap-2 text-sm font-bold uppercase tracking-[0.14em] text-zinc-400">
+            <p className="mt-3 flex items-center gap-2 text-sm font-bold uppercase tracking-[0.14em] text-zinc-400">
               <MapPin className="h-4 w-4" />
               {property.address}, {property.location}
             </p>
 
-            <p className="mt-6 text-3xl font-black text-zinc-950">{property.price}</p>
+            <p className="mt-4 text-3xl font-black text-zinc-950">{property.price}</p>
 
-            <div className="mt-7 grid grid-cols-2 gap-px bg-zinc-200">
-              <div className="bg-zinc-50 p-4">
-                <Building2 className="mb-3 h-5 w-5 text-zinc-400" />
+            <div className="mt-5 grid grid-cols-2 gap-px bg-zinc-200">
+              <div className="bg-zinc-50 p-3">
+                <Building2 className="mb-2 h-5 w-5 text-zinc-400" />
                 <p className="text-xs font-bold uppercase tracking-[0.14em] text-zinc-400">
                   Tipo
                 </p>
                 <p className="mt-1 font-bold text-zinc-950">{property.propertyType}</p>
               </div>
-              <div className="bg-zinc-50 p-4">
-                <Ruler className="mb-3 h-5 w-5 text-zinc-400" />
+              <div className="bg-zinc-50 p-3">
+                <Ruler className="mb-2 h-5 w-5 text-zinc-400" />
                 <p className="text-xs font-bold uppercase tracking-[0.14em] text-zinc-400">
                   Superficie
                 </p>
@@ -145,8 +155,8 @@ export default function PropertyDetail() {
                   {property.areaM2 ? `${property.areaM2} m2` : "A consultar"}
                 </p>
               </div>
-              <div className="bg-zinc-50 p-4">
-                <BedDouble className="mb-3 h-5 w-5 text-zinc-400" />
+              <div className="bg-zinc-50 p-3">
+                <BedDouble className="mb-2 h-5 w-5 text-zinc-400" />
                 <p className="text-xs font-bold uppercase tracking-[0.14em] text-zinc-400">
                   Dormitorios
                 </p>
@@ -154,8 +164,8 @@ export default function PropertyDetail() {
                   {property.bedrooms ?? "No aplica"}
                 </p>
               </div>
-              <div className="bg-zinc-50 p-4">
-                <Bath className="mb-3 h-5 w-5 text-zinc-400" />
+              <div className="bg-zinc-50 p-3">
+                <Bath className="mb-2 h-5 w-5 text-zinc-400" />
                 <p className="text-xs font-bold uppercase tracking-[0.14em] text-zinc-400">
                   Baños
                 </p>
@@ -165,7 +175,7 @@ export default function PropertyDetail() {
               </div>
             </div>
 
-            <div className="mt-7">
+            <div className="mt-5">
               <h2 className="mb-3 text-sm font-black uppercase tracking-[0.16em] text-zinc-950">
                 Caracteristicas
               </h2>
@@ -181,14 +191,14 @@ export default function PropertyDetail() {
               </div>
             </div>
 
-            <div className="mt-7 border-t border-zinc-200 pt-7">
+            <div className="mt-5 border-t border-zinc-200 pt-5">
               <h2 className="mb-3 text-sm font-black uppercase tracking-[0.16em] text-zinc-950">
                 Descripción
               </h2>
               <p className="text-sm leading-7 text-zinc-600">{property.description}</p>
             </div>
 
-            <div className="mt-8 flex flex-col gap-3 sm:flex-row">
+            <div className="mt-6 flex flex-col gap-3 sm:flex-row">
               {requestable ? (
                 <Link href={`/${safeSlug}/solicitar-visita/${property.id}`}>
                   <span className="inline-flex items-center justify-center gap-2 bg-zinc-950 px-6 py-4 text-xs font-black uppercase tracking-[0.16em] text-white">

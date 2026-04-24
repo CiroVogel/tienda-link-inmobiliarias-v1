@@ -1,10 +1,11 @@
 import { ArrowRight, Building2, CheckCircle2, HomeIcon, MapPin, MessageCircle } from "lucide-react";
 import { Link, useParams } from "wouter";
 import { PropertyCard } from "@/components/PropertyCard";
+import { usePublicProperties } from "@/lib/propertyData";
 import {
-  getFeaturedProperties,
-  getVisibleProperties,
+  getPropertyCoverImage,
   realEstateProfile,
+  type DemoProperty,
 } from "@/lib/realEstateDemo";
 
 type HomeProps = {
@@ -41,18 +42,18 @@ function Header({ slug }: { slug: string }) {
   );
 }
 
-function Hero({ slug }: { slug: string }) {
-  const featured = getFeaturedProperties()[0];
+function Hero({ featured, slug }: { featured?: DemoProperty; slug: string }) {
+  const coverImage = getPropertyCoverImage(featured);
 
   return (
     <section className="overflow-hidden bg-zinc-950 text-white">
-      <div className="mx-auto grid min-h-[calc(100svh-4rem)] max-w-6xl items-end gap-10 px-5 py-10 md:grid-cols-[1fr_0.9fr] md:py-14">
-        <div className="min-w-0 pb-4 md:pb-10">
+      <div className="mx-auto grid max-w-6xl items-center gap-8 px-5 py-12 md:min-h-[560px] md:grid-cols-[0.95fr_0.9fr] md:py-14 lg:min-h-[600px]">
+        <div className="min-w-0">
           <p className="mb-5 text-xs font-bold uppercase tracking-[0.22em] text-white/45">
             Inmobiliaria urbana en {realEstateProfile.city}
           </p>
 
-          <h1 className="max-w-3xl break-words text-4xl font-black leading-[0.98] tracking-tight sm:text-6xl lg:text-7xl">
+          <h1 className="max-w-3xl break-words text-4xl font-black leading-[0.98] tracking-tight sm:text-5xl lg:text-6xl">
             Propiedades claras para encontrar tu proximo lugar.
           </h1>
 
@@ -83,11 +84,11 @@ function Hero({ slug }: { slug: string }) {
         </div>
 
         {featured ? (
-          <div className="relative mb-2 min-w-0 overflow-hidden border border-white/10 bg-white/5 md:mb-10">
+          <div className="relative min-w-0 overflow-hidden border border-white/10 bg-white/5">
             <img
-              src={featured.images[0]}
+              src={coverImage}
               alt={featured.title}
-              className="aspect-[4/5] h-full w-full max-w-full object-cover opacity-95"
+              className="aspect-[4/3] w-full max-w-full object-cover opacity-95"
             />
             <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/80 to-transparent p-5">
               <p className="mb-1 text-xs font-bold uppercase tracking-[0.16em] text-white/55">
@@ -135,7 +136,7 @@ function ValueBlock() {
   );
 }
 
-function FeaturedProperties({ slug }: { slug: string }) {
+function FeaturedProperties({ properties, slug }: { properties: DemoProperty[]; slug: string }) {
   return (
     <section id="propiedades" className="bg-zinc-50 py-14 md:py-18">
       <div className="mx-auto max-w-6xl px-5">
@@ -158,7 +159,7 @@ function FeaturedProperties({ slug }: { slug: string }) {
         </div>
 
         <div className="grid gap-5 lg:grid-cols-3">
-          {getFeaturedProperties().map((property) => (
+          {properties.map((property) => (
             <PropertyCard key={property.id} property={property} slug={slug} />
           ))}
         </div>
@@ -171,7 +172,7 @@ function HowItWorks({ slug }: { slug: string }) {
   const steps = [
     ["Explorá propiedades", "Recorré opciones en venta y alquiler según zona, precio y tipo de propiedad."],
     ["Revisá la ficha", "Mirá fotos, ubicación, medidas, ambientes y detalles principales antes de consultar."],
-    ["Solicitá visita", "Dejá tus datos y una fecha preferida para que podamos coordinar contigo."],
+    ["Solicitá visita", "Dejá tus datos y tu disponibilidad para que podamos coordinar contigo."],
   ];
 
   return (
@@ -223,7 +224,7 @@ function Contact({ slug }: { slug: string }) {
             Coordinemos una visita a la propiedad que te interesa.
           </h2>
           <p className="mt-5 max-w-xl text-sm leading-7 text-white/55">
-            Envianos tus datos y una fecha preferida. Si tenes una consulta
+            Envianos tus datos y tu disponibilidad. Si tenes una consulta
             puntual, tambien podes escribirnos por WhatsApp.
           </p>
 
@@ -284,14 +285,18 @@ function Footer({ slug }: { slug: string }) {
 export default function Home({ forcedSlug }: HomeProps) {
   const params = useParams<{ slug: string }>();
   const slug = forcedSlug ?? params.slug ?? realEstateProfile.slug;
-  const visibleCount = getVisibleProperties().length;
+  const { properties } = usePublicProperties(slug);
+  const featuredProperties = properties.filter((property) => property.featured).slice(0, 3);
+  const featuredCards = featuredProperties.length > 0 ? featuredProperties : properties.slice(0, 3);
+  const heroProperty = featuredProperties[0] ?? properties[0];
+  const visibleCount = properties.length;
 
   return (
     <div className="min-h-screen bg-white">
       <Header slug={slug} />
-      <Hero slug={slug} />
+      <Hero featured={heroProperty} slug={slug} />
       <ValueBlock />
-      <FeaturedProperties slug={slug} />
+      <FeaturedProperties properties={featuredCards} slug={slug} />
       <section className="bg-white py-10">
         <div className="mx-auto flex max-w-6xl flex-col gap-4 px-5 sm:flex-row sm:items-center sm:justify-between">
           <p className="text-sm text-zinc-500">

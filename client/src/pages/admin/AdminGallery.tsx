@@ -1,169 +1,396 @@
-import { useRef, useState } from "react";
-import { trpc } from "@/lib/trpc";
+import { useEffect, useMemo, useRef, useState } from "react";
+import {
+  ArrowLeft,
+  ArrowRight,
+  ImagePlus,
+  Images,
+  Loader2,
+  Star,
+  Trash2,
+  Upload,
+} from "lucide-react";
+import { toast } from "sonner";
 import AdminLayout from "@/components/AdminLayout";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { toast } from "sonner";
-import { Upload, Trash2, Loader2, Images } from "lucide-react";
+import { propertyImageFallback } from "@/lib/realEstateDemo";
+import { trpc } from "@/lib/trpc";
+
+type AdminPropertyImage = {
+  id: string;
+  url: string;
+  caption?: string;
+  sortOrder: number;
+  isPrimary: boolean;
+};
+
+type AdminProperty = {
+  id: string;
+  title: string;
+  location: string;
+  propertyType: string;
+  price: string;
+  images: AdminPropertyImage[];
+};
+
+function readFileAsBase64(file: File) {
+  return new Promise<string>((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = (event) => {
+      const result = event.target?.result;
+      if (typeof result !== "string") {
+        reject(new Error("Invalid file result"));
+        return;
+      }
+
+      resolve(result.split(",")[1] ?? "");
+    };
+    reader.onerror = () => reject(new Error("File read error"));
+    reader.readAsDataURL(file);
+  });
+}
 
 export default function AdminGallery() {
+  const utils = trpc.useUtils();
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const [selectedPropertyId, setSelectedPropertyId] = useState("");
   const [uploading, setUploading] = useState(false);
-  const [caption, setCaption] = useState("");
+  const { data: properties = [] } = trpc.properties.list.useQuery();
 
-  const { data: images = [], refetch } = trpc.gallery.list.useQuery();
-
-  const uploadImage = trpc.gallery.upload.useMutation({
-    onSuccess: () => {
-      toast.success("Imagen subida");
-      refetch();
-      setCaption("");
-    },
-    onError: () => toast.error("Error al subir la imagen"),
-  });
-
-  const deleteImage = trpc.gallery.delete.useMutation({
-    onSuccess: () => { toast.success("Imagen eliminada"); refetch(); },
-    onError: () => toast.error("Error al eliminar la imagen"),
-  });
-
-  const handleFiles = async (files: FileList) => {
-    const file = files[0];
-    if (!file) return;
-    if (file.size > 5 * 1024 * 1024) {
-      toast.error("La imagen no puede superar 5MB");
+  useEffect(() => {
+    if (!properties.length) {
+      setSelectedPropertyId("");
       return;
     }
+
+    if (!selectedPropertyId || !properties.some((property) => property.id === selectedPropertyId)) {
+      setSelectedPropertyId(properties[0]!.id);
+    }
+  }, [properties, selectedPropertyId]);
+
+  const selectedProperty = useMemo(
+    () => properties.find((property) => property.id === selectedPropertyId) as AdminProperty | undefined,
+    [properties, selectedPropertyId],
+  );
+
+  const uploadImage = trpc.properties.uploadImage.useMutation({
+    onSuccess: async () => {
+      await utils.properties.list.invalidate();
+    },
+    onError: () => toast.error("No pudimos subir la imagen."),
+  });
+
+  const reorderImages = trpc.properties.reorderImages.useMutation({
+    onSuccess: async () => {
+      await utils.properties.list.invalidate();
+    },
+    onError: () => toast.error("No pudimos reordenar las fotos."),
+  });
+
+  const setPrimaryImage = trpc.properties.setPrimaryImage.useMutation({
+    onSuccess: async () => {
+      toast.success("Imagen principal actualizada.");
+      await utils.properties.list.invalidate();
+    },
+    onError: () => toast.error("No pudimos marcar la imagen principal."),
+  });
+
+  const deleteImage = trpc.properties.deleteImage.useMutation({
+    onSuccess: async () => {
+      toast.success("Imagen eliminada.");
+      await utils.properties.list.invalidate();
+    },
+    onError: () => toast.error("No pudimos eliminar la imagen."),
+  });
+
+  async function handleFiles(fileList: FileList | File[]) {
+    if (!selectedProperty) {
+      toast.error("Primero elegi una propiedad.");
+      return;
+    }
+
+    const files = Array.from(fileList);
+    if (!files.length) return;
+
+    for (const file of files) {
+      if (file.size > 5 * 1024 * 1024) {
+        toast.error(`"${file.name}" supera el maximo de 5MB.`);
+        return;
+      }
+    }
+
     setUploading(true);
+
     try {
-      const reader = new FileReader();
-      reader.onload = async (e) => {
-        const result = e.target?.result as string;
-        const base64 = result.split(",")[1];
+      for (const file of files) {
+        const base64 = await readFileAsBase64(file);
         await uploadImage.mutateAsync({
+          propertyId: selectedProperty.id,
           base64,
           mimeType: file.type,
-          caption: caption || undefined,
         });
-        setUploading(false);
-      };
-      reader.readAsDataURL(file);
+      }
+
+      toast.success(
+        `${files.length} foto${files.length !== 1 ? "s" : ""} subida${files.length !== 1 ? "s" : ""}.`,
+      );
     } catch {
+      toast.error("No pudimos procesar las fotos.");
+    } finally {
       setUploading(false);
-      toast.error("Error al procesar la imagen");
+      if (fileInputRef.current) fileInputRef.current.value = "";
     }
-  };
+  }
+
+  async function moveImage(imageId: string, direction: -1 | 1) {
+    if (!selectedProperty) return;
+
+    const images = [...selectedProperty.images];
+    const index = images.findIndex((image) => image.id === imageId);
+    const nextIndex = index + direction;
+
+    if (index === -1 || nextIndex < 0 || nextIndex >= images.length) return;
+    if (images[index]?.isPrimary || images[nextIndex]?.isPrimary) return;
+
+    const reorderedImages = [...images];
+    [reorderedImages[index], reorderedImages[nextIndex]] = [
+      reorderedImages[nextIndex]!,
+      reorderedImages[index]!,
+    ];
+
+    await reorderImages.mutateAsync({
+      propertyId: selectedProperty.id,
+      imageIds: reorderedImages.map((image) => image.id),
+    });
+  }
+
+  async function handleDeleteImage(imageId: string) {
+    if (!selectedProperty) return;
+
+    await deleteImage.mutateAsync({
+      propertyId: selectedProperty.id,
+      imageId,
+    });
+  }
+
+  async function handleSetPrimary(imageId: string) {
+    if (!selectedProperty) return;
+
+    await setPrimaryImage.mutateAsync({
+      propertyId: selectedProperty.id,
+      imageId,
+    });
+  }
+
+  if (!properties.length) {
+    return (
+      <AdminLayout>
+        <div className="mx-auto max-w-4xl p-6">
+          <div className="rounded-xl border-2 border-dashed border-zinc-200 bg-white px-6 py-16 text-center">
+            <Images className="mx-auto mb-3 h-10 w-10 text-zinc-300" />
+            <h1 className="text-2xl font-black tracking-tight text-zinc-950">
+              Fotos de propiedades
+            </h1>
+            <p className="mt-3 text-sm text-zinc-500">
+              Crea una propiedad primero y despues carga sus imagenes desde este panel.
+            </p>
+          </div>
+        </div>
+      </AdminLayout>
+    );
+  }
+
+  const currentImages = selectedProperty?.images ?? [];
+  const isBusy =
+    uploading ||
+    uploadImage.isPending ||
+    reorderImages.isPending ||
+    setPrimaryImage.isPending ||
+    deleteImage.isPending;
 
   return (
     <AdminLayout>
-      <div className="p-6 max-w-4xl mx-auto">
-        {/* Header */}
-        <div className="flex items-center justify-between mb-8">
+      <div className="mx-auto max-w-6xl p-6">
+        <div className="mb-8 flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
           <div>
-            <h1
-              className="text-2xl font-black text-black tracking-tight"
+            <h1 className="text-2xl font-black tracking-tight text-black">Fotos de propiedades</h1>
+            <p className="mt-1 text-sm text-black/50">
+              Elegi una propiedad, subi sus imagenes y defini la principal.
+            </p>
+          </div>
+
+          <div className="w-full md:max-w-sm">
+            <select
+              value={selectedPropertyId}
+              onChange={(event) => setSelectedPropertyId(event.target.value)}
+              className="h-11 w-full rounded-md border border-input bg-background px-3 text-sm"
             >
-              Galería
-            </h1>
-            <p className="text-muted-foreground text-sm mt-0.5">
-              {images.length} imagen{images.length !== 1 ? "es" : ""} en la galería
-            </p>
+              {properties.map((property) => (
+                <option key={property.id} value={property.id}>
+                  {property.title}
+                </option>
+              ))}
+            </select>
           </div>
         </div>
 
-        {/* Upload area */}
-        <div className="bg-white rounded-xl border border-border p-6 mb-8">
-          <h2 className="text-sm font-semibold uppercase tracking-wider text-muted-foreground mb-4">
-            Subir nueva imagen
-          </h2>
-          <div className="flex gap-3 mb-4">
-            <Input
-              placeholder="Descripción de la imagen (opcional)"
-              value={caption}
-              onChange={(e) => setCaption(e.target.value)}
-              className="flex-1"
-            />
-          </div>
-          <div
-            className="border-2 border-dashed border-black/15 hover:border-black/40 p-10 text-center cursor-pointer transition-colors"
-            onClick={() => fileInputRef.current?.click()}
-            onDragOver={(e) => e.preventDefault()}
-            onDrop={(e) => {
-              e.preventDefault();
-              const files = e.dataTransfer.files;
-              if (files.length) handleFiles(files);
-            }}
-          >
-            {uploading ? (
-              <div className="flex flex-col items-center gap-2 text-muted-foreground">
-                <Loader2 className="w-8 h-8 animate-spin"  />
-                <span className="text-sm">Subiendo imagen...</span>
-              </div>
-            ) : (
-              <div className="flex flex-col items-center gap-2 text-muted-foreground">
-                <Upload className="w-8 h-8" />
-                <p className="text-sm font-medium">Hacé clic o arrastrá una imagen aquí</p>
-                <p className="text-xs">PNG, JPG, WEBP · Máximo 5MB</p>
-              </div>
-            )}
-          </div>
-          <input
-            ref={fileInputRef}
-            type="file"
-            accept="image/*"
-            className="hidden"
-            onChange={(e) => {
-              if (e.target.files) handleFiles(e.target.files);
-            }}
-          />
-        </div>
-
-        {/* Gallery grid */}
-        {images.length === 0 ? (
-          <div className="text-center py-16 border-2 border-dashed border-border rounded-xl">
-            <Images className="w-10 h-10 mx-auto mb-3 text-muted-foreground opacity-40" />
-            <p className="font-medium text-muted-foreground">La galería está vacía</p>
-            <p className="text-sm text-muted-foreground mt-1">
-              Subí fotos de tu trabajo para mostrarlas en tu web.
-            </p>
-          </div>
-        ) : (
-          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3">
-            {images.map((image) => (
-              <div
-                key={image.id}
-                className="relative group rounded-xl overflow-hidden bg-muted border border-border"
-                style={{ aspectRatio: "1" }}
-              >
+        {selectedProperty ? (
+          <>
+            <div className="mb-8 grid gap-6 lg:grid-cols-[320px_1fr]">
+              <div className="overflow-hidden rounded-xl border border-zinc-200 bg-white">
                 <img
-                  src={image.url}
-                  alt={image.caption ?? "Imagen de galería"}
-                  className="w-full h-full object-cover"
+                  src={selectedProperty.images[0]?.url ?? propertyImageFallback}
+                  alt={selectedProperty.title}
+                  className="aspect-[4/3] w-full object-cover"
                 />
-                {/* Overlay */}
-                <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity duration-200 flex flex-col items-center justify-center gap-2 p-2">
-                  {image.caption && (
-                    <p className="text-white text-xs text-center font-medium line-clamp-2">
-                      {image.caption}
-                    </p>
-                  )}
-                  <button
-                    onClick={() => deleteImage.mutate({ id: image.id })}
-                    disabled={deleteImage.isPending}
-                    className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-red-500 hover:bg-red-600 text-white text-xs font-medium transition-colors"
-                  >
-                    {deleteImage.isPending ? (
-                      <Loader2 className="w-3 h-3 animate-spin" />
-                    ) : (
-                      <Trash2 className="w-3 h-3" />
-                    )}
-                    Eliminar
-                  </button>
+                <div className="space-y-2 p-5">
+                  <h2 className="text-lg font-black text-zinc-950">{selectedProperty.title}</h2>
+                  <p className="text-sm text-zinc-500">
+                    {selectedProperty.location} | {selectedProperty.propertyType}
+                  </p>
+                  <p className="text-sm font-semibold text-zinc-950">{selectedProperty.price}</p>
+                  <p className="text-xs uppercase tracking-[0.14em] text-zinc-400">
+                    {currentImages.length} foto{currentImages.length !== 1 ? "s" : ""}
+                  </p>
                 </div>
               </div>
-            ))}
-          </div>
-        )}
+
+              <div className="rounded-xl border border-zinc-200 bg-white p-6">
+                <p className="mb-4 text-xs font-black uppercase tracking-[0.16em] text-zinc-400">
+                  Subir imagenes
+                </p>
+                <div
+                  className="cursor-pointer border-2 border-dashed border-black/15 p-10 text-center transition-colors hover:border-black/40"
+                  onClick={() => fileInputRef.current?.click()}
+                  onDragOver={(event) => event.preventDefault()}
+                  onDrop={(event) => {
+                    event.preventDefault();
+                    if (event.dataTransfer.files.length) {
+                      void handleFiles(event.dataTransfer.files);
+                    }
+                  }}
+                >
+                  {uploading ? (
+                    <div className="flex flex-col items-center gap-2 text-zinc-500">
+                      <Loader2 className="h-8 w-8 animate-spin" />
+                      <span className="text-sm">Subiendo fotos...</span>
+                    </div>
+                  ) : (
+                    <div className="flex flex-col items-center gap-2 text-zinc-500">
+                      <Upload className="h-8 w-8" />
+                      <p className="text-sm font-medium">
+                        Hace clic o arrastra imagenes para esta propiedad
+                      </p>
+                      <p className="text-xs">PNG, JPG, WEBP · Maximo 5MB por archivo</p>
+                    </div>
+                  )}
+                </div>
+                <input
+                  ref={fileInputRef}
+                  type="file"
+                  accept="image/*"
+                  multiple
+                  className="hidden"
+                  onChange={(event) => {
+                    if (event.target.files?.length) {
+                      void handleFiles(event.target.files);
+                    }
+                  }}
+                />
+              </div>
+            </div>
+
+            {currentImages.length === 0 ? (
+              <div className="rounded-xl border-2 border-dashed border-zinc-200 bg-white px-6 py-16 text-center">
+                <ImagePlus className="mx-auto mb-3 h-10 w-10 text-zinc-300" />
+                <p className="font-semibold text-zinc-700">Todavia no hay fotos cargadas.</p>
+                <p className="mt-1 text-sm text-zinc-500">
+                  La web usara un fallback visual hasta que subas imagenes reales.
+                </p>
+              </div>
+            ) : (
+              <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
+                {currentImages.map((image, index) => (
+                  <article
+                    key={image.id}
+                    className="overflow-hidden rounded-xl border border-zinc-200 bg-white"
+                  >
+                    <div className="relative bg-zinc-100">
+                      <img
+                        src={image.url}
+                        alt={image.caption ?? `${selectedProperty.title} foto ${index + 1}`}
+                        className="aspect-[4/3] w-full object-cover"
+                      />
+                      <div className="absolute left-3 top-3 flex gap-2">
+                        {image.isPrimary ? (
+                          <span className="inline-flex items-center gap-1 bg-amber-100 px-3 py-1 text-[11px] font-black uppercase tracking-[0.14em] text-amber-700">
+                            <Star className="h-3 w-3 fill-current" />
+                            Principal
+                          </span>
+                        ) : null}
+                        <span className="bg-white/90 px-3 py-1 text-[11px] font-black uppercase tracking-[0.14em] text-zinc-700">
+                          {index + 1}
+                        </span>
+                      </div>
+                    </div>
+
+                    <div className="space-y-3 p-4">
+                      <div className="grid grid-cols-2 gap-2">
+                        <Button
+                          type="button"
+                          variant="outline"
+                          onClick={() => void moveImage(image.id, -1)}
+                          disabled={isBusy || index === 0 || image.isPrimary || currentImages[index - 1]?.isPrimary}
+                          className="justify-center gap-2"
+                        >
+                          <ArrowLeft className="h-4 w-4" />
+                          Subir
+                        </Button>
+                        <Button
+                          type="button"
+                          variant="outline"
+                          onClick={() => void moveImage(image.id, 1)}
+                          disabled={
+                            isBusy ||
+                            index === currentImages.length - 1 ||
+                            image.isPrimary ||
+                            currentImages[index + 1]?.isPrimary
+                          }
+                          className="justify-center gap-2"
+                        >
+                          Bajar
+                          <ArrowRight className="h-4 w-4" />
+                        </Button>
+                      </div>
+
+                      <div className="grid grid-cols-2 gap-2">
+                        <Button
+                          type="button"
+                          variant={image.isPrimary ? "secondary" : "outline"}
+                          onClick={() => void handleSetPrimary(image.id)}
+                          disabled={isBusy || image.isPrimary}
+                          className="justify-center gap-2"
+                        >
+                          <Star className={`h-4 w-4 ${image.isPrimary ? "fill-current" : ""}`} />
+                          {image.isPrimary ? "Principal" : "Hacer principal"}
+                        </Button>
+                        <Button
+                          type="button"
+                          variant="outline"
+                          onClick={() => void handleDeleteImage(image.id)}
+                          disabled={isBusy}
+                          className="justify-center gap-2 text-red-600 hover:text-red-700"
+                        >
+                          <Trash2 className="h-4 w-4" />
+                          Borrar
+                        </Button>
+                      </div>
+                    </div>
+                  </article>
+                ))}
+              </div>
+            )}
+          </>
+        ) : null}
       </div>
     </AdminLayout>
   );

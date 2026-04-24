@@ -45,6 +45,19 @@ upsertLocalAdminCredential,
 } from "./db";
 import { createMercadoPagoPreference } from "./mercadopago";
 import {
+  addStoredPropertyImage,
+  createStoredProperty,
+  deleteStoredPropertyImage,
+  getPublicProperty,
+  listPublicProperties,
+  listStoredProperties,
+  mapStoredPropertyToPublic,
+  reorderStoredPropertyImages,
+  setStoredPropertyPrimaryImage,
+  storagePut,
+  updateStoredProperty,
+} from "./storage";
+import {
   buildClientPaymentConfirmationTemplate,
   buildOwnerPaymentConfirmationTemplate,
   generateBookingCancelledMessage,
@@ -73,6 +86,42 @@ const demoVisitRequests: Array<{
   message: string;
   createdAt: string;
 }> = [];
+
+const propertyOperationSchema = z.enum(["sale", "rent"]);
+const propertyStatusSchema = z.enum(["available", "reserved", "sold", "rented", "hidden"]);
+const propertyInputSchema = z.object({
+  title: z.string().min(1).max(240),
+  operation: propertyOperationSchema,
+  status: propertyStatusSchema,
+  price: z.string().min(1).max(120),
+  location: z.string().min(1).max(160),
+  address: z.string().min(1).max(240),
+  propertyType: z.string().min(1).max(120),
+  bedrooms: z.number().int().min(0).max(20).nullable().optional(),
+  bathrooms: z.number().int().min(0).max(20).nullable().optional(),
+  areaM2: z.number().int().min(0).max(50000).nullable().optional(),
+  features: z.array(z.string().min(1).max(100)).max(30).default([]),
+  description: z.string().min(1).max(4000),
+  featured: z.boolean().default(false),
+});
+
+const propertyImageSchema = z.object({
+  propertyId: z.string().min(1).max(160),
+});
+
+const propertyImageUploadSchema = propertyImageSchema.extend({
+  base64: z.string().min(1),
+  mimeType: z.string().min(1).max(120),
+  caption: z.string().max(240).optional(),
+});
+
+const propertyImageReorderSchema = propertyImageSchema.extend({
+  imageIds: z.array(z.string().min(1).max(200)).min(1),
+});
+
+const propertyPrimaryImageSchema = propertyImageSchema.extend({
+  imageId: z.string().min(1).max(200),
+});
 
 function hashPassword(password: string) {
   const salt = randomBytes(16).toString("hex");
@@ -469,6 +518,132 @@ export const appRouter = router({
           ok: true,
           reference,
         };
+      }),
+  }),
+
+  properties: router({
+    listPublic: publicProcedure
+      .input(z.object({ slug: slugSchema }))
+      .query(async ({ input }) => {
+        return listPublicProperties(input.slug);
+      }),
+
+    getPublic: publicProcedure
+      .input(
+        z.object({
+          slug: slugSchema,
+          id: z.string().min(1).max(160),
+        }),
+      )
+      .query(async ({ input }) => {
+        return getPublicProperty(input.slug, input.id);
+      }),
+
+    list: adminProcedure.query(async ({ ctx }) => {
+      const profile = await getBusinessProfile(ctx.user.id);
+      if (!profile) return [];
+      return listStoredProperties(profile.slug);
+    }),
+
+    create: adminProcedure
+      .input(propertyInputSchema)
+      .mutation(async ({ ctx, input }) => {
+        const profile = await getBusinessProfile(ctx.user.id);
+        if (!profile) {
+          throw new TRPCError({ code: "NOT_FOUND", message: "Perfil no encontrado" });
+        }
+
+        const property = await createStoredProperty(profile.slug, input);
+        return property;
+      }),
+
+    update: adminProcedure
+      .input(
+        propertyInputSchema.extend({
+          id: z.string().min(1).max(160),
+        }),
+      )
+      .mutation(async ({ ctx, input }) => {
+        const profile = await getBusinessProfile(ctx.user.id);
+        if (!profile) {
+          throw new TRPCError({ code: "NOT_FOUND", message: "Perfil no encontrado" });
+        }
+
+        const { id, ...payload } = input;
+        const property = await updateStoredProperty(profile.slug, id, payload);
+        return property;
+      }),
+
+    uploadImage: adminProcedure
+      .input(propertyImageUploadSchema)
+      .mutation(async ({ ctx, input }) => {
+        const profile = await getBusinessProfile(ctx.user.id);
+        if (!profile) {
+          throw new TRPCError({ code: "NOT_FOUND", message: "Perfil no encontrado" });
+        }
+
+        const buffer = Buffer.from(input.base64, "base64");
+        const rawExtension = input.mimeType.split("/")[1] ?? "jpg";
+        const extension = rawExtension.toLowerCase().replace(/[^a-z0-9]/g, "") || "jpg";
+        const key = `real-estate/${profile.slug}/properties/${input.propertyId}/${Date.now()}-${randomBytes(4).toString("hex")}.${extension}`;
+        const { url, key: fileKey } = await storagePut(key, buffer, input.mimeType);
+
+        return addStoredPropertyImage(profile.slug, input.propertyId, {
+          url,
+          fileKey,
+          caption: input.caption,
+        });
+      }),
+
+    reorderImages: adminProcedure
+      .input(propertyImageReorderSchema)
+      .mutation(async ({ ctx, input }) => {
+        const profile = await getBusinessProfile(ctx.user.id);
+        if (!profile) {
+          throw new TRPCError({ code: "NOT_FOUND", message: "Perfil no encontrado" });
+        }
+
+        return reorderStoredPropertyImages(profile.slug, input.propertyId, input.imageIds);
+      }),
+
+    setPrimaryImage: adminProcedure
+      .input(propertyPrimaryImageSchema)
+      .mutation(async ({ ctx, input }) => {
+        const profile = await getBusinessProfile(ctx.user.id);
+        if (!profile) {
+          throw new TRPCError({ code: "NOT_FOUND", message: "Perfil no encontrado" });
+        }
+
+        return setStoredPropertyPrimaryImage(profile.slug, input.propertyId, input.imageId);
+      }),
+
+    deleteImage: adminProcedure
+      .input(propertyPrimaryImageSchema)
+      .mutation(async ({ ctx, input }) => {
+        const profile = await getBusinessProfile(ctx.user.id);
+        if (!profile) {
+          throw new TRPCError({ code: "NOT_FOUND", message: "Perfil no encontrado" });
+        }
+
+        return deleteStoredPropertyImage(profile.slug, input.propertyId, input.imageId);
+      }),
+
+    getAdminPreview: adminProcedure
+      .input(z.object({ id: z.string().min(1).max(160) }))
+      .query(async ({ ctx, input }) => {
+        const profile = await getBusinessProfile(ctx.user.id);
+        if (!profile) {
+          throw new TRPCError({ code: "NOT_FOUND", message: "Perfil no encontrado" });
+        }
+
+        const properties = await listStoredProperties(profile.slug);
+        const property = properties.find((item) => item.id === input.id);
+
+        if (!property) {
+          throw new TRPCError({ code: "NOT_FOUND", message: "Propiedad no encontrada" });
+        }
+
+        return mapStoredPropertyToPublic(property);
       }),
   }),
 
