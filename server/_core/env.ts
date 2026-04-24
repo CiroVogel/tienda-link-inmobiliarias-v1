@@ -1,10 +1,19 @@
+const isProduction = process.env.NODE_ENV === "production";
+const adminEmail =
+  process.env.ADMIN_EMAIL?.trim() || (!isProduction ? "admin@inmobiliarias.local" : "");
+const adminPassword = process.env.ADMIN_PASSWORD ?? (!isProduction ? "Admin12345!" : "");
+const localAuthEnabled =
+  process.env.LOCAL_AUTH_ENABLED === "true" ||
+  (!isProduction && (!process.env.OAUTH_SERVER_URL?.trim() || !process.env.VITE_APP_ID?.trim()));
+
 export const ENV = {
   appId: process.env.VITE_APP_ID ?? "",
-  cookieSecret: process.env.JWT_SECRET ?? "",
+  cookieSecret:
+    process.env.JWT_SECRET ?? (!isProduction ? "inmobiliarias-local-cookie-secret" : ""),
   databaseUrl: process.env.DATABASE_URL ?? "",
   oAuthServerUrl: process.env.OAUTH_SERVER_URL ?? "",
   ownerOpenId: process.env.OWNER_OPEN_ID ?? "",
-  isProduction: process.env.NODE_ENV === "production",
+  isProduction,
   forgeApiUrl: process.env.BUILT_IN_FORGE_API_URL ?? "",
   forgeApiKey: process.env.BUILT_IN_FORGE_API_KEY ?? "",
   whatsappMetaAccessToken: process.env.WHATSAPP_META_ACCESS_TOKEN ?? "",
@@ -16,8 +25,8 @@ export const ENV = {
     process.env.WHATSAPP_META_CLIENT_PAYMENT_TEMPLATE_NAME ?? "",
   whatsappMetaOwnerPaymentTemplateName:
     process.env.WHATSAPP_META_OWNER_PAYMENT_TEMPLATE_NAME ?? "",
-  // Local auth (dev only): set LOCAL_AUTH_ENABLED=true + ADMIN_EMAIL + ADMIN_PASSWORD in .env
-  localAuthEnabled: process.env.LOCAL_AUTH_ENABLED === "true",
-  adminEmail: process.env.ADMIN_EMAIL ?? "",
-  adminPassword: process.env.ADMIN_PASSWORD ?? "",
+  // Local auth (dev): if OAuth config is missing, fall back to local admin.
+  localAuthEnabled,
+  adminEmail,
+  adminPassword,
 };

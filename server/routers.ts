@@ -1,10 +1,12 @@
 import { TRPCError } from "@trpc/server";
 import { z } from "zod";
 import { COOKIE_NAME } from "@shared/const";
+import type { BusinessProfile, User } from "../drizzle/schema";
 import { getSessionCookieOptions } from "./_core/cookies";
 import { systemRouter } from "./_core/systemRouter";
 import { protectedProcedure, publicProcedure, router } from "./_core/trpc";
 import { randomBytes, scryptSync, timingSafeEqual } from "crypto";
+import { realEstateProfile } from "../client/src/lib/realEstateDemo";
 import {
   addGalleryImage,
   archiveBooking,
@@ -122,6 +124,51 @@ const propertyImageReorderSchema = propertyImageSchema.extend({
 const propertyPrimaryImageSchema = propertyImageSchema.extend({
   imageId: z.string().min(1).max(200),
 });
+
+function buildLocalBusinessProfile(userId: number): BusinessProfile {
+  const now = new Date();
+
+  return {
+    id: 0,
+    userId,
+    slug: realEstateProfile.slug,
+    businessName: realEstateProfile.name,
+    tagline: realEstateProfile.tagline,
+    description: realEstateProfile.description,
+    ownerName: "",
+    ownerTitle: "",
+    ownerBio: null,
+    ownerImageUrl: null,
+    logoUrl: null,
+    heroImageUrl: null,
+    phone: realEstateProfile.phone,
+    whatsapp: realEstateProfile.whatsapp,
+    email: realEstateProfile.email,
+    address: realEstateProfile.address,
+    instagram: realEstateProfile.instagram,
+    facebook: "",
+    primaryColor: "#000000",
+    accentColor: "#c9a96e",
+    paymentMpAccessToken: null,
+    depositPercentage: 30,
+    currency: "ARS",
+    createdAt: now,
+    updatedAt: now,
+  };
+}
+
+async function getAdminBusinessProfile(user: User): Promise<BusinessProfile | null> {
+  const profile = await getBusinessProfile(user.id);
+  if (profile) {
+    return profile;
+  }
+
+  if (user.openId === "local-admin") {
+    return buildLocalBusinessProfile(user.id);
+  }
+
+  return null;
+}
 
 function hashPassword(password: string) {
   const salt = randomBytes(16).toString("hex");
@@ -540,7 +587,7 @@ export const appRouter = router({
       }),
 
     list: adminProcedure.query(async ({ ctx }) => {
-      const profile = await getBusinessProfile(ctx.user.id);
+      const profile = await getAdminBusinessProfile(ctx.user);
       if (!profile) return [];
       return listStoredProperties(profile.slug);
     }),
@@ -548,7 +595,7 @@ export const appRouter = router({
     create: adminProcedure
       .input(propertyInputSchema)
       .mutation(async ({ ctx, input }) => {
-        const profile = await getBusinessProfile(ctx.user.id);
+        const profile = await getAdminBusinessProfile(ctx.user);
         if (!profile) {
           throw new TRPCError({ code: "NOT_FOUND", message: "Perfil no encontrado" });
         }
@@ -564,7 +611,7 @@ export const appRouter = router({
         }),
       )
       .mutation(async ({ ctx, input }) => {
-        const profile = await getBusinessProfile(ctx.user.id);
+        const profile = await getAdminBusinessProfile(ctx.user);
         if (!profile) {
           throw new TRPCError({ code: "NOT_FOUND", message: "Perfil no encontrado" });
         }
@@ -577,7 +624,7 @@ export const appRouter = router({
     uploadImage: adminProcedure
       .input(propertyImageUploadSchema)
       .mutation(async ({ ctx, input }) => {
-        const profile = await getBusinessProfile(ctx.user.id);
+        const profile = await getAdminBusinessProfile(ctx.user);
         if (!profile) {
           throw new TRPCError({ code: "NOT_FOUND", message: "Perfil no encontrado" });
         }
@@ -598,7 +645,7 @@ export const appRouter = router({
     reorderImages: adminProcedure
       .input(propertyImageReorderSchema)
       .mutation(async ({ ctx, input }) => {
-        const profile = await getBusinessProfile(ctx.user.id);
+        const profile = await getAdminBusinessProfile(ctx.user);
         if (!profile) {
           throw new TRPCError({ code: "NOT_FOUND", message: "Perfil no encontrado" });
         }
@@ -609,7 +656,7 @@ export const appRouter = router({
     setPrimaryImage: adminProcedure
       .input(propertyPrimaryImageSchema)
       .mutation(async ({ ctx, input }) => {
-        const profile = await getBusinessProfile(ctx.user.id);
+        const profile = await getAdminBusinessProfile(ctx.user);
         if (!profile) {
           throw new TRPCError({ code: "NOT_FOUND", message: "Perfil no encontrado" });
         }
@@ -620,7 +667,7 @@ export const appRouter = router({
     deleteImage: adminProcedure
       .input(propertyPrimaryImageSchema)
       .mutation(async ({ ctx, input }) => {
-        const profile = await getBusinessProfile(ctx.user.id);
+        const profile = await getAdminBusinessProfile(ctx.user);
         if (!profile) {
           throw new TRPCError({ code: "NOT_FOUND", message: "Perfil no encontrado" });
         }
@@ -631,7 +678,7 @@ export const appRouter = router({
     getAdminPreview: adminProcedure
       .input(z.object({ id: z.string().min(1).max(160) }))
       .query(async ({ ctx, input }) => {
-        const profile = await getBusinessProfile(ctx.user.id);
+        const profile = await getAdminBusinessProfile(ctx.user);
         if (!profile) {
           throw new TRPCError({ code: "NOT_FOUND", message: "Perfil no encontrado" });
         }
@@ -659,7 +706,7 @@ export const appRouter = router({
     }),
 
     get: protectedProcedure.query(async ({ ctx }) => {
-      return getBusinessProfile(ctx.user.id);
+      return getAdminBusinessProfile(ctx.user);
     }),
 
     createPage: platformAdminProcedure

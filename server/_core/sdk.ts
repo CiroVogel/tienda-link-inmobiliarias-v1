@@ -28,6 +28,23 @@ export type SessionPayload = {
 const EXCHANGE_TOKEN_PATH = `/webdev.v1.WebDevAuthPublicService/ExchangeToken`;
 const GET_USER_INFO_PATH = `/webdev.v1.WebDevAuthPublicService/GetUserInfo`;
 const GET_USER_INFO_WITH_JWT_PATH = `/webdev.v1.WebDevAuthPublicService/GetUserInfoWithJwt`;
+const LOCAL_ADMIN_OPEN_ID = "local-admin";
+
+function buildLocalDevAdminUser(): User {
+  const now = new Date();
+
+  return {
+    id: 0,
+    openId: LOCAL_ADMIN_OPEN_ID,
+    name: "Admin Local",
+    email: ENV.adminEmail,
+    loginMethod: "local",
+    role: "admin",
+    createdAt: now,
+    updatedAt: now,
+    lastSignedIn: now,
+  };
+}
 
 class OAuthService {
   constructor(private client: ReturnType<typeof axios.create>) {
@@ -271,6 +288,10 @@ class SDKServer {
     }
 
     if (!user) {
+      if (sessionUserId === LOCAL_ADMIN_OPEN_ID) {
+        return buildLocalDevAdminUser();
+      }
+
       throw ForbiddenError("User not found");
     }
 

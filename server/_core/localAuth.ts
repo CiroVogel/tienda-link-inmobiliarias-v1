@@ -1,11 +1,28 @@
 import { COOKIE_NAME, ONE_YEAR_MS } from "../../shared/const";
 import type { Express, Request, Response } from "express";
 import { randomBytes, scryptSync, timingSafeEqual } from "crypto";
+import type { User } from "../../drizzle/schema";
 import * as db from "../db";
 import { ENV } from "./env";
 import { sdk } from "./sdk";
 
 const LOCAL_ADMIN_OPEN_ID = "local-admin";
+
+function buildLocalBootstrapUser(): User {
+  const now = new Date();
+
+  return {
+    id: 0,
+    openId: LOCAL_ADMIN_OPEN_ID,
+    name: "Admin Local",
+    email: ENV.adminEmail,
+    loginMethod: "local",
+    role: "admin",
+    createdAt: now,
+    updatedAt: now,
+    lastSignedIn: now,
+  };
+}
 
 function hashPassword(password: string) {
   const salt = randomBytes(16).toString("hex");
@@ -23,6 +40,11 @@ function verifyPassword(password: string, storedHash: string) {
 }
 
 async function ensureBootstrapAdmin() {
+  const database = await db.getDb();
+  if (!database) {
+    return buildLocalBootstrapUser();
+  }
+
   await db.upsertUser({
     openId: LOCAL_ADMIN_OPEN_ID,
     name: "Admin Local",
