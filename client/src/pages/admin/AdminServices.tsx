@@ -1,5 +1,16 @@
 import { useMemo, useState } from "react";
-import { Eye, EyeOff, Home, Loader2, Pencil, Plus, Star } from "lucide-react";
+import { Link } from "wouter";
+import {
+  Eye,
+  EyeOff,
+  Home,
+  Images,
+  Loader2,
+  Pencil,
+  Plus,
+  Search,
+  Star,
+} from "lucide-react";
 import { toast } from "sonner";
 import AdminLayout from "@/components/AdminLayout";
 import { Button } from "@/components/ui/button";
@@ -36,6 +47,8 @@ type AdminProperty = {
   description: string;
   featured: boolean;
   images: Array<{ id: string; url: string }>;
+  createdAt: string;
+  updatedAt: string;
 };
 
 type PropertyForm = {
@@ -53,6 +66,12 @@ type PropertyForm = {
   featuresText: string;
   featured: boolean;
 };
+
+type OperationFilter = "all" | PropertyOperation;
+type StatusFilter = "all" | PropertyStatus;
+type FeaturedFilter = "all" | "featured" | "regular";
+type VisibilityFilter = "all" | "visible" | "hidden";
+type SortOrder = "recent" | "oldest";
 
 const EMPTY_FORM: PropertyForm = {
   title: "",
@@ -119,11 +138,34 @@ function toPayload(form: PropertyForm) {
   };
 }
 
+function toSearchableText(property: AdminProperty) {
+  return [
+    property.title,
+    property.location,
+    property.address,
+    property.propertyType,
+  ]
+    .join(" ")
+    .toLowerCase();
+}
+
+function parseCreatedAt(value: string) {
+  const timestamp = new Date(value).getTime();
+  return Number.isNaN(timestamp) ? 0 : timestamp;
+}
+
 export default function AdminServices() {
   const utils = trpc.useUtils();
   const [dialogOpen, setDialogOpen] = useState(false);
   const [editingId, setEditingId] = useState<string | null>(null);
   const [form, setForm] = useState<PropertyForm>(EMPTY_FORM);
+  const [search, setSearch] = useState("");
+  const [operationFilter, setOperationFilter] = useState<OperationFilter>("all");
+  const [statusFilter, setStatusFilter] = useState<StatusFilter>("all");
+  const [featuredFilter, setFeaturedFilter] = useState<FeaturedFilter>("all");
+  const [visibilityFilter, setVisibilityFilter] = useState<VisibilityFilter>("all");
+  const [sortOrder, setSortOrder] = useState<SortOrder>("recent");
+  const [quickActionId, setQuickActionId] = useState<string | null>(null);
 
   const { data: properties = [] } = trpc.properties.list.useQuery();
 
@@ -140,7 +182,6 @@ export default function AdminServices() {
 
   const updateProperty = trpc.properties.update.useMutation({
     onSuccess: async () => {
-      toast.success("Propiedad actualizada");
       await utils.properties.list.invalidate();
       setDialogOpen(false);
       setEditingId(null);
@@ -151,17 +192,58 @@ export default function AdminServices() {
 
   const isSaving = createProperty.isPending || updateProperty.isPending;
 
-  const sortedProperties = useMemo(
-    () =>
-      [...properties].sort((left, right) => {
-        if (left.featured !== right.featured) {
-          return left.featured ? -1 : 1;
+  const filteredProperties = useMemo(() => {
+    const normalizedSearch = search.trim().toLowerCase();
+
+    return [...properties]
+      .filter((property) => {
+        if (normalizedSearch && !toSearchableText(property).includes(normalizedSearch)) {
+          return false;
+        }
+
+        if (operationFilter !== "all" && property.operation !== operationFilter) {
+          return false;
+        }
+
+        if (statusFilter !== "all" && property.status !== statusFilter) {
+          return false;
+        }
+
+        if (featuredFilter === "featured" && !property.featured) {
+          return false;
+        }
+
+        if (featuredFilter === "regular" && property.featured) {
+          return false;
+        }
+
+        if (visibilityFilter === "visible" && property.status === "hidden") {
+          return false;
+        }
+
+        if (visibilityFilter === "hidden" && property.status !== "hidden") {
+          return false;
+        }
+
+        return true;
+      })
+      .sort((left, right) => {
+        const diff = parseCreatedAt(left.createdAt) - parseCreatedAt(right.createdAt);
+        if (diff !== 0) {
+          return sortOrder === "oldest" ? diff : -diff;
         }
 
         return left.title.localeCompare(right.title, "es");
-      }),
-    [properties],
-  );
+      });
+  }, [
+    featuredFilter,
+    operationFilter,
+    properties,
+    search,
+    sortOrder,
+    statusFilter,
+    visibilityFilter,
+  ]);
 
   function openCreate() {
     setEditingId(null);
@@ -175,12 +257,41 @@ export default function AdminServices() {
     setDialogOpen(true);
   }
 
+  async function runQuickUpdate(
+    property: AdminProperty,
+    changes: Partial<ReturnType<typeof toPayload>>,
+    successMessage: string,
+  ) {
+    setQuickActionId(property.id);
+
+    try {
+      await updateProperty.mutateAsync({
+        id: property.id,
+        ...toPayload(toForm(property)),
+        ...changes,
+      });
+      toast.success(successMessage);
+    } finally {
+      setQuickActionId(null);
+    }
+  }
+
   async function quickToggleVisibility(property: AdminProperty) {
-    await updateProperty.mutateAsync({
-      id: property.id,
-      ...toPayload(toForm(property)),
-      status: property.status === "hidden" ? "available" : "hidden",
-    });
+    await runQuickUpdate(
+      property,
+      { status: property.status === "hidden" ? "available" : "hidden" },
+      property.status === "hidden"
+        ? "Propiedad visible otra vez"
+        : "Propiedad oculta del sitio publico",
+    );
+  }
+
+  async function quickToggleFeatured(property: AdminProperty) {
+    await runQuickUpdate(
+      property,
+      { featured: !property.featured },
+      property.featured ? "Quitamos la propiedad de destacadas" : "Propiedad destacada en home",
+    );
   }
 
   async function handleSubmit(event: React.FormEvent) {
@@ -198,30 +309,137 @@ export default function AdminServices() {
         id: editingId,
         ...payload,
       });
+      toast.success("Propiedad actualizada");
       return;
     }
 
     await createProperty.mutateAsync(payload);
   }
 
+  const totalProperties = properties.length;
+  const visibleProperties = properties.filter((property) => property.status !== "hidden").length;
+  const hiddenProperties = totalProperties - visibleProperties;
+
   return (
     <AdminLayout>
-      <div className="mx-auto max-w-5xl p-6">
-        <div className="mb-8 flex items-center justify-between gap-4">
+      <div className="mx-auto max-w-6xl p-6">
+        <div className="mb-8 flex flex-col gap-4 xl:flex-row xl:items-end xl:justify-between">
           <div>
             <h1 className="text-2xl font-black tracking-tight text-black">Propiedades</h1>
             <p className="mt-1 text-sm text-black/50">
-              {properties.length} propiedad{properties.length !== 1 ? "es" : ""} en gestion
+              {totalProperties} propiedad{totalProperties !== 1 ? "es" : ""} en gestion
             </p>
           </div>
 
-          <Button onClick={openCreate} className="gap-2 bg-black text-white hover:bg-black/85">
-            <Plus className="h-4 w-4" />
-            Nueva propiedad
-          </Button>
+          <div className="flex flex-wrap gap-3 text-xs font-bold uppercase tracking-[0.14em] text-zinc-500">
+            <span className="rounded-full border border-zinc-200 bg-white px-3 py-2">
+              {visibleProperties} visibles
+            </span>
+            <span className="rounded-full border border-zinc-200 bg-white px-3 py-2">
+              {hiddenProperties} ocultas
+            </span>
+            <span className="rounded-full border border-zinc-200 bg-white px-3 py-2">
+              {properties.filter((property) => property.featured).length} destacadas
+            </span>
+          </div>
         </div>
 
-        {sortedProperties.length === 0 ? (
+        <div className="mb-6 rounded-xl border border-zinc-200 bg-white p-4">
+          <div className="grid gap-3 xl:grid-cols-[minmax(0,1.4fr)_180px_170px]">
+            <div className="relative">
+              <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-zinc-400" />
+              <Input
+                value={search}
+                onChange={(event) => setSearch(event.target.value)}
+                placeholder="Buscar por titulo, ubicacion, direccion o tipo"
+                className="pl-9"
+              />
+            </div>
+
+            <select
+              value={sortOrder}
+              onChange={(event) => setSortOrder(event.target.value as SortOrder)}
+              className="h-10 rounded-md border border-input bg-background px-3 text-sm"
+            >
+              <option value="recent">Mas recientes</option>
+              <option value="oldest">Mas antiguas</option>
+            </select>
+
+            <Button onClick={openCreate} className="gap-2 bg-black text-white hover:bg-black/85">
+              <Plus className="h-4 w-4" />
+              Nueva propiedad
+            </Button>
+          </div>
+
+          <div className="mt-3 grid gap-3 md:grid-cols-2 xl:grid-cols-4">
+            <select
+              value={operationFilter}
+              onChange={(event) => setOperationFilter(event.target.value as OperationFilter)}
+              className="h-10 rounded-md border border-input bg-background px-3 text-sm"
+            >
+              <option value="all">Todas las operaciones</option>
+              <option value="sale">Venta</option>
+              <option value="rent">Alquiler</option>
+            </select>
+
+            <select
+              value={statusFilter}
+              onChange={(event) => setStatusFilter(event.target.value as StatusFilter)}
+              className="h-10 rounded-md border border-input bg-background px-3 text-sm"
+            >
+              <option value="all">Todos los estados</option>
+              <option value="available">Disponible</option>
+              <option value="reserved">Reservada</option>
+              <option value="sold">Vendida</option>
+              <option value="rented">Alquilada</option>
+              <option value="hidden">Oculta</option>
+            </select>
+
+            <select
+              value={featuredFilter}
+              onChange={(event) => setFeaturedFilter(event.target.value as FeaturedFilter)}
+              className="h-10 rounded-md border border-input bg-background px-3 text-sm"
+            >
+              <option value="all">Todas las destacadas</option>
+              <option value="featured">Solo destacadas</option>
+              <option value="regular">No destacadas</option>
+            </select>
+
+            <select
+              value={visibilityFilter}
+              onChange={(event) => setVisibilityFilter(event.target.value as VisibilityFilter)}
+              className="h-10 rounded-md border border-input bg-background px-3 text-sm"
+            >
+              <option value="all">Visibles y ocultas</option>
+              <option value="visible">Solo visibles</option>
+              <option value="hidden">Solo ocultas</option>
+            </select>
+          </div>
+
+          <div className="mt-3 flex flex-wrap items-center justify-between gap-3 text-xs text-zinc-500">
+            <p>
+              Mostrando <span className="font-semibold text-zinc-950">{filteredProperties.length}</span> de{" "}
+              <span className="font-semibold text-zinc-950">{totalProperties}</span> propiedades
+            </p>
+
+            <button
+              type="button"
+              onClick={() => {
+                setSearch("");
+                setOperationFilter("all");
+                setStatusFilter("all");
+                setFeaturedFilter("all");
+                setVisibilityFilter("all");
+                setSortOrder("recent");
+              }}
+              className="text-xs font-bold uppercase tracking-[0.14em] text-zinc-700 hover:text-black"
+            >
+              Limpiar filtros
+            </button>
+          </div>
+        </div>
+
+        {totalProperties === 0 ? (
           <div className="rounded-xl border-2 border-dashed border-zinc-200 bg-white px-6 py-16 text-center">
             <Home className="mx-auto mb-3 h-10 w-10 text-zinc-300" />
             <p className="font-semibold text-zinc-700">Todavia no cargaste propiedades.</p>
@@ -229,68 +447,108 @@ export default function AdminServices() {
               Crea la primera propiedad para empezar a publicar desde el admin.
             </p>
           </div>
+        ) : filteredProperties.length === 0 ? (
+          <div className="rounded-xl border border-zinc-200 bg-white px-6 py-16 text-center">
+            <Search className="mx-auto mb-3 h-10 w-10 text-zinc-300" />
+            <p className="font-semibold text-zinc-700">No encontramos propiedades con esos filtros.</p>
+            <p className="mt-1 text-sm text-zinc-500">
+              Prueba otra busqueda o limpia los filtros para volver al listado completo.
+            </p>
+          </div>
         ) : (
           <div className="space-y-3">
-            {sortedProperties.map((property) => (
-              <article
-                key={property.id}
-                className="flex flex-col gap-4 rounded-xl border border-zinc-200 bg-white p-5 md:flex-row md:items-start md:justify-between"
-              >
-                <div className="min-w-0 flex-1">
-                  <div className="mb-2 flex flex-wrap items-center gap-2">
-                    <span className="bg-zinc-950 px-3 py-1 text-[11px] font-black uppercase tracking-[0.14em] text-white">
-                      {getOperationLabel(property.operation)}
-                    </span>
-                    <span className="bg-zinc-100 px-3 py-1 text-[11px] font-black uppercase tracking-[0.14em] text-zinc-600">
-                      {getStatusLabel(property.status)}
-                    </span>
-                    {property.featured ? (
-                      <span className="inline-flex items-center gap-1 bg-amber-100 px-3 py-1 text-[11px] font-black uppercase tracking-[0.14em] text-amber-700">
-                        <Star className="h-3 w-3 fill-current" />
-                        Destacada
+            {filteredProperties.map((property) => {
+              const isQuickUpdating = quickActionId === property.id && updateProperty.isPending;
+
+              return (
+                <article
+                  key={property.id}
+                  className="grid gap-4 rounded-xl border border-zinc-200 bg-white p-5 lg:grid-cols-[minmax(0,1fr)_auto]"
+                >
+                  <div className="min-w-0">
+                    <div className="mb-2 flex flex-wrap items-center gap-2">
+                      <span className="bg-zinc-950 px-3 py-1 text-[11px] font-black uppercase tracking-[0.14em] text-white">
+                        {getOperationLabel(property.operation)}
                       </span>
-                    ) : null}
+                      <span className="bg-zinc-100 px-3 py-1 text-[11px] font-black uppercase tracking-[0.14em] text-zinc-600">
+                        {getStatusLabel(property.status)}
+                      </span>
+                      {property.featured ? (
+                        <span className="inline-flex items-center gap-1 bg-amber-100 px-3 py-1 text-[11px] font-black uppercase tracking-[0.14em] text-amber-700">
+                          <Star className="h-3 w-3 fill-current" />
+                          Destacada
+                        </span>
+                      ) : null}
+                    </div>
+
+                    <h2 className="text-lg font-black text-zinc-950">{property.title}</h2>
+                    <p className="mt-1 text-sm text-zinc-500">
+                      {property.location} | {property.propertyType}
+                    </p>
+
+                    <div className="mt-3 flex flex-wrap gap-4 text-xs text-zinc-500">
+                      <span className="font-semibold text-zinc-900">{property.price}</span>
+                      <span>{property.address}</span>
+                      <span>{property.images.length} foto{property.images.length !== 1 ? "s" : ""}</span>
+                    </div>
                   </div>
 
-                  <h2 className="text-lg font-black text-zinc-950">{property.title}</h2>
-                  <p className="mt-1 text-sm text-zinc-500">
-                    {property.location} | {property.propertyType}
-                  </p>
+                  <div className="flex flex-wrap items-center gap-2 lg:justify-end">
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => openEdit(property)}
+                      className="gap-2"
+                    >
+                      <Pencil className="h-4 w-4" />
+                      Editar
+                    </Button>
 
-                  <div className="mt-3 flex flex-wrap gap-4 text-xs text-zinc-500">
-                    <span className="font-semibold text-zinc-900">{property.price}</span>
-                    <span>{property.address}</span>
-                    <span>{property.images.length} foto{property.images.length !== 1 ? "s" : ""}</span>
+                    <Button variant="outline" size="sm" asChild className="gap-2">
+                      <Link href={`/admin/gallery?propertyId=${property.id}`}>
+                        <span>
+                          <Images className="h-4 w-4" />
+                          Fotos
+                        </span>
+                      </Link>
+                    </Button>
+
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => void quickToggleFeatured(property)}
+                      disabled={isQuickUpdating}
+                      className="gap-2"
+                    >
+                      {isQuickUpdating ? (
+                        <Loader2 className="h-4 w-4 animate-spin" />
+                      ) : (
+                        <Star className={`h-4 w-4 ${property.featured ? "fill-current" : ""}`} />
+                      )}
+                      {property.featured ? "Quitar destacada" : "Destacar"}
+                    </Button>
+
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => void quickToggleVisibility(property)}
+                      disabled={isQuickUpdating}
+                      className="gap-2"
+                      title={property.status === "hidden" ? "Mostrar" : "Ocultar"}
+                    >
+                      {isQuickUpdating ? (
+                        <Loader2 className="h-4 w-4 animate-spin" />
+                      ) : property.status === "hidden" ? (
+                        <Eye className="h-4 w-4" />
+                      ) : (
+                        <EyeOff className="h-4 w-4" />
+                      )}
+                      {property.status === "hidden" ? "Mostrar" : "Ocultar"}
+                    </Button>
                   </div>
-                </div>
-
-                <div className="flex items-center gap-2">
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={() => openEdit(property)}
-                    className="h-9 w-9 p-0"
-                  >
-                    <Pencil className="h-4 w-4" />
-                  </Button>
-
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={() => quickToggleVisibility(property)}
-                    disabled={updateProperty.isPending}
-                    className="h-9 w-9 p-0"
-                    title={property.status === "hidden" ? "Mostrar" : "Ocultar"}
-                  >
-                    {property.status === "hidden" ? (
-                      <Eye className="h-4 w-4" />
-                    ) : (
-                      <EyeOff className="h-4 w-4" />
-                    )}
-                  </Button>
-                </div>
-              </article>
-            ))}
+                </article>
+              );
+            })}
           </div>
         )}
 

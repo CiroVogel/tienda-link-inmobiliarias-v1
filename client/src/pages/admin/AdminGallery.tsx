@@ -49,6 +49,11 @@ function readFileAsBase64(file: File) {
   });
 }
 
+function getRequestedPropertyId() {
+  if (typeof window === "undefined") return "";
+  return new URLSearchParams(window.location.search).get("propertyId") ?? "";
+}
+
 export default function AdminGallery() {
   const utils = trpc.useUtils();
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -62,10 +67,29 @@ export default function AdminGallery() {
       return;
     }
 
-    if (!selectedPropertyId || !properties.some((property) => property.id === selectedPropertyId)) {
+    const requestedPropertyId = getRequestedPropertyId();
+    const nextPropertyId =
+      requestedPropertyId && properties.some((property) => property.id === requestedPropertyId)
+        ? requestedPropertyId
+        : selectedPropertyId;
+
+    if (!nextPropertyId || !properties.some((property) => property.id === nextPropertyId)) {
       setSelectedPropertyId(properties[0]!.id);
+      return;
+    }
+
+    if (selectedPropertyId !== nextPropertyId) {
+      setSelectedPropertyId(nextPropertyId);
     }
   }, [properties, selectedPropertyId]);
+
+  useEffect(() => {
+    if (typeof window === "undefined" || !selectedPropertyId) return;
+
+    const url = new URL(window.location.href);
+    url.searchParams.set("propertyId", selectedPropertyId);
+    window.history.replaceState({}, "", `${url.pathname}${url.search}${url.hash}`);
+  }, [selectedPropertyId]);
 
   const selectedProperty = useMemo(
     () => properties.find((property) => property.id === selectedPropertyId) as AdminProperty | undefined,
