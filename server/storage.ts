@@ -1,5 +1,6 @@
 import fs from "fs";
 import path from "path";
+import { randomBytes } from "crypto";
 import {
   demoProperties,
   realEstateProfile,
@@ -106,6 +107,39 @@ type PropertyStore = {
   properties: StoredProperty[];
 };
 
+export type StoredVisitRequestStatus = "new" | "contacted" | "closed";
+
+export type StoredVisitRequest = {
+  id: string;
+  reference: string;
+  slug: string;
+  propertyId: string;
+  propertyTitle: string;
+  name: string;
+  whatsapp: string;
+  email: string | null;
+  message: string;
+  status: StoredVisitRequestStatus;
+  createdAt: string;
+  updatedAt: string;
+};
+
+export type VisitRequestMutationInput = {
+  propertyId: string;
+  propertyTitle: string;
+  name: string;
+  whatsapp: string;
+  email?: string;
+  message: string;
+};
+
+type VisitRequestStore = {
+  version: 1;
+  slug: string;
+  updatedAt: string;
+  requests: StoredVisitRequest[];
+};
+
 const STORE_VERSION = 1 as const;
 
 function normalizeSlug(slug: string) {
@@ -114,6 +148,10 @@ function normalizeSlug(slug: string) {
 
 function buildStoreKey(slug: string) {
   return `real-estate/${normalizeSlug(slug)}/properties.json`;
+}
+
+function buildVisitRequestStoreKey(slug: string) {
+  return `real-estate/${normalizeSlug(slug)}/visit-requests.json`;
 }
 
 function sortImages(images: StoredPropertyImage[]) {
@@ -233,6 +271,69 @@ async function readStore(slug: string): Promise<PropertyStore> {
     await writeStore(normalizedSlug, initialStore);
     return initialStore;
   }
+}
+
+async function writeVisitRequestStore(slug: string, store: VisitRequestStore) {
+  ensureUploadsDir();
+  const normalizedSlug = normalizeSlug(slug);
+  const { diskPath } = getUploadDiskPath(buildVisitRequestStoreKey(normalizedSlug));
+  const nextStore: VisitRequestStore = {
+    version: STORE_VERSION,
+    slug: normalizedSlug,
+    updatedAt: new Date().toISOString(),
+    requests: [...store.requests].map((request) => ({
+      ...request,
+      slug: normalizedSlug,
+      email: request.email?.trim() || null,
+    })),
+  };
+
+  await fs.promises.mkdir(path.dirname(diskPath), { recursive: true });
+  const tempPath = `${diskPath}.tmp`;
+  await fs.promises.writeFile(tempPath, JSON.stringify(nextStore, null, 2), "utf8");
+  await fs.promises.rename(tempPath, diskPath);
+}
+
+async function readVisitRequestStore(slug: string): Promise<VisitRequestStore> {
+  ensureUploadsDir();
+  const normalizedSlug = normalizeSlug(slug);
+  const { diskPath } = getUploadDiskPath(buildVisitRequestStoreKey(normalizedSlug));
+
+  try {
+    const raw = await fs.promises.readFile(diskPath, "utf8");
+    const parsed = JSON.parse(raw) as VisitRequestStore;
+
+    return {
+      version: STORE_VERSION,
+      slug: normalizedSlug,
+      updatedAt: parsed.updatedAt ?? new Date().toISOString(),
+      requests: (parsed.requests ?? []).map((request) => ({
+        ...request,
+        slug: normalizedSlug,
+        email: request.email?.trim() || null,
+      })),
+    };
+  } catch (error) {
+    if ((error as NodeJS.ErrnoException).code !== "ENOENT") throw error;
+
+    const initialStore: VisitRequestStore = {
+      version: STORE_VERSION,
+      slug: normalizedSlug,
+      updatedAt: new Date().toISOString(),
+      requests: [],
+    };
+
+    await writeVisitRequestStore(normalizedSlug, initialStore);
+    return initialStore;
+  }
+}
+
+function buildVisitRequestId() {
+  return `visit-${Date.now().toString(36)}-${randomBytes(3).toString("hex")}`;
+}
+
+function buildVisitRequestReference() {
+  return `CU-${Date.now().toString(36).toUpperCase()}-${randomBytes(2).toString("hex").toUpperCase()}`;
 }
 
 function buildPropertyId(existingIds: Set<string>, title: string) {
@@ -496,4 +597,71 @@ export async function deleteStoredPropertyImage(
   }
 
   return updatedProperty;
+}
+
+export async function listStoredVisitRequests(slug: string): Promise<StoredVisitRequest[]> {
+  const store = await readVisitRequestStore(slug);
+  return [...store.requests].sort((a, b) => b.createdAt.localeCompare(a.createdAt));
+}
+
+export async function createStoredVisitRequest(
+  slug: string,
+  input: VisitRequestMutationInput,
+): Promise<StoredVisitRequest> {
+  const normalizedSlug = normalizeSlug(slug);
+  const store = await readVisitRequestStore(normalizedSlug);
+  const now = new Date().toISOString();
+
+  const nextRequest: StoredVisitRequest = {
+    id: buildVisitRequestId(),
+    reference: buildVisitRequestReference(),
+    slug: normalizedSlug,
+    propertyId: input.propertyId,
+    propertyTitle: input.propertyTitle.trim(),
+    name: input.name.trim(),
+    whatsapp: input.whatsapp.trim(),
+    email: input.email?.trim() || null,
+    message: input.message.trim(),
+    status: "new",
+    createdAt: now,
+    updatedAt: now,
+  };
+
+  await writeVisitRequestStore(normalizedSlug, {
+    ...store,
+    requests: [nextRequest, ...store.requests],
+  });
+
+  return nextRequest;
+}
+
+export async function updateStoredVisitRequestStatus(
+  slug: string,
+  requestId: string,
+  status: StoredVisitRequestStatus,
+): Promise<StoredVisitRequest> {
+  const normalizedSlug = normalizeSlug(slug);
+  const store = await readVisitRequestStore(normalizedSlug);
+  const requestIndex = store.requests.findIndex((request) => request.id === requestId);
+
+  if (requestIndex === -1) {
+    throw new Error("Visit request not found");
+  }
+
+  const currentRequest = store.requests[requestIndex]!;
+  const nextRequest: StoredVisitRequest = {
+    ...currentRequest,
+    status,
+    updatedAt: new Date().toISOString(),
+  };
+
+  const nextRequests = [...store.requests];
+  nextRequests[requestIndex] = nextRequest;
+
+  await writeVisitRequestStore(normalizedSlug, {
+    ...store,
+    requests: nextRequests,
+  });
+
+  return nextRequest;
 }

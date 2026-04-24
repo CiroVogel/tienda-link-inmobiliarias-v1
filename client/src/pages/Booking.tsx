@@ -80,7 +80,6 @@ export default function Booking() {
       const result = await createVisitRequest.mutateAsync({
         slug: safeSlug,
         propertyId: currentProperty.id,
-        propertyTitle: currentProperty.title,
         name: form.name.trim(),
         whatsapp: form.whatsapp.trim(),
         email: form.email.trim() || undefined,

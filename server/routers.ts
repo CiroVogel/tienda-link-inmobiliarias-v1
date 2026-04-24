@@ -48,15 +48,18 @@ upsertLocalAdminCredential,
 import { createMercadoPagoPreference } from "./mercadopago";
 import {
   addStoredPropertyImage,
+  createStoredVisitRequest,
   createStoredProperty,
   deleteStoredPropertyImage,
   getPublicProperty,
   listPublicProperties,
   listStoredProperties,
+  listStoredVisitRequests,
   mapStoredPropertyToPublic,
   reorderStoredPropertyImages,
   setStoredPropertyPrimaryImage,
   storagePut,
+  updateStoredVisitRequestStatus,
   updateStoredProperty,
 } from "./storage";
 import {
@@ -77,20 +80,9 @@ const slugSchema = z
   .max(100)
   .regex(/^[a-z0-9-]+$/, "Slug inválido: solo letras minúsculas, números y guiones");
 
-const demoVisitRequests: Array<{
-  reference: string;
-  slug: string;
-  propertyId: string;
-  propertyTitle: string;
-  name: string;
-  whatsapp: string;
-  email?: string;
-  message: string;
-  createdAt: string;
-}> = [];
-
 const propertyOperationSchema = z.enum(["sale", "rent"]);
 const propertyStatusSchema = z.enum(["available", "reserved", "sold", "rented", "hidden"]);
+const visitRequestStatusSchema = z.enum(["new", "contacted", "closed"]);
 const propertyInputSchema = z.object({
   title: z.string().min(1).max(240),
   operation: propertyOperationSchema,
@@ -545,7 +537,6 @@ export const appRouter = router({
         z.object({
           slug: slugSchema,
           propertyId: z.string().min(1).max(160),
-          propertyTitle: z.string().min(1).max(240),
           name: z.string().min(1).max(200),
           whatsapp: z.string().min(6).max(40),
           email: z.string().email().max(320).optional(),
@@ -553,18 +544,59 @@ export const appRouter = router({
         })
       )
       .mutation(async ({ input }) => {
-        const reference = `CU-${Date.now().toString(36).toUpperCase()}`;
+        const property = await getPublicProperty(input.slug, input.propertyId);
+        if (!property) {
+          throw new TRPCError({
+            code: "NOT_FOUND",
+            message: "Propiedad no encontrada",
+          });
+        }
 
-        demoVisitRequests.push({
-          reference,
-          ...input,
-          createdAt: new Date().toISOString(),
+        if (property.status !== "available") {
+          throw new TRPCError({
+            code: "BAD_REQUEST",
+            message: "Esta propiedad no permite solicitudes de visita",
+          });
+        }
+
+        const request = await createStoredVisitRequest(input.slug, {
+          propertyId: property.id,
+          propertyTitle: property.title,
+          name: input.name,
+          whatsapp: input.whatsapp,
+          email: input.email,
+          message: input.message,
         });
 
         return {
           ok: true,
-          reference,
+          reference: request.reference,
         };
+      }),
+
+    list: adminProcedure.query(async ({ ctx }) => {
+      const profile = await getAdminBusinessProfile(ctx.user);
+      if (!profile) {
+        throw new TRPCError({ code: "NOT_FOUND", message: "Perfil no encontrado" });
+      }
+
+      return listStoredVisitRequests(profile.slug);
+    }),
+
+    updateStatus: adminProcedure
+      .input(
+        z.object({
+          id: z.string().min(1).max(200),
+          status: visitRequestStatusSchema,
+        }),
+      )
+      .mutation(async ({ ctx, input }) => {
+        const profile = await getAdminBusinessProfile(ctx.user);
+        if (!profile) {
+          throw new TRPCError({ code: "NOT_FOUND", message: "Perfil no encontrado" });
+        }
+
+        return updateStoredVisitRequestStatus(profile.slug, input.id, input.status);
       }),
   }),
 
