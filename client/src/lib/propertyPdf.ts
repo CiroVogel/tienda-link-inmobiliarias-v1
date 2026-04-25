@@ -1,4 +1,4 @@
-import { loadHtml2Pdf } from "@/lib/html2pdf";
+﻿import { loadHtml2Pdf } from "@/lib/html2pdf";
 import {
   getOperationLabel,
   getStatusLabel,
@@ -49,6 +49,49 @@ const SECTION_TITLE_STYLES: Partial<CSSStyleDeclaration> = {
   breakAfter: "avoid",
   pageBreakAfter: "avoid",
 };
+
+const PDF_TEXT_REPLACEMENTS: Array<[RegExp, string]> = [
+  [/\bmas\b/gi, "m\u00e1s"],
+  [/\bimagenes\b/gi, "im\u00e1genes"],
+  [/\bdescripcion\b/gi, "descripci\u00f3n"],
+  [/\bcaracteristicas\b/gi, "caracter\u00edsticas"],
+  [/\bbanos\b/gi, "ba\u00f1os"],
+  [/\bbano\b/gi, "ba\u00f1o"],
+  [/\bjardin\b/gi, "jard\u00edn"],
+  [/\bdeposito\b/gi, "dep\u00f3sito"],
+  [/\bgalpon\b/gi, "galp\u00f3n"],
+  [/\bbalcon\b/gi, "balc\u00f3n"],
+  [/\bmetalica\b/gi, "met\u00e1lica"],
+  [/\bmatricula\b/gi, "matr\u00edcula"],
+  [/\binformacion\b/gi, "informaci\u00f3n"],
+  [/\bcredito\b/gi, "cr\u00e9dito"],
+  [/\bpublica\b/gi, "p\u00fablica"],
+  [/\bexposicion\b/gi, "exposici\u00f3n"],
+  [/\bcirculacion\b/gi, "circulaci\u00f3n"],
+  [/\bcercania\b/gi, "cercan\u00eda"],
+  [/\btransito\b/gi, "tr\u00e1nsito"],
+  [/\brecepcion\b/gi, "recepci\u00f3n"],
+  [/\bubicacion\b/gi, "ubicaci\u00f3n"],
+  [/\bestrategica\b/gi, "estrat\u00e9gica"],
+  [/\bpractica\b/gi, "pr\u00e1ctica"],
+  [/\binversion\b/gi, "inversi\u00f3n"],
+  [/\brio\b/gi, "r\u00edo"],
+  [/\bopcion\b/gi, "opci\u00f3n"],
+  [/\bcomoda\b/gi, "c\u00f3moda"],
+  [/\bdistribucion\b/gi, "distribuci\u00f3n"],
+  [/\bcaracter\b/gi, "car\u00e1cter"],
+];
+
+function normalizePdfText(value: string) {
+  return PDF_TEXT_REPLACEMENTS.reduce(
+    (currentValue, [pattern, replacement]) => currentValue.replace(pattern, replacement),
+    value,
+  );
+}
+
+function formatAreaM2(value?: number | null) {
+  return value ? `${value} m\u00b2` : "A consultar";
+}
 
 function buildPdfFilename(title: string) {
   const fileSlug =
@@ -465,7 +508,7 @@ function buildPropertyPdfElement({
   introSide.appendChild(badgeRow);
   introSide.appendChild(
     createElement("p", {
-      text: "Propiedad presentada para compartir por WhatsApp o email con informacion clave, imagenes y contacto directo de la inmobiliaria.",
+      text: "Propiedad presentada para compartir por WhatsApp o email con informaci\u00f3n clave, im\u00e1genes y contacto directo de la inmobiliaria.",
       styles: {
         margin: "14px 0 0",
         fontSize: "13px",
@@ -496,7 +539,7 @@ function buildPropertyPdfElement({
   });
   descriptionBlock.appendChild(
     createElement("h2", {
-      text: "Descripcion",
+      text: "Descripci\u00f3n",
       styles: {
         margin: "0",
         fontSize: "14px",
@@ -510,7 +553,7 @@ function buildPropertyPdfElement({
   );
   descriptionBlock.appendChild(
     createElement("p", {
-      text: property.description,
+      text: normalizePdfText(property.description),
       styles: {
         margin: "14px 0 0",
         fontSize: "13px",
@@ -532,7 +575,7 @@ function buildPropertyPdfElement({
   });
   featuresBlock.appendChild(
     createElement("h2", {
-      text: "Caracteristicas principales",
+      text: "Caracter\u00edsticas principales",
       styles: {
         margin: "0",
         fontSize: "14px",
@@ -546,16 +589,20 @@ function buildPropertyPdfElement({
   );
 
   const dataGrid = createElement("div", {
+    attrs: {
+      class: "pdf-avoid-break",
+    },
     styles: {
       marginTop: "14px",
       display: "grid",
       gridTemplateColumns: "repeat(2, minmax(0, 1fr))",
       gap: "12px",
+      ...KEEP_TOGETHER_STYLES,
     },
   });
 
-  appendTextBlock(dataGrid, "Tipo", property.propertyType);
-  appendTextBlock(dataGrid, "Superficie", property.areaM2 ? `${property.areaM2} m2` : "A consultar");
+  appendTextBlock(dataGrid, "Tipo", normalizePdfText(property.propertyType));
+  appendTextBlock(dataGrid, "Superficie", formatAreaM2(property.areaM2));
   appendTextBlock(
     dataGrid,
     "Dormitorios",
@@ -563,25 +610,29 @@ function buildPropertyPdfElement({
   );
   appendTextBlock(
     dataGrid,
-    "Banos",
+    "Ba\u00f1os",
     property.bathrooms != null ? String(property.bathrooms) : "A consultar",
   );
   featuresBlock.appendChild(dataGrid);
 
   if (summaryFeatures.length > 0) {
     const tagList = createElement("div", {
+      attrs: {
+        class: "pdf-avoid-break",
+      },
       styles: {
         marginTop: "14px",
         display: "flex",
         flexWrap: "wrap",
         gap: "8px",
+        ...KEEP_TOGETHER_STYLES,
       },
     });
 
     summaryFeatures.forEach((feature) => {
       tagList.appendChild(
         createElement("span", {
-          text: feature,
+          text: normalizePdfText(feature),
           styles: {
             border: "1px solid #e5e7eb",
             padding: "8px 12px",
@@ -613,7 +664,7 @@ function buildPropertyPdfElement({
     });
     imagesSection.appendChild(
       createElement("h2", {
-        text: "Mas imagenes",
+        text: "M\u00e1s im\u00e1genes",
         styles: {
           margin: "0",
           fontSize: "14px",
@@ -678,7 +729,7 @@ function buildPropertyPdfElement({
   });
   contactSection.appendChild(
     createElement("h2", {
-      text: "Contacto y ficha publica",
+      text: "Contacto y ficha p\u00fablica",
       styles: {
         margin: "0",
         fontSize: "14px",
@@ -703,21 +754,6 @@ function buildPropertyPdfElement({
         text: item,
         styles: {
           margin: "0",
-          fontSize: "12px",
-          lineHeight: "1.65",
-          color: "#374151",
-          wordBreak: "break-all",
-          overflowWrap: "break-word",
-        },
-      }),
-    );
-  });
-  if (publicPropertyUrl) {
-    contactItems.appendChild(
-      createElement("p", {
-        text: publicPropertyUrl,
-        styles: {
-          margin: "0",
           fontSize: "13px",
           lineHeight: "1.65",
           color: "#374151",
@@ -725,6 +761,35 @@ function buildPropertyPdfElement({
         },
       }),
     );
+  });
+  if (publicPropertyUrl) {
+    const publicLinkRow = createElement("p", {
+      styles: {
+        margin: "0",
+        fontSize: "13px",
+        lineHeight: "1.65",
+        color: "#374151",
+        ...WRAP_TEXT_STYLES,
+      },
+    });
+    publicLinkRow.appendChild(document.createTextNode("Ficha p\u00fablica online: "));
+    publicLinkRow.appendChild(
+      createElement("a", {
+        text: "Ver propiedad",
+        attrs: {
+          href: publicPropertyUrl,
+          target: "_blank",
+          rel: "noopener noreferrer",
+        },
+        styles: {
+          color: safePrimaryColor,
+          textDecoration: "underline",
+          fontWeight: "700",
+          ...WRAP_TEXT_STYLES,
+        },
+      }),
+    );
+    contactItems.appendChild(publicLinkRow);
   }
   contactSection.appendChild(contactItems);
   page.appendChild(contactSection);
@@ -769,7 +834,7 @@ function buildPropertyPdfElement({
   );
   footerLeft.appendChild(
     createElement("p", {
-      text: "Matricula: a informar",
+      text: "Matr\u00edcula: a informar",
       styles: {
         margin: "4px 0 0",
         fontSize: "12px",
@@ -861,6 +926,7 @@ export async function generatePropertyPdf({
     const pdfBinary = (await html2pdf()
       .set({
         margin: 0,
+        enableLinks: true,
         filename,
         image: { type: "jpeg", quality: 0.98 },
         html2canvas: {
@@ -910,3 +976,5 @@ export async function generatePropertyPdf({
     iframe.remove();
   }
 }
+
+

@@ -1,5 +1,6 @@
 type Html2PdfOptions = {
   margin?: number | number[];
+  enableLinks?: boolean;
   filename?: string;
   image?: {
     type?: string;
