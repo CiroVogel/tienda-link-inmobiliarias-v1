@@ -1,3 +1,4 @@
+import { useMemo, useState } from "react";
 import { ArrowLeft, Building2 } from "lucide-react";
 import { Link, useParams } from "wouter";
 import { PropertyCard } from "@/components/PropertyCard";
@@ -6,13 +7,27 @@ import {
   getOperationLabel,
   getStatusLabel,
   realEstateProfile,
+  type PropertyOperation,
+  type PropertyStatus,
 } from "@/lib/realEstateDemo";
 import { trpc } from "@/lib/trpc";
+
+const operationFilters: PropertyOperation[] = ["sale", "rent"];
+const statusFilters: Array<Exclude<PropertyStatus, "hidden">> = [
+  "available",
+  "reserved",
+  "sold",
+  "rented",
+];
 
 export default function PropertyList() {
   const { slug } = useParams<{ slug: string }>();
   const safeSlug = slug ?? realEstateProfile.slug;
   const { properties } = usePublicProperties(safeSlug);
+  const [operationFilter, setOperationFilter] = useState<PropertyOperation | "all">("all");
+  const [statusFilter, setStatusFilter] = useState<Exclude<PropertyStatus, "hidden"> | "all">(
+    "all",
+  );
   const { data: publicProfile } = trpc.business.getPublic.useQuery(
     { slug: safeSlug },
     { enabled: Boolean(safeSlug) },
@@ -23,6 +38,26 @@ export default function PropertyList() {
     publicProfile?.logoUrl?.trim() ||
     publicProfile?.ownerImageUrl?.trim() ||
     null;
+  const filteredProperties = useMemo(
+    () =>
+      properties.filter((property) => {
+        const matchesOperation =
+          operationFilter === "all" || property.operation === operationFilter;
+        const matchesStatus = statusFilter === "all" || property.status === statusFilter;
+
+        return matchesOperation && matchesStatus;
+      }),
+    [operationFilter, properties, statusFilter],
+  );
+  const showingAll = operationFilter === "all" && statusFilter === "all";
+
+  function getFilterClasses(active: boolean) {
+    return `border px-3 py-2 text-xs font-bold uppercase tracking-[0.14em] transition-colors ${
+      active
+        ? "border-zinc-950 bg-zinc-950 text-white"
+        : "border-zinc-200 bg-white text-zinc-500 hover:border-zinc-300 hover:text-zinc-950"
+    }`;
+  }
 
   return (
     <div className="min-h-screen bg-zinc-50">
@@ -70,29 +105,72 @@ export default function PropertyList() {
         </div>
 
         <div className="mb-7 flex flex-wrap gap-2">
-          {["sale", "rent"].map((operation) => (
-            <span
+          <button
+            type="button"
+            onClick={() => {
+              setOperationFilter("all");
+              setStatusFilter("all");
+            }}
+            className={getFilterClasses(showingAll)}
+          >
+            Todas
+          </button>
+
+          {operationFilters.map((operation) => (
+            <button
               key={operation}
-              className="border border-zinc-200 bg-white px-3 py-2 text-xs font-bold uppercase tracking-[0.14em] text-zinc-500"
+              type="button"
+              onClick={() =>
+                setOperationFilter((current) => (current === operation ? "all" : operation))
+              }
+              className={getFilterClasses(operationFilter === operation)}
             >
               {getOperationLabel(operation as "sale" | "rent")}
-            </span>
+            </button>
           ))}
-          {["available", "reserved", "sold", "rented"].map((status) => (
-            <span
+          {statusFilters.map((status) => (
+            <button
               key={status}
-              className="border border-zinc-200 bg-white px-3 py-2 text-xs font-bold uppercase tracking-[0.14em] text-zinc-500"
+              type="button"
+              onClick={() => setStatusFilter((current) => (current === status ? "all" : status))}
+              className={getFilterClasses(statusFilter === status)}
             >
               {getStatusLabel(status as "available" | "reserved" | "sold" | "rented")}
-            </span>
+            </button>
           ))}
         </div>
 
-        <div className="grid gap-5 lg:grid-cols-2">
-          {properties.map((property) => (
-            <PropertyCard key={property.id} property={property} slug={safeSlug} />
-          ))}
-        </div>
+        <p className="mb-6 text-sm text-zinc-500">
+          Mostrando {filteredProperties.length} de {properties.length} propiedades.
+        </p>
+
+        {filteredProperties.length > 0 ? (
+          <div className="grid gap-5 lg:grid-cols-2">
+            {filteredProperties.map((property) => (
+              <PropertyCard key={property.id} property={property} slug={safeSlug} />
+            ))}
+          </div>
+        ) : (
+          <div className="border border-zinc-200 bg-white px-6 py-10 text-center">
+            <p className="text-xs font-bold uppercase tracking-[0.18em] text-zinc-400">
+              Sin resultados
+            </p>
+            <p className="mt-3 text-sm leading-7 text-zinc-500">
+              No encontramos propiedades para ese filtro. Puedes desactivarlo o volver a{" "}
+              <button
+                type="button"
+                onClick={() => {
+                  setOperationFilter("all");
+                  setStatusFilter("all");
+                }}
+                className="font-bold text-zinc-950"
+              >
+                ver todas
+              </button>
+              .
+            </p>
+          </div>
+        )}
       </main>
     </div>
   );
