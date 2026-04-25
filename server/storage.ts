@@ -107,7 +107,29 @@ type PropertyStore = {
   properties: StoredProperty[];
 };
 
-export type StoredVisitRequestStatus = "new" | "contacted" | "closed";
+export type StoredVisitRequestStatus =
+  | "new"
+  | "contacted"
+  | "visited"
+  | "negotiating"
+  | "closed"
+  | "not_interested";
+
+export type StoredVisitRequestNote = {
+  id: string;
+  text: string;
+  createdAt: string;
+};
+
+export type StoredVisitRequestTimelineEntry = {
+  id: string;
+  type: "created" | "status_changed" | "note_added";
+  title: string;
+  description?: string;
+  status?: StoredVisitRequestStatus;
+  noteId?: string;
+  createdAt: string;
+};
 
 export type StoredVisitRequest = {
   id: string;
@@ -120,6 +142,8 @@ export type StoredVisitRequest = {
   email: string | null;
   message: string;
   status: StoredVisitRequestStatus;
+  notes: StoredVisitRequestNote[];
+  timeline: StoredVisitRequestTimelineEntry[];
   createdAt: string;
   updatedAt: string;
 };
@@ -156,6 +180,14 @@ type BusinessMediaStore = {
 };
 
 const STORE_VERSION = 1 as const;
+const VISIT_REQUEST_STATUS_LABELS: Record<StoredVisitRequestStatus, string> = {
+  new: "Nueva",
+  contacted: "Contactado",
+  visited: "Visitó",
+  negotiating: "En negociación",
+  closed: "Cerrado",
+  not_interested: "No interesado",
+};
 
 function normalizeSlug(slug: string) {
   return slug.trim().toLowerCase();
@@ -300,11 +332,12 @@ async function writeVisitRequestStore(slug: string, store: VisitRequestStore) {
     version: STORE_VERSION,
     slug: normalizedSlug,
     updatedAt: new Date().toISOString(),
-    requests: [...store.requests].map((request) => ({
-      ...request,
-      slug: normalizedSlug,
-      email: request.email?.trim() || null,
-    })),
+    requests: [...store.requests].map((request) =>
+      normalizeVisitRequest({
+        ...request,
+        slug: normalizedSlug,
+      }),
+    ),
   };
 
   await fs.promises.mkdir(path.dirname(diskPath), { recursive: true });
@@ -326,11 +359,12 @@ async function readVisitRequestStore(slug: string): Promise<VisitRequestStore> {
       version: STORE_VERSION,
       slug: normalizedSlug,
       updatedAt: parsed.updatedAt ?? new Date().toISOString(),
-      requests: (parsed.requests ?? []).map((request) => ({
-        ...request,
-        slug: normalizedSlug,
-        email: request.email?.trim() || null,
-      })),
+      requests: (parsed.requests ?? []).map((request) =>
+        normalizeVisitRequest({
+          ...request,
+          slug: normalizedSlug,
+        }),
+      ),
     };
   } catch (error) {
     if ((error as NodeJS.ErrnoException).code !== "ENOENT") throw error;
@@ -400,6 +434,116 @@ function buildVisitRequestId() {
 
 function buildVisitRequestReference() {
   return `CU-${Date.now().toString(36).toUpperCase()}-${randomBytes(2).toString("hex").toUpperCase()}`;
+}
+
+function buildVisitRequestNoteId() {
+  return `note-${Date.now().toString(36)}-${randomBytes(2).toString("hex")}`;
+}
+
+function buildVisitRequestTimelineId() {
+  return `timeline-${Date.now().toString(36)}-${randomBytes(2).toString("hex")}`;
+}
+
+function normalizeVisitRequestStatus(status?: string | null): StoredVisitRequestStatus {
+  switch (status) {
+    case "contacted":
+    case "visited":
+    case "negotiating":
+    case "closed":
+    case "not_interested":
+      return status;
+    case "new":
+    default:
+      return "new";
+  }
+}
+
+function buildVisitRequestCreatedEntry(request: {
+  name: string;
+  propertyTitle: string;
+  createdAt: string;
+}): StoredVisitRequestTimelineEntry {
+  return {
+    id: buildVisitRequestTimelineId(),
+    type: "created",
+    title: "Consulta recibida",
+    description: `${request.name.trim()} consultó por ${request.propertyTitle.trim()}.`,
+    createdAt: request.createdAt,
+  };
+}
+
+function buildVisitRequestStatusEntry(
+  status: StoredVisitRequestStatus,
+  createdAt: string,
+): StoredVisitRequestTimelineEntry {
+  return {
+    id: buildVisitRequestTimelineId(),
+    type: "status_changed",
+    title: `Estado actualizado a ${VISIT_REQUEST_STATUS_LABELS[status]}`,
+    status,
+    createdAt,
+  };
+}
+
+function buildVisitRequestNoteEntry(
+  note: StoredVisitRequestNote,
+): StoredVisitRequestTimelineEntry {
+  return {
+    id: buildVisitRequestTimelineId(),
+    type: "note_added",
+    title: "Nota agregada",
+    description: note.text,
+    noteId: note.id,
+    createdAt: note.createdAt,
+  };
+}
+
+function normalizeVisitRequest(request: StoredVisitRequest): StoredVisitRequest {
+  const normalizedStatus = normalizeVisitRequestStatus(request.status);
+  const notes = (request.notes ?? [])
+    .map((note) => ({
+      id: note.id,
+      text: note.text.trim(),
+      createdAt: note.createdAt,
+    }))
+    .filter((note) => note.text);
+
+  const fallbackTimeline: StoredVisitRequestTimelineEntry[] = [
+    buildVisitRequestCreatedEntry({
+      name: request.name,
+      propertyTitle: request.propertyTitle,
+      createdAt: request.createdAt,
+    }),
+  ];
+
+  if (normalizedStatus !== "new") {
+    fallbackTimeline.push(buildVisitRequestStatusEntry(normalizedStatus, request.updatedAt));
+  }
+
+  notes.forEach((note) => {
+    fallbackTimeline.push(buildVisitRequestNoteEntry(note));
+  });
+
+  const timeline = (request.timeline ?? fallbackTimeline)
+    .map((entry) => ({
+      id: entry.id,
+      type: entry.type,
+      title: entry.title.trim(),
+      description: entry.description?.trim() || undefined,
+      status: entry.status ? normalizeVisitRequestStatus(entry.status) : undefined,
+      noteId: entry.noteId,
+      createdAt: entry.createdAt,
+    }))
+    .filter((entry) => entry.title)
+    .sort((left, right) => left.createdAt.localeCompare(right.createdAt));
+
+  return {
+    ...request,
+    email: request.email?.trim() || null,
+    status: normalizedStatus,
+    notes,
+    timeline,
+  };
 }
 
 function buildPropertyId(existingIds: Set<string>, title: string) {
@@ -670,6 +814,40 @@ export async function listStoredVisitRequests(slug: string): Promise<StoredVisit
   return [...store.requests].sort((a, b) => b.createdAt.localeCompare(a.createdAt));
 }
 
+export async function getStoredVisitRequest(
+  slug: string,
+  requestId: string,
+): Promise<StoredVisitRequest | null> {
+  const requests = await listStoredVisitRequests(slug);
+  return requests.find((request) => request.id === requestId) ?? null;
+}
+
+async function updateStoredVisitRequestRecord(
+  slug: string,
+  requestId: string,
+  updater: (request: StoredVisitRequest) => StoredVisitRequest,
+): Promise<StoredVisitRequest> {
+  const normalizedSlug = normalizeSlug(slug);
+  const store = await readVisitRequestStore(normalizedSlug);
+  const requestIndex = store.requests.findIndex((request) => request.id === requestId);
+
+  if (requestIndex === -1) {
+    throw new Error("Visit request not found");
+  }
+
+  const currentRequest = normalizeVisitRequest(store.requests[requestIndex]!);
+  const nextRequest = normalizeVisitRequest(updater(currentRequest));
+  const nextRequests = [...store.requests];
+  nextRequests[requestIndex] = nextRequest;
+
+  await writeVisitRequestStore(normalizedSlug, {
+    ...store,
+    requests: nextRequests,
+  });
+
+  return nextRequest;
+}
+
 export async function createStoredVisitRequest(
   slug: string,
   input: VisitRequestMutationInput,
@@ -689,9 +867,19 @@ export async function createStoredVisitRequest(
     email: input.email?.trim() || null,
     message: input.message.trim(),
     status: "new",
+    notes: [],
+    timeline: [],
     createdAt: now,
     updatedAt: now,
   };
+
+  nextRequest.timeline = [
+    buildVisitRequestCreatedEntry({
+      name: nextRequest.name,
+      propertyTitle: nextRequest.propertyTitle,
+      createdAt: now,
+    }),
+  ];
 
   await writeVisitRequestStore(normalizedSlug, {
     ...store,
@@ -706,30 +894,47 @@ export async function updateStoredVisitRequestStatus(
   requestId: string,
   status: StoredVisitRequestStatus,
 ): Promise<StoredVisitRequest> {
-  const normalizedSlug = normalizeSlug(slug);
-  const store = await readVisitRequestStore(normalizedSlug);
-  const requestIndex = store.requests.findIndex((request) => request.id === requestId);
+  return updateStoredVisitRequestRecord(slug, requestId, (currentRequest) => {
+    if (currentRequest.status === status) {
+      return currentRequest;
+    }
 
-  if (requestIndex === -1) {
-    throw new Error("Visit request not found");
-  }
-
-  const currentRequest = store.requests[requestIndex]!;
-  const nextRequest: StoredVisitRequest = {
-    ...currentRequest,
-    status,
-    updatedAt: new Date().toISOString(),
-  };
-
-  const nextRequests = [...store.requests];
-  nextRequests[requestIndex] = nextRequest;
-
-  await writeVisitRequestStore(normalizedSlug, {
-    ...store,
-    requests: nextRequests,
+    const now = new Date().toISOString();
+    return {
+      ...currentRequest,
+      status,
+      updatedAt: now,
+      timeline: [
+        ...currentRequest.timeline,
+        buildVisitRequestStatusEntry(status, now),
+      ],
+    };
   });
+}
 
-  return nextRequest;
+export async function addStoredVisitRequestNote(
+  slug: string,
+  requestId: string,
+  text: string,
+): Promise<StoredVisitRequest> {
+  return updateStoredVisitRequestRecord(slug, requestId, (currentRequest) => {
+    const now = new Date().toISOString();
+    const nextNote: StoredVisitRequestNote = {
+      id: buildVisitRequestNoteId(),
+      text: text.trim(),
+      createdAt: now,
+    };
+
+    return {
+      ...currentRequest,
+      updatedAt: now,
+      notes: [nextNote, ...currentRequest.notes],
+      timeline: [
+        ...currentRequest.timeline,
+        buildVisitRequestNoteEntry(nextNote),
+      ],
+    };
+  });
 }
 
 export async function getStoredBusinessImageOverrides(slug: string) {

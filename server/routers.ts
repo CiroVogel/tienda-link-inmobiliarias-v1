@@ -47,11 +47,13 @@ upsertLocalAdminCredential,
 } from "./db";
 import { createMercadoPagoPreference } from "./mercadopago";
 import {
+  addStoredVisitRequestNote,
   addStoredPropertyImage,
   createStoredVisitRequest,
   createStoredProperty,
   deleteStoredPropertyImage,
   getPublicProperty,
+  getStoredVisitRequest,
   getStoredBusinessImageOverrides,
   listPublicProperties,
   listStoredProperties,
@@ -85,7 +87,14 @@ const slugSchema = z
 
 const propertyOperationSchema = z.enum(["sale", "rent"]);
 const propertyStatusSchema = z.enum(["available", "reserved", "sold", "rented", "hidden"]);
-const visitRequestStatusSchema = z.enum(["new", "contacted", "closed"]);
+const visitRequestStatusSchema = z.enum([
+  "new",
+  "contacted",
+  "visited",
+  "negotiating",
+  "closed",
+  "not_interested",
+]);
 const propertyInputSchema = z.object({
   title: z.string().min(1).max(240),
   operation: propertyOperationSchema,
@@ -612,6 +621,26 @@ export const appRouter = router({
       return listStoredVisitRequests(profile.slug);
     }),
 
+    get: adminProcedure
+      .input(
+        z.object({
+          id: z.string().min(1).max(200),
+        }),
+      )
+      .query(async ({ ctx, input }) => {
+        const profile = await getAdminBusinessProfile(ctx.user);
+        if (!profile) {
+          throw new TRPCError({ code: "NOT_FOUND", message: "Perfil no encontrado" });
+        }
+
+        const request = await getStoredVisitRequest(profile.slug, input.id);
+        if (!request) {
+          throw new TRPCError({ code: "NOT_FOUND", message: "Interesado no encontrado" });
+        }
+
+        return request;
+      }),
+
     updateStatus: adminProcedure
       .input(
         z.object({
@@ -626,6 +655,22 @@ export const appRouter = router({
         }
 
         return updateStoredVisitRequestStatus(profile.slug, input.id, input.status);
+      }),
+
+    addNote: adminProcedure
+      .input(
+        z.object({
+          id: z.string().min(1).max(200),
+          text: z.string().min(1).max(2000),
+        }),
+      )
+      .mutation(async ({ ctx, input }) => {
+        const profile = await getAdminBusinessProfile(ctx.user);
+        if (!profile) {
+          throw new TRPCError({ code: "NOT_FOUND", message: "Perfil no encontrado" });
+        }
+
+        return addStoredVisitRequestNote(profile.slug, input.id, input.text);
       }),
   }),
 

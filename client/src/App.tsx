@@ -16,6 +16,8 @@ import LegalMiniWebServicios from "./pages/LegalMiniWebServicios";
 import LocalLogin from "./pages/LocalLogin";
 
 import AdminBookings from "./pages/admin/AdminBookings";
+import AdminInterested from "./pages/admin/AdminInterested";
+import AdminInterestedDetail from "./pages/admin/AdminInterestedDetail";
 import AdminProfile from "./pages/admin/AdminProfile";
 import AdminServices from "./pages/admin/AdminServices";
 import AdminGallery from "./pages/admin/AdminGallery";
@@ -38,6 +40,8 @@ function Router() {
       <Route path="/admin-login" component={LocalLogin} />
 
       <Route path="/admin" component={AdminBookings} />
+      <Route path="/admin/interesados" component={AdminInterested} />
+      <Route path="/admin/interesados/:requestId" component={AdminInterestedDetail} />
       <Route path="/admin/profile" component={AdminProfile} />
       <Route path="/admin/services" component={AdminServices} />
       <Route path="/admin/gallery" component={AdminGallery} />

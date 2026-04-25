@@ -8,6 +8,7 @@ import {
   Briefcase,
   Images,
   CalendarCheck,
+  Users,
   Settings,
   LogOut,
   Menu,
@@ -59,6 +60,7 @@ export default function AdminLayout({ children }: { children: ReactNode }) {
   const navItems = useMemo<NavItemConfig[]>(
     () => [
       { href: "/admin", label: "Consultas", icon: CalendarCheck, exact: true },
+      { href: "/admin/interesados", label: "Interesados", icon: Users },
       { href: "/admin/profile", label: "Perfil de la inmobiliaria", icon: Settings },
       { href: "/admin/services", label: "Propiedades", icon: Briefcase },
       { href: "/admin/gallery", label: "Galeria", icon: Images },
