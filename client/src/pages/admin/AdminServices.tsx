@@ -1,6 +1,7 @@
 import { useMemo, useState } from "react";
 import { Link } from "wouter";
 import {
+  Download,
   Eye,
   EyeOff,
   Home,
@@ -24,6 +25,7 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { trpc } from "@/lib/trpc";
+import { generatePropertyPdf } from "@/lib/propertyPdf";
 import {
   getOperationLabel,
   getStatusLabel,
@@ -166,8 +168,10 @@ export default function AdminServices() {
   const [visibilityFilter, setVisibilityFilter] = useState<VisibilityFilter>("all");
   const [sortOrder, setSortOrder] = useState<SortOrder>("recent");
   const [quickActionId, setQuickActionId] = useState<string | null>(null);
+  const [pdfPropertyId, setPdfPropertyId] = useState<string | null>(null);
 
   const { data: properties = [] } = trpc.properties.list.useQuery();
+  const { data: profile } = trpc.business.get.useQuery();
 
   const createProperty = trpc.properties.create.useMutation({
     onSuccess: async () => {
@@ -292,6 +296,31 @@ export default function AdminServices() {
       { featured: !property.featured },
       property.featured ? "Quitamos la propiedad de destacadas" : "Propiedad destacada en home",
     );
+  }
+
+  async function handleDownloadPdf(property: AdminProperty) {
+    if (!profile) {
+      toast.error("Necesitamos el perfil de la inmobiliaria para generar el PDF.");
+      return;
+    }
+
+    setPdfPropertyId(property.id);
+
+    try {
+      await generatePropertyPdf({
+        property: {
+          ...property,
+          images: property.images.map((image) => image.url),
+        },
+        profile,
+      });
+      toast.success("PDF generado");
+    } catch (error) {
+      console.error(error);
+      toast.error("No pudimos generar el PDF.");
+    } finally {
+      setPdfPropertyId(null);
+    }
   }
 
   async function handleSubmit(event: React.FormEvent) {
@@ -459,6 +488,7 @@ export default function AdminServices() {
           <div className="space-y-3">
             {filteredProperties.map((property) => {
               const isQuickUpdating = quickActionId === property.id && updateProperty.isPending;
+              const isGeneratingPdf = pdfPropertyId === property.id;
 
               return (
                 <article
@@ -511,6 +541,21 @@ export default function AdminServices() {
                           Fotos
                         </span>
                       </Link>
+                    </Button>
+
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => void handleDownloadPdf(property)}
+                      disabled={isGeneratingPdf}
+                      className="gap-2"
+                    >
+                      {isGeneratingPdf ? (
+                        <Loader2 className="h-4 w-4 animate-spin" />
+                      ) : (
+                        <Download className="h-4 w-4" />
+                      )}
+                      PDF
                     </Button>
 
                     <Button

@@ -19,7 +19,7 @@ import {
   realEstateProfile,
 } from "@/lib/realEstateDemo";
 
-function whatsappHref(propertyTitle: string) {
+function buildWhatsappHref(propertyTitle: string) {
   return `https://wa.me/${realEstateProfile.whatsapp.replace(/\D/g, "")}?text=${encodeURIComponent(
     `Hola, quiero consultar por la propiedad: ${propertyTitle}`,
   )}`;
@@ -167,7 +167,7 @@ export default function PropertyDetail() {
               <div className="bg-zinc-50 p-3">
                 <Bath className="mb-2 h-5 w-5 text-zinc-400" />
                 <p className="text-xs font-bold uppercase tracking-[0.14em] text-zinc-400">
-                  Baños
+                  Banos
                 </p>
                 <p className="mt-1 font-bold text-zinc-950">
                   {property.bathrooms ?? "A consultar"}
@@ -193,7 +193,7 @@ export default function PropertyDetail() {
 
             <div className="mt-5 border-t border-zinc-200 pt-5">
               <h2 className="mb-3 text-sm font-black uppercase tracking-[0.16em] text-zinc-950">
-                Descripción
+                Descripcion
               </h2>
               <p className="text-sm leading-7 text-zinc-600">{property.description}</p>
             </div>
@@ -213,7 +213,7 @@ export default function PropertyDetail() {
               )}
 
               <a
-                href={whatsappHref(property.title)}
+                href={buildWhatsappHref(property.title)}
                 target="_blank"
                 rel="noreferrer"
                 className="inline-flex items-center justify-center gap-2 border border-zinc-300 px-6 py-4 text-xs font-black uppercase tracking-[0.16em] text-zinc-950"
