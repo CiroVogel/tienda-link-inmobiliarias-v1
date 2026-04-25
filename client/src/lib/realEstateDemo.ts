@@ -60,9 +60,9 @@ export const demoProperties: DemoProperty[] = [
     bedrooms: 2,
     bathrooms: 1,
     areaM2: 72,
-    features: ["Balcon al frente", "Cocina separada", "Luminoso", "Apto credito"],
+    features: ["Balcón al frente", "Cocina separada", "Luminoso", "Apto crédito"],
     description:
-      "Departamento amplio y bien distribuido en una zona practica del Centro. Living comedor con salida al balcon, cocina separada y dos dormitorios con placares. Ideal para vivienda propia o inversion urbana.",
+      "Departamento amplio y bien distribuido en una zona práctica del Centro. Living comedor con salida al balcón, cocina separada y dos dormitorios con placares. Ideal para vivienda propia o inversión urbana.",
     images: [
       "https://images.unsplash.com/photo-1502672260266-1c1ef2d93688?auto=format&fit=crop&w=1400&q=82",
       "https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?auto=format&fit=crop&w=1400&q=82",
@@ -81,9 +81,9 @@ export const demoProperties: DemoProperty[] = [
     propertyType: "Monoambiente",
     bathrooms: 1,
     areaM2: 34,
-    features: ["Moderno", "Amenities", "Bajas expensas", "Cerca del rio"],
+    features: ["Moderno", "Amenities", "Bajas expensas", "Cerca del río"],
     description:
-      "Unidad moderna en edificio joven, con ambiente unico bien aprovechado y excelente ingreso de luz. Una opcion comoda para vivir cerca de bares, facultades y espacios verdes.",
+      "Unidad moderna en edificio joven, con ambiente único bien aprovechado y excelente ingreso de luz. Una opción cómoda para vivir cerca de bares, facultades y espacios verdes.",
     images: [
       "https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?auto=format&fit=crop&w=1400&q=82",
       "https://images.unsplash.com/photo-1560185007-c5ca9d2c014d?auto=format&fit=crop&w=1400&q=82",
@@ -103,7 +103,7 @@ export const demoProperties: DemoProperty[] = [
     bedrooms: 3,
     bathrooms: 2,
     areaM2: 190,
-    features: ["Jardin", "Pileta", "Cochera doble", "Parrillero"],
+    features: ["Jardín", "Pileta", "Cochera doble", "Parrillero"],
     description:
       "Casa familiar con ambientes generosos, verde propio y una distribucion pensada para la vida diaria. Actualmente se encuentra reservada, visible como referencia comercial.",
     images: [
@@ -146,7 +146,7 @@ export const demoProperties: DemoProperty[] = [
     bedrooms: 1,
     bathrooms: 1,
     areaM2: 45,
-    features: ["Vista abierta", "Balcon", "Cocina integrada", "Excelente zona"],
+    features: ["Vista abierta", "Balcón", "Cocina integrada", "Excelente zona"],
     description:
       "Departamento con vista abierta y ubicacion privilegiada, a metros del Monumento y parques. Ya fue alquilado y queda publicado como referencia de operaciones recientes.",
     images: [
@@ -166,9 +166,9 @@ export const demoProperties: DemoProperty[] = [
     propertyType: "Oficina",
     bathrooms: 1,
     areaM2: 62,
-    features: ["Recepcion", "Privado", "Ascensor", "Zona bancaria"],
+    features: ["Recepción", "Privado", "Ascensor", "Zona bancaria"],
     description:
-      "Oficina funcional para estudio profesional o equipo chico. Planta flexible, buena luz natural y ubicacion estrategica en el circuito comercial del Microcentro.",
+      "Oficina funcional para estudio profesional o equipo chico. Planta flexible, buena luz natural y ubicación estratégica en el circuito comercial del Microcentro.",
     images: [
       "https://images.unsplash.com/photo-1497366754035-f200968a6e72?auto=format&fit=crop&w=1400&q=82",
       "https://images.unsplash.com/photo-1497366811353-6870744d04b2?auto=format&fit=crop&w=1400&q=82",
@@ -189,7 +189,7 @@ export const demoProperties: DemoProperty[] = [
     areaM2: 128,
     features: ["Cochera", "Patio verde", "Parrillero", "A estrenar"],
     description:
-      "Duplex a estrenar en sector residencial de Funes, con espacios integrados y patio privado. Una alternativa equilibrada para vivir cerca de Rosario con mas aire.",
+      "Duplex a estrenar en sector residencial de Funes, con espacios integrados y patio privado. Una alternativa equilibrada para vivir cerca de Rosario con más aire.",
     images: [
       "https://images.unsplash.com/photo-1605276374104-dee2a0ed3cd6?auto=format&fit=crop&w=1400&q=82",
       "https://images.unsplash.com/photo-1600566753086-00f18fb6b3ea?auto=format&fit=crop&w=1400&q=82",
@@ -207,9 +207,9 @@ export const demoProperties: DemoProperty[] = [
     propertyType: "Local",
     bathrooms: 1,
     areaM2: 58,
-    features: ["Vidriera", "Persiana metalica", "Deposito", "Alto transito"],
+    features: ["Vidriera", "Persiana metálica", "Depósito", "Alto tránsito"],
     description:
-      "Local con buena exposicion a la calle y circulacion constante. Planta libre, vidriera ancha y deposito posterior para marcas de cercania o servicios profesionales.",
+      "Local con buena exposición a la calle y circulación constante. Planta libre, vidriera ancha y depósito posterior para marcas de cercanía o servicios profesionales.",
     images: [
       "https://images.unsplash.com/photo-1441986300917-64674bd600d8?auto=format&fit=crop&w=1400&q=82",
       "https://images.unsplash.com/photo-1528698827591-e19ccd7bc23d?auto=format&fit=crop&w=1400&q=82",

@@ -7,11 +7,22 @@ import {
   getStatusLabel,
   realEstateProfile,
 } from "@/lib/realEstateDemo";
+import { trpc } from "@/lib/trpc";
 
 export default function PropertyList() {
   const { slug } = useParams<{ slug: string }>();
   const safeSlug = slug ?? realEstateProfile.slug;
   const { properties } = usePublicProperties(safeSlug);
+  const { data: publicProfile } = trpc.business.getPublic.useQuery(
+    { slug: safeSlug },
+    { enabled: Boolean(safeSlug) },
+  );
+  const businessName =
+    publicProfile?.businessName?.trim() || realEstateProfile.name;
+  const brandImageUrl =
+    publicProfile?.logoUrl?.trim() ||
+    publicProfile?.ownerImageUrl?.trim() ||
+    null;
 
   return (
     <div className="min-h-screen bg-zinc-50">
@@ -23,10 +34,23 @@ export default function PropertyList() {
               Inicio
             </span>
           </Link>
-          <span className="text-sm font-black uppercase tracking-[0.18em] text-zinc-950">
-            Propiedades
-          </span>
-          <div className="w-16" />
+          <Link href={`/${safeSlug}`}>
+            <span className="flex max-w-[58vw] items-center gap-3">
+              {brandImageUrl ? (
+                <span className="flex h-7 w-7 shrink-0 items-center justify-center overflow-hidden rounded-sm sm:h-8 sm:w-8">
+                  <img
+                    src={brandImageUrl}
+                    alt={businessName}
+                    className="h-full w-full scale-[1.18] object-contain"
+                  />
+                </span>
+              ) : null}
+              <span className="truncate text-[11px] font-black uppercase tracking-[0.12em] text-zinc-950 sm:text-sm sm:tracking-[0.18em]">
+                {businessName}
+              </span>
+            </span>
+          </Link>
+          <div className="w-14" />
         </div>
       </header>
 
@@ -34,7 +58,7 @@ export default function PropertyList() {
         <div className="mb-8 max-w-2xl">
           <p className="mb-3 inline-flex items-center gap-2 text-xs font-bold uppercase tracking-[0.18em] text-zinc-400">
             <Building2 className="h-4 w-4" />
-            {realEstateProfile.name}
+            {businessName}
           </p>
           <h1 className="text-4xl font-black tracking-tight text-zinc-950 md:text-5xl">
             Listado de propiedades

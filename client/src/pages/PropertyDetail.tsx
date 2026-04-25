@@ -18,6 +18,7 @@ import {
   isPropertyRequestable,
   realEstateProfile,
 } from "@/lib/realEstateDemo";
+import { trpc } from "@/lib/trpc";
 
 function buildWhatsappHref(propertyTitle: string) {
   return `https://wa.me/${realEstateProfile.whatsapp.replace(/\D/g, "")}?text=${encodeURIComponent(
@@ -29,8 +30,18 @@ export default function PropertyDetail() {
   const { slug, propertyId } = useParams<{ slug: string; propertyId: string }>();
   const safeSlug = slug ?? realEstateProfile.slug;
   const { property, isLoading } = usePublicProperty(safeSlug, propertyId);
+  const { data: publicProfile } = trpc.business.getPublic.useQuery(
+    { slug: safeSlug },
+    { enabled: Boolean(safeSlug) },
+  );
   const [selectedImage, setSelectedImage] = useState(0);
   const galleryImages = getPropertyGalleryImages(property);
+  const businessName =
+    publicProfile?.businessName?.trim() || realEstateProfile.name;
+  const brandImageUrl =
+    publicProfile?.logoUrl?.trim() ||
+    publicProfile?.ownerImageUrl?.trim() ||
+    null;
 
   if (isLoading && !property) {
     return (
@@ -72,10 +83,23 @@ export default function PropertyDetail() {
               Listado
             </span>
           </Link>
-          <span className="text-sm font-black uppercase tracking-[0.18em] text-zinc-950">
-            Ficha de propiedad
-          </span>
-          <div className="w-20" />
+          <Link href={`/${safeSlug}`}>
+            <span className="flex max-w-[58vw] items-center gap-3">
+              {brandImageUrl ? (
+                <span className="flex h-7 w-7 shrink-0 items-center justify-center overflow-hidden rounded-sm sm:h-8 sm:w-8">
+                  <img
+                    src={brandImageUrl}
+                    alt={businessName}
+                    className="h-full w-full scale-[1.18] object-contain"
+                  />
+                </span>
+              ) : null}
+              <span className="truncate text-[11px] font-black uppercase tracking-[0.12em] text-zinc-950 sm:text-sm sm:tracking-[0.18em]">
+                {businessName}
+              </span>
+            </span>
+          </Link>
+          <div className="w-14" />
         </div>
       </header>
 

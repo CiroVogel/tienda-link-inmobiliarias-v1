@@ -670,63 +670,6 @@ export default function AdminProfile() {
             </div>
           </section>
 
-          <section className="bg-white p-6">
-            <h2 className="text-xs font-bold uppercase tracking-widest text-black/40 mb-5">
-              Configuración de pagos
-            </h2>
-
-            <div className="grid sm:grid-cols-2 gap-4">
-              <div>
-                <Label className="text-xs font-bold uppercase tracking-widest text-black/50 mb-2 block">
-                  Moneda
-                </Label>
-                <Input
-                  value={getValue("currency")}
-                  onChange={(e) => handleChange("currency", e.target.value)}
-                  placeholder="ARS"
-                  maxLength={5}
-                />
-                <p className="text-xs text-black/30 mt-1">
-                  Ej: ARS, USD, CLP, UYU
-                </p>
-              </div>
-
-              <div>
-                <Label className="text-xs font-bold uppercase tracking-widest text-black/50 mb-2 block">
-                  Porcentaje de seña (%)
-                </Label>
-                <Input
-                  type="number"
-                  min={0}
-                  max={100}
-                  value={getValue("depositPercentage")}
-                  onChange={(e) => handleChange("depositPercentage", e.target.value)}
-                  placeholder="30"
-                />
-                <p className="text-xs text-black/30 mt-1">
-                  Porcentaje del total que se cobra como seña
-                </p>
-              </div>
-            </div>
-
-            <div className="pt-2 border-t border-black/10">
-              <Label className="text-xs font-bold uppercase tracking-widest text-black/50 mb-2 block">
-                Access Token de Mercado Pago
-              </Label>
-              <Input
-                type="password"
-                value={getValue("paymentMpAccessToken")}
-                onChange={(e) =>
-                  handleChange("paymentMpAccessToken", e.target.value)
-                }
-                placeholder="APP_USR-..."
-                autoComplete="off"
-              />
-              <p className="text-xs text-black/30 mt-1">
-                Se guarda por página y se usa para crear el cobro real de esta web.
-              </p>
-            </div>
-          </section>
         </div>
 
         {hasChanges && (

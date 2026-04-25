@@ -36,16 +36,29 @@ function getCityLabel(address?: string | null) {
 function Header({
   slug,
   businessName,
+  brandImageUrl,
 }: {
   slug: string;
   businessName: string;
+  brandImageUrl?: string | null;
 }) {
   return (
     <header className="sticky top-0 z-50 border-b border-white/10 bg-black/95 text-white backdrop-blur">
       <div className="mx-auto flex h-16 max-w-6xl items-center justify-between gap-4 px-5">
         <Link href={`/${slug}`}>
-          <span className="block whitespace-nowrap text-[11px] font-black uppercase tracking-[0.1em] text-white sm:text-sm sm:tracking-[0.18em]">
-            {businessName}
+          <span className="flex items-center gap-3">
+            {brandImageUrl ? (
+              <span className="flex h-7 w-7 shrink-0 items-center justify-center overflow-hidden rounded-sm sm:h-8 sm:w-8">
+                <img
+                  src={brandImageUrl}
+                  alt={businessName}
+                  className="h-full w-full scale-[1.18] object-contain"
+                />
+              </span>
+            ) : null}
+            <span className="block whitespace-nowrap text-[11px] font-black uppercase tracking-[0.1em] text-white sm:text-sm sm:tracking-[0.18em]">
+              {businessName}
+            </span>
           </span>
         </Link>
 
@@ -370,6 +383,10 @@ export default function Home({ forcedSlug }: HomeProps) {
 
   const businessName =
     publicProfile?.businessName?.trim() || realEstateProfile.name;
+  const brandImageUrl =
+    publicProfile?.logoUrl?.trim() ||
+    publicProfile?.ownerImageUrl?.trim() ||
+    null;
   const tagline =
     publicProfile?.tagline?.trim() ||
     "Propiedades claras para encontrar tu proximo lugar.";
@@ -392,7 +409,7 @@ export default function Home({ forcedSlug }: HomeProps) {
 
   return (
     <div className="min-h-screen bg-white">
-      <Header slug={slug} businessName={businessName} />
+      <Header slug={slug} businessName={businessName} brandImageUrl={brandImageUrl} />
       <Hero
         featured={heroProperty}
         slug={slug}
