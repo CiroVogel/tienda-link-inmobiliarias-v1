@@ -19,16 +19,6 @@ import {
 
 type RemovableImageField = "heroImageUrl" | "ownerImageUrl";
 
-const PRIMARY_COLOR_OPTIONS = [
-  { label: "Negro", value: "#000000" },
-  { label: "Gris grafito", value: "#3A3A3A" },
-  { label: "Beige", value: "#D6C2A8" },
-  { label: "Verde oliva", value: "#6B705C" },
-  { label: "Azul petróleo", value: "#2F5D62" },
-  { label: "Bordó", value: "#6E2233" },
-  { label: "Terracota", value: "#C06C4E" },
-];
-
 function ImageUploader({
   label,
   currentUrl,
@@ -323,50 +313,6 @@ export default function AdminProfile() {
                   inmobiliaria sin cambiar la estructura actual de la pantalla.
                 </p>
               </div>
-            </div>
-          </section>
-
-          <section className="bg-white p-6">
-            <h2 className="text-xs font-bold uppercase tracking-widest text-black/40 mb-5">
-              Apariencia
-            </h2>
-
-            <div>
-              <Label className="text-xs font-bold uppercase tracking-widest text-black/50 mb-3 block">
-                Color principal
-              </Label>
-
-              <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
-                {PRIMARY_COLOR_OPTIONS.map((option) => {
-                  const selected =
-                    (getValue("primaryColor") || "#000000") === option.value;
-
-                  return (
-                    <button
-                      key={option.value}
-                      type="button"
-                      onClick={() => handleChange("primaryColor", option.value)}
-                      className={`flex items-center gap-3 border px-3 py-3 text-left transition-colors ${
-                        selected
-                          ? "border-black bg-black/5"
-                          : "border-black/15 hover:border-black/30"
-                      }`}
-                    >
-                      <span
-                        className="w-5 h-5 rounded-full border border-black/10 shrink-0"
-                        style={{ backgroundColor: option.value }}
-                      />
-                      <span className="text-xs font-medium text-black">
-                        {option.label}
-                      </span>
-                    </button>
-                  );
-                })}
-              </div>
-
-              <p className="text-xs text-black/30 mt-2">
-                Se aplica a botones, links y detalles visuales de la web pública.
-              </p>
             </div>
           </section>
 

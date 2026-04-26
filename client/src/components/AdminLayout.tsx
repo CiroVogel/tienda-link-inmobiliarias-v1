@@ -10,6 +10,7 @@ import {
   CalendarCheck,
   Users,
   Settings,
+  PlusSquare,
   LogOut,
   Menu,
   X,
@@ -65,8 +66,11 @@ export default function AdminLayout({ children }: { children: ReactNode }) {
       { href: "/admin/profile", label: "Perfil de la inmobiliaria", icon: Settings },
       { href: "/admin/services", label: "Propiedades", icon: Briefcase },
       { href: "/admin/gallery", label: "Galeria", icon: Images },
+      ...(isPlatformAdmin
+        ? [{ href: "/admin/nueva-inmobiliaria", label: "Crear inmobiliaria", icon: PlusSquare }]
+        : []),
     ],
-    [],
+    [isPlatformAdmin],
   );
 
   const handleLogout = async () => {

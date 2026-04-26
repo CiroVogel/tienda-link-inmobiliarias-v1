@@ -28,10 +28,30 @@ export default function PropertyList() {
   const [statusFilter, setStatusFilter] = useState<Exclude<PropertyStatus, "hidden"> | "all">(
     "all",
   );
-  const { data: publicProfile } = trpc.business.getPublic.useQuery(
+  const { data: publicProfile, isLoading: isPublicProfileLoading } = trpc.business.getPublic.useQuery(
     { slug: safeSlug },
     { enabled: Boolean(safeSlug) },
   );
+  const isDemoSlug = safeSlug === realEstateProfile.slug;
+
+  if (!isDemoSlug && !isPublicProfileLoading && !publicProfile) {
+    return (
+      <div className="flex min-h-screen items-center justify-center bg-white px-5">
+        <div className="max-w-md text-center">
+          <p className="mb-3 text-xs font-bold uppercase tracking-[0.18em] text-zinc-400">
+            Inmobiliaria no disponible
+          </p>
+          <h1 className="mb-4 text-4xl font-black text-zinc-950">
+            Este listado no está visible públicamente.
+          </h1>
+          <p className="text-sm leading-7 text-zinc-500">
+            Puede estar archivado o el slug no coincide con una inmobiliaria activa.
+          </p>
+        </div>
+      </div>
+    );
+  }
+
   const businessName =
     publicProfile?.businessName?.trim() || realEstateProfile.name;
   const brandImageUrl =

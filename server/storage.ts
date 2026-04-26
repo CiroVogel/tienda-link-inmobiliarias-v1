@@ -1,6 +1,7 @@
 import fs from "fs";
 import path from "path";
 import { randomBytes } from "crypto";
+import type { BusinessProfile } from "../drizzle/schema";
 import {
   demoProperties,
   realEstateProfile,
@@ -179,6 +180,41 @@ type BusinessMediaStore = {
   fields: Partial<Record<StoredBusinessImageField, StoredBusinessImageAsset | null>>;
 };
 
+type BusinessProfileStore = {
+  version: 1;
+  slug: string;
+  updatedAt: string;
+  profile: BusinessProfile;
+};
+
+export type StoredLocalAdminCredential = {
+  slug: string;
+  openId: string;
+  email: string;
+  passwordHash: string;
+  createdAt: string;
+  updatedAt: string;
+};
+
+type LocalAdminCredentialStore = {
+  version: 1;
+  updatedAt: string;
+  credentials: StoredLocalAdminCredential[];
+};
+
+export type StoredBusinessDirectoryEntry = {
+  slug: string;
+  businessName: string;
+  archivedAt: string | null;
+  updatedAt: string;
+};
+
+type BusinessDirectoryStore = {
+  version: 1;
+  updatedAt: string;
+  entries: StoredBusinessDirectoryEntry[];
+};
+
 const STORE_VERSION = 1 as const;
 const VISIT_REQUEST_STATUS_LABELS: Record<StoredVisitRequestStatus, string> = {
   new: "Nueva",
@@ -203,6 +239,18 @@ function buildVisitRequestStoreKey(slug: string) {
 
 function buildBusinessMediaStoreKey(slug: string) {
   return `real-estate/${normalizeSlug(slug)}/business-media.json`;
+}
+
+function buildBusinessProfileStoreKey(slug: string) {
+  return `real-estate/${normalizeSlug(slug)}/business-profile.json`;
+}
+
+function buildLocalAdminCredentialStoreKey() {
+  return "real-estate/local-admin-credentials.json";
+}
+
+function buildBusinessDirectoryStoreKey() {
+  return "real-estate/business-directory.json";
 }
 
 function sortImages(images: StoredPropertyImage[]) {
@@ -236,6 +284,70 @@ function normalizeProperty(property: StoredProperty): StoredProperty {
     featured: Boolean(property.featured),
     images: normalizeImages(property.images),
   };
+}
+
+function buildStoredBusinessProfileFromSource(
+  slug: string,
+  source: Partial<BusinessProfile> & {
+    businessName: string;
+  },
+): BusinessProfile {
+  const now = new Date();
+  const normalizedSlug = normalizeSlug(slug);
+  const cityOrAddress = source.address?.trim() || "";
+  const createdAt =
+    source.createdAt instanceof Date
+      ? source.createdAt
+      : source.createdAt
+      ? new Date(source.createdAt)
+      : now;
+  const updatedAt =
+    source.updatedAt instanceof Date
+      ? source.updatedAt
+      : source.updatedAt
+      ? new Date(source.updatedAt)
+      : now;
+
+  return {
+    id: source.id ?? 0,
+    userId: source.userId ?? 0,
+    slug: normalizedSlug,
+    businessName: source.businessName.trim(),
+    tagline: source.tagline?.trim() || "",
+    description: source.description?.trim() || "",
+    ownerName: source.ownerName?.trim() || "",
+    ownerTitle: source.ownerTitle?.trim() || "",
+    ownerBio: source.ownerBio?.trim() || null,
+    ownerImageUrl: source.ownerImageUrl ?? null,
+    logoUrl: source.logoUrl ?? null,
+    heroImageUrl: source.heroImageUrl ?? null,
+    phone: source.phone?.trim() || "",
+    whatsapp: source.whatsapp?.trim() || "",
+    email: source.email?.trim() || "",
+    address: cityOrAddress,
+    instagram: source.instagram?.trim() || "",
+    facebook: source.facebook?.trim() || "",
+    primaryColor: source.primaryColor?.trim() || "#000000",
+    accentColor: source.accentColor?.trim() || "#c9a96e",
+    paymentMpAccessToken: source.paymentMpAccessToken ?? null,
+    depositPercentage: source.depositPercentage ?? 30,
+    currency: source.currency?.trim() || "ARS",
+    createdAt,
+    updatedAt,
+  };
+}
+
+function buildDemoStoredBusinessProfile() {
+  return buildStoredBusinessProfileFromSource(realEstateProfile.slug, {
+    businessName: realEstateProfile.name,
+    tagline: realEstateProfile.tagline,
+    description: realEstateProfile.description,
+    phone: realEstateProfile.phone,
+    whatsapp: realEstateProfile.whatsapp,
+    email: realEstateProfile.email,
+    address: realEstateProfile.address,
+    instagram: realEstateProfile.instagram,
+  });
 }
 
 function seedProperty(property: DemoProperty, slug: string, sortOrder: number): StoredProperty {
@@ -321,6 +433,55 @@ async function readStore(slug: string): Promise<PropertyStore> {
     const initialStore = buildInitialStore(normalizedSlug);
     await writeStore(normalizedSlug, initialStore);
     return initialStore;
+  }
+}
+
+async function writeBusinessDirectoryStore(store: BusinessDirectoryStore) {
+  ensureUploadsDir();
+  const { diskPath } = getUploadDiskPath(buildBusinessDirectoryStoreKey());
+  const nextStore: BusinessDirectoryStore = {
+    version: STORE_VERSION,
+    updatedAt: new Date().toISOString(),
+    entries: [...store.entries]
+      .map((entry) => ({
+        slug: normalizeSlug(entry.slug),
+        businessName: entry.businessName.trim(),
+        archivedAt: entry.archivedAt ?? null,
+        updatedAt: entry.updatedAt,
+      }))
+      .sort((left, right) => left.slug.localeCompare(right.slug)),
+  };
+
+  await fs.promises.mkdir(path.dirname(diskPath), { recursive: true });
+  const tempPath = `${diskPath}.tmp`;
+  await fs.promises.writeFile(tempPath, JSON.stringify(nextStore, null, 2), "utf8");
+  await fs.promises.rename(tempPath, diskPath);
+}
+
+async function readBusinessDirectoryStore(): Promise<BusinessDirectoryStore> {
+  ensureUploadsDir();
+  const { diskPath } = getUploadDiskPath(buildBusinessDirectoryStoreKey());
+
+  try {
+    const raw = await fs.promises.readFile(diskPath, "utf8");
+    const parsed = JSON.parse(raw) as BusinessDirectoryStore;
+    return {
+      version: STORE_VERSION,
+      updatedAt: parsed.updatedAt ?? new Date().toISOString(),
+      entries: (parsed.entries ?? []).map((entry) => ({
+        slug: normalizeSlug(entry.slug),
+        businessName: entry.businessName?.trim() || normalizeSlug(entry.slug),
+        archivedAt: entry.archivedAt ?? null,
+        updatedAt: entry.updatedAt ?? new Date().toISOString(),
+      })),
+    };
+  } catch (error) {
+    if ((error as NodeJS.ErrnoException).code !== "ENOENT") throw error;
+    return {
+      version: STORE_VERSION,
+      updatedAt: new Date().toISOString(),
+      entries: [],
+    };
   }
 }
 
@@ -424,6 +585,102 @@ async function readBusinessMediaStore(slug: string): Promise<BusinessMediaStore>
     };
 
     await writeBusinessMediaStore(normalizedSlug, initialStore);
+    return initialStore;
+  }
+}
+
+async function writeBusinessProfileStore(slug: string, profile: BusinessProfile) {
+  ensureUploadsDir();
+  const normalizedSlug = normalizeSlug(slug);
+  const { diskPath } = getUploadDiskPath(buildBusinessProfileStoreKey(normalizedSlug));
+  const nextProfile = buildStoredBusinessProfileFromSource(normalizedSlug, {
+    ...profile,
+    slug: normalizedSlug,
+  });
+  const nextStore: BusinessProfileStore = {
+    version: STORE_VERSION,
+    slug: normalizedSlug,
+    updatedAt: new Date().toISOString(),
+    profile: nextProfile,
+  };
+
+  await fs.promises.mkdir(path.dirname(diskPath), { recursive: true });
+  const tempPath = `${diskPath}.tmp`;
+  await fs.promises.writeFile(tempPath, JSON.stringify(nextStore, null, 2), "utf8");
+  await fs.promises.rename(tempPath, diskPath);
+}
+
+async function readBusinessProfileStore(slug: string): Promise<BusinessProfileStore | null> {
+  ensureUploadsDir();
+  const normalizedSlug = normalizeSlug(slug);
+  const { diskPath } = getUploadDiskPath(buildBusinessProfileStoreKey(normalizedSlug));
+
+  try {
+    const raw = await fs.promises.readFile(diskPath, "utf8");
+    const parsed = JSON.parse(raw) as BusinessProfileStore;
+
+    return {
+      version: STORE_VERSION,
+      slug: normalizedSlug,
+      updatedAt: parsed.updatedAt ?? new Date().toISOString(),
+      profile: buildStoredBusinessProfileFromSource(normalizedSlug, {
+        ...parsed.profile,
+        slug: normalizedSlug,
+      }),
+    };
+  } catch (error) {
+    if ((error as NodeJS.ErrnoException).code !== "ENOENT") throw error;
+    return null;
+  }
+}
+
+async function writeLocalAdminCredentialStore(store: LocalAdminCredentialStore) {
+  ensureUploadsDir();
+  const { diskPath } = getUploadDiskPath(buildLocalAdminCredentialStoreKey());
+  const nextStore: LocalAdminCredentialStore = {
+    version: STORE_VERSION,
+    updatedAt: new Date().toISOString(),
+    credentials: [...store.credentials].map((credential) => ({
+      ...credential,
+      slug: normalizeSlug(credential.slug),
+      openId: credential.openId,
+      email: credential.email.trim().toLowerCase(),
+    })),
+  };
+
+  await fs.promises.mkdir(path.dirname(diskPath), { recursive: true });
+  const tempPath = `${diskPath}.tmp`;
+  await fs.promises.writeFile(tempPath, JSON.stringify(nextStore, null, 2), "utf8");
+  await fs.promises.rename(tempPath, diskPath);
+}
+
+async function readLocalAdminCredentialStore(): Promise<LocalAdminCredentialStore> {
+  ensureUploadsDir();
+  const { diskPath } = getUploadDiskPath(buildLocalAdminCredentialStoreKey());
+
+  try {
+    const raw = await fs.promises.readFile(diskPath, "utf8");
+    const parsed = JSON.parse(raw) as LocalAdminCredentialStore;
+
+    return {
+      version: STORE_VERSION,
+      updatedAt: parsed.updatedAt ?? new Date().toISOString(),
+      credentials: (parsed.credentials ?? []).map((credential) => ({
+        ...credential,
+        slug: normalizeSlug(credential.slug),
+        email: credential.email.trim().toLowerCase(),
+      })),
+    };
+  } catch (error) {
+    if ((error as NodeJS.ErrnoException).code !== "ENOENT") throw error;
+
+    const initialStore: LocalAdminCredentialStore = {
+      version: STORE_VERSION,
+      updatedAt: new Date().toISOString(),
+      credentials: [],
+    };
+
+    await writeLocalAdminCredentialStore(initialStore);
     return initialStore;
   }
 }
@@ -997,4 +1254,252 @@ export async function removeStoredBusinessImage(
   });
 
   return { success: true } as const;
+}
+
+export async function initializeRealEstateTenant(slug: string) {
+  const normalizedSlug = normalizeSlug(slug);
+  await Promise.all([
+    readStore(normalizedSlug),
+    readVisitRequestStore(normalizedSlug),
+    readBusinessMediaStore(normalizedSlug),
+  ]);
+
+  return { slug: normalizedSlug } as const;
+}
+
+export function buildStoredLocalAdminOpenId(slug: string) {
+  return `local-admin:${normalizeSlug(slug)}`;
+}
+
+export async function getStoredBusinessProfile(slug: string): Promise<BusinessProfile | null> {
+  const normalizedSlug = normalizeSlug(slug);
+  const store = await readBusinessProfileStore(normalizedSlug);
+
+  if (store) {
+    return store.profile;
+  }
+
+  if (normalizedSlug === normalizeSlug(realEstateProfile.slug)) {
+    return buildDemoStoredBusinessProfile();
+  }
+
+  return null;
+}
+
+export async function upsertStoredBusinessProfile(
+  slug: string,
+  input: Partial<BusinessProfile>,
+): Promise<BusinessProfile> {
+  const normalizedSlug = normalizeSlug(slug);
+  const existingProfile = await getStoredBusinessProfile(normalizedSlug);
+  const baseProfile =
+    existingProfile ??
+    buildStoredBusinessProfileFromSource(normalizedSlug, {
+      businessName: input.businessName?.trim() || "Mi inmobiliaria",
+      address: input.address?.trim() || "",
+    });
+
+  const nextProfile = buildStoredBusinessProfileFromSource(normalizedSlug, {
+    ...baseProfile,
+    ...input,
+    slug: normalizedSlug,
+    businessName: input.businessName?.trim() || baseProfile.businessName,
+    updatedAt: new Date(),
+  });
+
+  await writeBusinessProfileStore(normalizedSlug, nextProfile);
+  return nextProfile;
+}
+
+export async function getStoredLocalAdminCredentialByEmail(email: string) {
+  const store = await readLocalAdminCredentialStore();
+  const normalizedEmail = email.trim().toLowerCase();
+  return store.credentials.find((credential) => credential.email === normalizedEmail) ?? null;
+}
+
+export async function getStoredLocalAdminCredentialByOpenId(openId: string) {
+  const store = await readLocalAdminCredentialStore();
+  return store.credentials.find((credential) => credential.openId === openId) ?? null;
+}
+
+export async function listStoredBusinessDirectoryEntries(): Promise<StoredBusinessDirectoryEntry[]> {
+  const store = await readBusinessDirectoryStore();
+  return [...store.entries];
+}
+
+export async function isStoredBusinessArchived(slug: string): Promise<boolean> {
+  const normalizedSlug = normalizeSlug(slug);
+  const store = await readBusinessDirectoryStore();
+  const entry = store.entries.find((item) => item.slug === normalizedSlug);
+  return Boolean(entry?.archivedAt);
+}
+
+export async function setStoredBusinessArchivedState(input: {
+  slug: string;
+  businessName?: string;
+  archived: boolean;
+}) {
+  const normalizedSlug = normalizeSlug(input.slug);
+  const store = await readBusinessDirectoryStore();
+  const now = new Date().toISOString();
+  const existingIndex = store.entries.findIndex((entry) => entry.slug === normalizedSlug);
+  const previousEntry = existingIndex >= 0 ? store.entries[existingIndex]! : null;
+
+  const nextEntry: StoredBusinessDirectoryEntry = {
+    slug: normalizedSlug,
+    businessName:
+      input.businessName?.trim() ||
+      previousEntry?.businessName ||
+      normalizedSlug,
+    archivedAt: input.archived ? previousEntry?.archivedAt ?? now : null,
+    updatedAt: now,
+  };
+
+  const nextEntries = [...store.entries];
+  if (existingIndex >= 0) {
+    nextEntries[existingIndex] = nextEntry;
+  } else {
+    nextEntries.push(nextEntry);
+  }
+
+  await writeBusinessDirectoryStore({
+    ...store,
+    entries: nextEntries,
+  });
+
+  return nextEntry;
+}
+
+export async function setStoredLocalAdminCredential(input: {
+  slug: string;
+  email: string;
+  passwordHash: string;
+}) {
+  const store = await readLocalAdminCredentialStore();
+  const normalizedSlug = normalizeSlug(input.slug);
+  const normalizedEmail = input.email.trim().toLowerCase();
+
+  const duplicateEmail = store.credentials.find(
+    (credential) =>
+      credential.email === normalizedEmail && credential.slug !== normalizedSlug,
+  );
+  if (duplicateEmail) {
+    throw new Error("Ese email admin ya existe");
+  }
+
+  const now = new Date().toISOString();
+  const openId = buildStoredLocalAdminOpenId(normalizedSlug);
+  const existingIndex = store.credentials.findIndex(
+    (credential) => credential.slug === normalizedSlug,
+  );
+
+  const nextCredential: StoredLocalAdminCredential = {
+    slug: normalizedSlug,
+    openId,
+    email: normalizedEmail,
+    passwordHash: input.passwordHash,
+    createdAt:
+      existingIndex >= 0 ? store.credentials[existingIndex]!.createdAt : now,
+    updatedAt: now,
+  };
+
+  const nextCredentials = [...store.credentials];
+  if (existingIndex >= 0) {
+    nextCredentials[existingIndex] = nextCredential;
+  } else {
+    nextCredentials.push(nextCredential);
+  }
+
+  await writeLocalAdminCredentialStore({
+    ...store,
+    credentials: nextCredentials,
+  });
+
+  return nextCredential;
+}
+
+export async function createStoredBusinessPage(input: {
+  businessName: string;
+  slug: string;
+  city: string;
+  whatsapp?: string;
+  email?: string;
+  address?: string;
+  description?: string;
+  adminEmail: string;
+  passwordHash: string;
+}) {
+  const normalizedSlug = normalizeSlug(input.slug);
+  if (!normalizedSlug) {
+    throw new Error("El slug es obligatorio");
+  }
+
+  if (normalizedSlug === normalizeSlug(realEstateProfile.slug)) {
+    throw new Error("Ese slug ya existe");
+  }
+
+  const existingProfile = await readBusinessProfileStore(normalizedSlug);
+  if (existingProfile) {
+    throw new Error("Ese slug ya existe");
+  }
+
+  const existingCredential = await getStoredLocalAdminCredentialByEmail(input.adminEmail);
+  if (existingCredential) {
+    throw new Error("Ese email admin ya existe");
+  }
+
+  const profile = buildStoredBusinessProfileFromSource(normalizedSlug, {
+    businessName: input.businessName.trim(),
+    whatsapp: input.whatsapp?.trim() || "",
+    email: input.email?.trim() || "",
+    address: input.address?.trim() || input.city.trim(),
+    description:
+      input.description?.trim() ||
+      `Inmobiliaria enfocada en propiedades de ${input.city.trim()}.`,
+    tagline: `Propiedades en venta y alquiler en ${input.city.trim()}.`,
+  });
+
+  await writeBusinessProfileStore(normalizedSlug, profile);
+  const credential = await setStoredLocalAdminCredential({
+    slug: normalizedSlug,
+    email: input.adminEmail,
+    passwordHash: input.passwordHash,
+  });
+  await initializeRealEstateTenant(normalizedSlug);
+  await setStoredBusinessArchivedState({
+    slug: normalizedSlug,
+    businessName: input.businessName.trim(),
+    archived: false,
+  });
+
+  return {
+    profile,
+    credential,
+  };
+}
+
+export async function listStoredBusinessProfiles(): Promise<BusinessProfile[]> {
+  ensureUploadsDir();
+  const baseDir = path.join(process.cwd(), "uploads", "real-estate");
+
+  let entries: fs.Dirent[] = [];
+  try {
+    entries = await fs.promises.readdir(baseDir, { withFileTypes: true });
+  } catch (error) {
+    if ((error as NodeJS.ErrnoException).code !== "ENOENT") throw error;
+  }
+
+  const profiles: BusinessProfile[] = [];
+
+  for (const entry of entries) {
+    if (!entry.isDirectory()) continue;
+    const profile = await getStoredBusinessProfile(entry.name);
+    if (profile) {
+      profiles.push(profile);
+    }
+  }
+
+  return profiles.sort((left, right) =>
+    left.businessName.localeCompare(right.businessName),
+  );
 }

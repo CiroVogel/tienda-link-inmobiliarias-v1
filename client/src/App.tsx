@@ -47,6 +47,7 @@ function Router() {
       <Route path="/admin/gallery" component={AdminGallery} />
       <Route path="/admin/availability" component={AdminAvailability} />
       <Route path="/admin/create-page" component={AdminCreatePage} />
+      <Route path="/admin/nueva-inmobiliaria" component={AdminCreatePage} />
 
       <Route
         path="/"

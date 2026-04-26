@@ -49,12 +49,19 @@ import { createMercadoPagoPreference } from "./mercadopago";
 import {
   addStoredVisitRequestNote,
   addStoredPropertyImage,
+  createStoredBusinessPage,
   createStoredVisitRequest,
   createStoredProperty,
   deleteStoredPropertyImage,
   getPublicProperty,
+  getStoredBusinessProfile,
+  isStoredBusinessArchived,
+  getStoredLocalAdminCredentialByOpenId,
   getStoredVisitRequest,
   getStoredBusinessImageOverrides,
+  initializeRealEstateTenant,
+  listStoredBusinessDirectoryEntries,
+  listStoredBusinessProfiles,
   listPublicProperties,
   listStoredProperties,
   listStoredVisitRequests,
@@ -62,8 +69,11 @@ import {
   removeStoredBusinessImage,
   reorderStoredPropertyImages,
   setStoredBusinessImage,
+  setStoredBusinessArchivedState,
   setStoredPropertyPrimaryImage,
   storagePut,
+  upsertStoredBusinessProfile,
+  setStoredLocalAdminCredential,
   updateStoredVisitRequestStatus,
   updateStoredProperty,
 } from "./storage";
@@ -168,7 +178,16 @@ async function getAdminBusinessProfile(user: User): Promise<BusinessProfile | nu
   }
 
   if (user.openId === "local-admin") {
-    return applyStoredBusinessImages(buildLocalBusinessProfile(user.id));
+    const storedDemoProfile = await getStoredBusinessProfile(realEstateProfile.slug);
+    return applyStoredBusinessImages(storedDemoProfile ?? buildLocalBusinessProfile(user.id));
+  }
+
+  if (user.openId.startsWith("local-admin:")) {
+    const slug = user.openId.slice("local-admin:".length);
+    const storedProfile = await getStoredBusinessProfile(slug);
+    if (storedProfile) {
+      return applyStoredBusinessImages(storedProfile);
+    }
   }
 
   return null;
@@ -188,9 +207,18 @@ async function applyStoredBusinessImages(profile: BusinessProfile): Promise<Busi
 }
 
 async function getResolvedPublicBusinessProfile(slug: string): Promise<BusinessProfile | null> {
+  if (await isStoredBusinessArchived(slug)) {
+    return null;
+  }
+
   const profile = await getPublicBusinessProfile(slug);
   if (profile) {
     return applyStoredBusinessImages(profile);
+  }
+
+  const storedProfile = await getStoredBusinessProfile(slug);
+  if (storedProfile) {
+    return applyStoredBusinessImages(storedProfile);
   }
 
   if (slug.trim().toLowerCase() === realEstateProfile.slug) {
@@ -198,6 +226,34 @@ async function getResolvedPublicBusinessProfile(slug: string): Promise<BusinessP
   }
 
   return null;
+}
+
+async function updateAdminBusinessProfile(
+  user: User,
+  input: Partial<BusinessProfile>,
+): Promise<BusinessProfile> {
+  const profile = await getBusinessProfile(user.id);
+  if (profile) {
+    return upsertBusinessProfile(user.id, input);
+  }
+
+  if (user.openId === "local-admin") {
+    return upsertStoredBusinessProfile(realEstateProfile.slug, input);
+  }
+
+  if (user.openId.startsWith("local-admin:")) {
+    const slug = user.openId.slice("local-admin:".length);
+    if (input.slug && input.slug.trim().toLowerCase() !== slug.trim().toLowerCase()) {
+      throw new TRPCError({
+        code: "BAD_REQUEST",
+        message: "Cambiar el slug no está disponible en este entorno local",
+      });
+    }
+
+    return upsertStoredBusinessProfile(slug, input);
+  }
+
+  throw new TRPCError({ code: "NOT_FOUND", message: "Perfil no encontrado" });
 }
 
 function hashPassword(password: string) {
@@ -504,7 +560,9 @@ export const appRouter = router({
   me: publicProcedure.query((opts) => opts.ctx.user),
 
   passwordStatus: protectedProcedure.query(async ({ ctx }) => {
-    const credential = await getLocalAdminCredentialByUserId(ctx.user.id);
+    const credential =
+      (await getLocalAdminCredentialByUserId(ctx.user.id)) ??
+      (await getStoredLocalAdminCredentialByOpenId(ctx.user.openId));
 
     return {
       email: credential?.email ?? ctx.user.email ?? null,
@@ -520,7 +578,9 @@ export const appRouter = router({
       })
     )
     .mutation(async ({ ctx, input }) => {
-      const credential = await getLocalAdminCredentialByUserId(ctx.user.id);
+      const credential =
+        (await getLocalAdminCredentialByUserId(ctx.user.id)) ??
+        (await getStoredLocalAdminCredentialByOpenId(ctx.user.openId));
       const email = (credential?.email ?? ctx.user.email ?? "").trim().toLowerCase();
 
       if (!email) {
@@ -551,10 +611,32 @@ export const appRouter = router({
         }
       }
 
-      await upsertLocalAdminCredential(ctx.user.id, {
-        email,
-        passwordHash: hashPassword(input.newPassword),
-      });
+      if (ctx.user.id > 0) {
+        await upsertLocalAdminCredential(ctx.user.id, {
+          email,
+          passwordHash: hashPassword(input.newPassword),
+        });
+      } else {
+        const slug =
+          ctx.user.openId === "local-admin"
+            ? realEstateProfile.slug
+            : ctx.user.openId.startsWith("local-admin:")
+            ? ctx.user.openId.slice("local-admin:".length)
+            : "";
+
+        if (!slug) {
+          throw new TRPCError({
+            code: "BAD_REQUEST",
+            message: "No se pudo resolver la inmobiliaria actual",
+          });
+        }
+
+        await setStoredLocalAdminCredential({
+          slug,
+          email,
+          passwordHash: hashPassword(input.newPassword),
+        });
+      }
 
       return {
         success: true,
@@ -678,6 +760,9 @@ export const appRouter = router({
     listPublic: publicProcedure
       .input(z.object({ slug: slugSchema }))
       .query(async ({ input }) => {
+        if (await isStoredBusinessArchived(input.slug)) {
+          return [];
+        }
         return listPublicProperties(input.slug);
       }),
 
@@ -689,6 +774,9 @@ export const appRouter = router({
         }),
       )
       .query(async ({ input }) => {
+        if (await isStoredBusinessArchived(input.slug)) {
+          return null;
+        }
         return getPublicProperty(input.slug, input.id);
       }),
 
@@ -808,7 +896,34 @@ export const appRouter = router({
       }),
 
     listAll: publicProcedure.query(async () => {
-      return listAllBusinessProfiles();
+      const [dbProfiles, storedProfiles, directoryEntries] = await Promise.all([
+        listAllBusinessProfiles(),
+        listStoredBusinessProfiles(),
+        listStoredBusinessDirectoryEntries(),
+      ]);
+      const archivedSlugs = new Set(
+        directoryEntries
+          .filter((entry) => Boolean(entry.archivedAt))
+          .map((entry) => entry.slug.trim().toLowerCase()),
+      );
+
+      const merged = new Map<string, BusinessProfile>();
+      [...storedProfiles, ...dbProfiles].forEach((profile) => {
+        merged.set(profile.slug.trim().toLowerCase(), profile);
+      });
+
+      return Array.from(merged.values())
+        .map((profile) => ({
+          ...profile,
+          isArchived: archivedSlugs.has(profile.slug.trim().toLowerCase()),
+        }))
+        .sort((left, right) => {
+          if (left.isArchived !== right.isArchived) {
+            return left.isArchived ? 1 : -1;
+          }
+
+          return left.businessName.localeCompare(right.businessName);
+        });
     }),
 
     get: protectedProcedure.query(async ({ ctx }) => {
@@ -820,31 +935,123 @@ export const appRouter = router({
         z.object({
           businessName: z.string().min(1).max(200),
           slug: slugSchema,
+          city: z.string().min(1).max(160),
           whatsapp: z.string().max(30).optional(),
+          email: z.string().email().max(320).optional(),
+          address: z.string().max(240).optional(),
+          description: z.string().max(1000).optional(),
           tagline: z.string().max(300).optional(),
           adminEmail: z.string().email(),
           adminPassword: z.string().min(6).max(100),
         })
       )
       .mutation(async ({ input }) => {
-        const result = await createBusinessPageWithLocalAdmin({
-          businessName: input.businessName,
-          slug: input.slug,
-          whatsapp: input.whatsapp,
-          tagline: input.tagline,
-          adminEmail: input.adminEmail,
-          passwordHash: hashPassword(input.adminPassword),
+        if (input.slug.trim().toLowerCase() === realEstateProfile.slug) {
+          throw new TRPCError({
+            code: "BAD_REQUEST",
+            message: "Ese slug ya está en uso por la demo actual",
+          });
+        }
+
+        const passwordHash = hashPassword(input.adminPassword);
+        let result:
+          | {
+              profile: BusinessProfile;
+              credential: { email: string };
+              user: { id: number };
+            }
+          | {
+              profile: BusinessProfile;
+              credential: { email: string };
+            };
+
+        try {
+          result = await createBusinessPageWithLocalAdmin({
+            businessName: input.businessName,
+            slug: input.slug,
+            city: input.city,
+            whatsapp: input.whatsapp,
+            email: input.email,
+            address: input.address,
+            description: input.description,
+            tagline: input.tagline,
+            adminEmail: input.adminEmail,
+            passwordHash,
+          });
+        } catch (error) {
+          if ((error as Error).message !== "Database not available") {
+            throw error;
+          }
+
+          result = await createStoredBusinessPage({
+            businessName: input.businessName,
+            slug: input.slug,
+            city: input.city,
+            whatsapp: input.whatsapp,
+            email: input.email,
+            address: input.address,
+            description: input.description,
+            adminEmail: input.adminEmail,
+            passwordHash,
+          });
+        }
+
+        await initializeRealEstateTenant(result.profile.slug);
+        await setStoredBusinessArchivedState({
+          slug: result.profile.slug,
+          businessName: result.profile.businessName,
+          archived: false,
         });
 
         return {
           success: true,
           businessId: result.profile.id,
-          userId: result.user.id,
+          userId: "user" in result ? result.user.id : 0,
           slug: result.profile.slug,
           businessName: result.profile.businessName,
           adminEmail: result.credential.email,
           publicPath: `/${result.profile.slug}`,
           adminLoginPath: "/admin-login",
+        };
+      }),
+
+    setPageArchived: platformAdminProcedure
+      .input(
+        z.object({
+          slug: slugSchema,
+          archived: z.boolean(),
+        }),
+      )
+      .mutation(async ({ input }) => {
+        const normalizedSlug = input.slug.trim().toLowerCase();
+        if (normalizedSlug === realEstateProfile.slug) {
+          throw new TRPCError({
+            code: "BAD_REQUEST",
+            message: "La demo principal no se puede archivar",
+          });
+        }
+
+        const dbProfile = await getPublicBusinessProfile(normalizedSlug);
+        const storedProfile = await getStoredBusinessProfile(normalizedSlug);
+        const profile = dbProfile ?? storedProfile;
+
+        if (!profile) {
+          throw new TRPCError({
+            code: "NOT_FOUND",
+            message: "No encontramos esa inmobiliaria",
+          });
+        }
+
+        const state = await setStoredBusinessArchivedState({
+          slug: normalizedSlug,
+          businessName: profile.businessName,
+          archived: input.archived,
+        });
+
+        return {
+          success: true,
+          slug: normalizedSlug,
+          isArchived: Boolean(state.archivedAt),
         };
       }),
 
@@ -875,7 +1082,7 @@ export const appRouter = router({
         })
       )
       .mutation(async ({ ctx, input }) => {
-        return upsertBusinessProfile(ctx.user.id, input);
+        return updateAdminBusinessProfile(ctx.user, input);
       }),
 
     uploadImage: adminProcedure

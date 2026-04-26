@@ -376,10 +376,29 @@ export default function Home({ forcedSlug }: HomeProps) {
   const params = useParams<{ slug: string }>();
   const slug = forcedSlug ?? params.slug ?? realEstateProfile.slug;
   const { properties } = usePublicProperties(slug);
-  const { data: publicProfile } = trpc.business.getPublic.useQuery(
+  const { data: publicProfile, isLoading: isPublicProfileLoading } = trpc.business.getPublic.useQuery(
     { slug },
     { enabled: Boolean(slug) },
   );
+  const isDemoSlug = slug === realEstateProfile.slug;
+
+  if (!isDemoSlug && !isPublicProfileLoading && !publicProfile) {
+    return (
+      <div className="flex min-h-screen items-center justify-center bg-white px-5">
+        <div className="max-w-md text-center">
+          <p className="mb-3 text-xs font-bold uppercase tracking-[0.18em] text-zinc-400">
+            Inmobiliaria no disponible
+          </p>
+          <h1 className="mb-4 text-4xl font-black text-zinc-950">
+            Esta página no está pública en este momento.
+          </h1>
+          <p className="text-sm leading-7 text-zinc-500">
+            Si necesitas acceso, te conviene revisar el slug o entrar desde la administración central.
+          </p>
+        </div>
+      </div>
+    );
+  }
 
   const businessName =
     publicProfile?.businessName?.trim() || realEstateProfile.name;

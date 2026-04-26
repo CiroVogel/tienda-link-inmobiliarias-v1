@@ -5,6 +5,7 @@ import type { User } from "../../drizzle/schema";
 import * as db from "../db";
 import { ENV } from "./env";
 import { sdk } from "./sdk";
+import { getStoredLocalAdminCredentialByEmail } from "../storage";
 
 const LOCAL_ADMIN_OPEN_ID = "local-admin";
 
@@ -139,6 +140,22 @@ export function registerLocalAuthRoutes(app: Express) {
         });
 
         await createSessionForUser(res, user);
+        res.json({ ok: true });
+        return;
+      }
+
+      const storedCredential = await getStoredLocalAdminCredentialByEmail(normalizedEmail);
+      if (storedCredential) {
+        const validPassword = verifyPassword(String(password), storedCredential.passwordHash);
+        if (!validPassword) {
+          res.status(401).json({ error: "Credenciales incorrectas" });
+          return;
+        }
+
+        await createSessionForUser(res, {
+          openId: storedCredential.openId,
+          name: storedCredential.slug,
+        });
         res.json({ ok: true });
         return;
       }

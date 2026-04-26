@@ -7,6 +7,10 @@ import { SignJWT, jwtVerify } from "jose";
 import type { User } from "../../drizzle/schema";
 import * as db from "../db";
 import { ENV } from "./env";
+import {
+  getStoredBusinessProfile,
+  getStoredLocalAdminCredentialByOpenId,
+} from "../storage";
 import type {
   ExchangeTokenRequest,
   ExchangeTokenResponse,
@@ -38,6 +42,39 @@ function buildLocalDevAdminUser(): User {
     openId: LOCAL_ADMIN_OPEN_ID,
     name: "Admin Local",
     email: ENV.adminEmail,
+    loginMethod: "local",
+    role: "admin",
+    createdAt: now,
+    updatedAt: now,
+    lastSignedIn: now,
+  };
+}
+
+async function buildStoredLocalAdminUser(openId: string): Promise<User | null> {
+  if (!openId.startsWith(`${LOCAL_ADMIN_OPEN_ID}:`)) {
+    return null;
+  }
+
+  const slug = openId.slice(`${LOCAL_ADMIN_OPEN_ID}:`.length).trim().toLowerCase();
+  if (!slug) {
+    return null;
+  }
+
+  const [profile, credential] = await Promise.all([
+    getStoredBusinessProfile(slug),
+    getStoredLocalAdminCredentialByOpenId(openId),
+  ]);
+
+  if (!profile || !credential) {
+    return null;
+  }
+
+  const now = new Date();
+  return {
+    id: 0,
+    openId,
+    name: profile.businessName,
+    email: credential.email,
     loginMethod: "local",
     role: "admin",
     createdAt: now,
@@ -267,10 +304,13 @@ class SDKServer {
     const sessionUserId = session.openId;
     const signedInAt = new Date();
     let user = await db.getUserByOpenId(sessionUserId);
+    const isLocalSession =
+      sessionUserId === LOCAL_ADMIN_OPEN_ID ||
+      sessionUserId.startsWith(`${LOCAL_ADMIN_OPEN_ID}:`);
 
     // If user not in DB, sync from OAuth server automatically
-    // Skip OAuth sync for local-admin (created by localAuth.ts)
-    if (!user && sessionUserId !== "local-admin") {
+    // Skip OAuth sync for local admin sessions created in localAuth/storage.
+    if (!user && !isLocalSession) {
       try {
         const userInfo = await this.getUserInfoWithJwt(sessionCookie ?? "");
         await db.upsertUser({
@@ -290,6 +330,11 @@ class SDKServer {
     if (!user) {
       if (sessionUserId === LOCAL_ADMIN_OPEN_ID) {
         return buildLocalDevAdminUser();
+      }
+
+      const storedLocalAdmin = await buildStoredLocalAdminUser(sessionUserId);
+      if (storedLocalAdmin) {
+        return storedLocalAdmin;
       }
 
       throw ForbiddenError("User not found");

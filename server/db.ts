@@ -178,7 +178,11 @@ export async function upsertLocalAdminCredential(
 type CreateBusinessPageInput = {
   businessName: string;
   slug: string;
+  city: string;
   whatsapp?: string;
+  email?: string;
+  address?: string;
+  description?: string;
   tagline?: string;
   adminEmail: string;
   passwordHash: string;
@@ -196,12 +200,17 @@ export async function createBusinessPageWithLocalAdmin(
 
   const businessName = input.businessName.trim();
   const slug = normalizeSlug(input.slug);
+  const city = input.city.trim();
   const adminEmail = normalizeEmail(input.adminEmail);
   const whatsapp = input.whatsapp?.trim() ?? "";
+  const email = input.email?.trim() ?? "";
+  const address = input.address?.trim() || city;
+  const description = input.description?.trim() ?? "";
   const tagline = input.tagline?.trim() ?? "";
 
   if (!businessName) throw new Error("El nombre del negocio es obligatorio");
   if (!slug) throw new Error("El slug es obligatorio");
+  if (!city) throw new Error("La ciudad o zona principal es obligatoria");
   if (!adminEmail) throw new Error("El email admin es obligatorio");
   if (!input.passwordHash) throw new Error("La contraseña es obligatoria");
 
@@ -243,7 +252,11 @@ export async function createBusinessPageWithLocalAdmin(
       slug,
       businessName,
       whatsapp,
-      tagline,
+      email,
+      address,
+      description:
+        description || `Inmobiliaria enfocada en propiedades de ${city}.`,
+      tagline: tagline || `Propiedades en venta y alquiler en ${city}.`,
     });
 
     await tx.insert(localAdminCredentials).values({
