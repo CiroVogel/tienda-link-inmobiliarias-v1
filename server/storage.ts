@@ -202,6 +202,77 @@ type LocalAdminCredentialStore = {
   credentials: StoredLocalAdminCredential[];
 };
 
+export type StoredSavedSearchOperation = "buy" | "rent" | "both";
+export type StoredSavedSearchBedrooms =
+  | "studio"
+  | "1"
+  | "2"
+  | "3"
+  | "4_plus"
+  | "any";
+export type StoredSavedSearchStatus =
+  | "new"
+  | "searching"
+  | "matched"
+  | "contacted"
+  | "closed"
+  | "not_interested";
+
+export type StoredSavedSearchNote = {
+  id: string;
+  text: string;
+  createdAt: string;
+};
+
+export type StoredSavedSearch = {
+  id: string;
+  slug: string;
+  name: string;
+  whatsapp: string;
+  operationType: StoredSavedSearchOperation;
+  propertyType: string;
+  zone: string;
+  budget: string;
+  bedrooms: StoredSavedSearchBedrooms;
+  comments: string | null;
+  status: StoredSavedSearchStatus;
+  notes: string | null;
+  createdAt: string;
+  updatedAt: string;
+};
+
+export type SavedSearchMutationInput = {
+  name: string;
+  whatsapp: string;
+  operationType: StoredSavedSearchOperation;
+  propertyType: string;
+  zone: string;
+  budget: string;
+  bedrooms: StoredSavedSearchBedrooms;
+  comments?: string;
+};
+
+type SavedSearchStore = {
+  version: 1;
+  slug: string;
+  updatedAt: string;
+  searches: StoredSavedSearch[];
+};
+
+type SavedSearchMetaEntry = {
+  searchId: string;
+  isArchived: boolean;
+  notes: StoredSavedSearchNote[];
+  updatedAt: string;
+};
+
+type SavedSearchMetaStore = {
+  version: 1;
+  slug: string;
+  updatedAt: string;
+  entries: SavedSearchMetaEntry[];
+};
+
 export type StoredBusinessDirectoryEntry = {
   slug: string;
   businessName: string;
@@ -247,6 +318,14 @@ function buildBusinessProfileStoreKey(slug: string) {
 
 function buildLocalAdminCredentialStoreKey() {
   return "real-estate/local-admin-credentials.json";
+}
+
+function buildSavedSearchStoreKey(slug: string) {
+  return `real-estate/${normalizeSlug(slug)}/saved-searches.json`;
+}
+
+function buildSavedSearchMetaStoreKey(slug: string) {
+  return `real-estate/${normalizeSlug(slug)}/saved-search-meta.json`;
 }
 
 function buildBusinessDirectoryStoreKey() {
@@ -432,6 +511,160 @@ async function readStore(slug: string): Promise<PropertyStore> {
     if ((error as NodeJS.ErrnoException).code !== "ENOENT") throw error;
     const initialStore = buildInitialStore(normalizedSlug);
     await writeStore(normalizedSlug, initialStore);
+    return initialStore;
+  }
+}
+
+function normalizeSavedSearch(search: StoredSavedSearch): StoredSavedSearch {
+  return {
+    ...search,
+    slug: normalizeSlug(search.slug),
+    name: search.name.trim(),
+    whatsapp: search.whatsapp.trim(),
+    propertyType: search.propertyType.trim(),
+    zone: search.zone.trim(),
+    budget: search.budget.trim(),
+    comments: search.comments?.trim() || null,
+    notes: search.notes?.trim() || null,
+  };
+}
+
+function normalizeSavedSearchNote(note: StoredSavedSearchNote): StoredSavedSearchNote {
+  return {
+    id: note.id,
+    text: note.text.trim(),
+    createdAt: note.createdAt,
+  };
+}
+
+function normalizeSavedSearchMetaEntry(entry: SavedSearchMetaEntry): SavedSearchMetaEntry {
+  return {
+    searchId: entry.searchId,
+    isArchived: Boolean(entry.isArchived),
+    notes: (entry.notes ?? [])
+      .map((note) => normalizeSavedSearchNote(note))
+      .filter((note) => note.text.length > 0)
+      .sort((a, b) => b.createdAt.localeCompare(a.createdAt)),
+    updatedAt: entry.updatedAt ?? new Date().toISOString(),
+  };
+}
+
+function buildSavedSearchId() {
+  return `search-${Date.now().toString(36)}-${randomBytes(3).toString("hex")}`;
+}
+
+function buildSavedSearchNoteId() {
+  return `search-note-${Date.now().toString(36)}-${randomBytes(3).toString("hex")}`;
+}
+
+async function writeSavedSearchStore(slug: string, store: SavedSearchStore) {
+  ensureUploadsDir();
+  const normalizedSlug = normalizeSlug(slug);
+  const { diskPath } = getUploadDiskPath(buildSavedSearchStoreKey(normalizedSlug));
+  const nextStore: SavedSearchStore = {
+    version: STORE_VERSION,
+    slug: normalizedSlug,
+    updatedAt: new Date().toISOString(),
+    searches: [...store.searches].map((search) =>
+      normalizeSavedSearch({
+        ...search,
+        slug: normalizedSlug,
+      }),
+    ),
+  };
+
+  await fs.promises.mkdir(path.dirname(diskPath), { recursive: true });
+  const tempPath = `${diskPath}.tmp`;
+  await fs.promises.writeFile(tempPath, JSON.stringify(nextStore, null, 2), "utf8");
+  await fs.promises.rename(tempPath, diskPath);
+}
+
+async function readSavedSearchStore(slug: string): Promise<SavedSearchStore> {
+  ensureUploadsDir();
+  const normalizedSlug = normalizeSlug(slug);
+  const { diskPath } = getUploadDiskPath(buildSavedSearchStoreKey(normalizedSlug));
+
+  try {
+    const raw = await fs.promises.readFile(diskPath, "utf8");
+    const parsed = JSON.parse(raw) as SavedSearchStore;
+
+    return {
+      version: STORE_VERSION,
+      slug: normalizedSlug,
+      updatedAt: parsed.updatedAt ?? new Date().toISOString(),
+      searches: (parsed.searches ?? []).map((search) =>
+        normalizeSavedSearch({
+          ...search,
+          slug: normalizedSlug,
+        }),
+      ),
+    };
+  } catch (error) {
+    if ((error as NodeJS.ErrnoException).code !== "ENOENT") throw error;
+
+    const initialStore: SavedSearchStore = {
+      version: STORE_VERSION,
+      slug: normalizedSlug,
+      updatedAt: new Date().toISOString(),
+      searches: [],
+    };
+
+    await writeSavedSearchStore(normalizedSlug, initialStore);
+    return initialStore;
+  }
+}
+
+async function writeSavedSearchMetaStore(slug: string, store: SavedSearchMetaStore) {
+  ensureUploadsDir();
+  const normalizedSlug = normalizeSlug(slug);
+  const { diskPath } = getUploadDiskPath(buildSavedSearchMetaStoreKey(normalizedSlug));
+  const nextStore: SavedSearchMetaStore = {
+    version: STORE_VERSION,
+    slug: normalizedSlug,
+    updatedAt: new Date().toISOString(),
+    entries: [...store.entries]
+      .map((entry) => normalizeSavedSearchMetaEntry(entry))
+      .filter((entry) => entry.isArchived || entry.notes.length > 0)
+      .sort((a, b) => a.searchId.localeCompare(b.searchId)),
+  };
+
+  await fs.promises.mkdir(path.dirname(diskPath), { recursive: true });
+  const tempPath = `${diskPath}.tmp`;
+  await fs.promises.writeFile(tempPath, JSON.stringify(nextStore, null, 2), "utf8");
+  await fs.promises.rename(tempPath, diskPath);
+}
+
+async function readSavedSearchMetaStore(slug: string): Promise<SavedSearchMetaStore> {
+  ensureUploadsDir();
+  const normalizedSlug = normalizeSlug(slug);
+  const { diskPath } = getUploadDiskPath(buildSavedSearchMetaStoreKey(normalizedSlug));
+
+  try {
+    const raw = await fs.promises.readFile(diskPath, "utf8");
+    const parsed = JSON.parse(raw) as SavedSearchMetaStore;
+
+    return {
+      version: STORE_VERSION,
+      slug: normalizedSlug,
+      updatedAt: parsed.updatedAt ?? new Date().toISOString(),
+      entries: (parsed.entries ?? []).map((entry) =>
+        normalizeSavedSearchMetaEntry({
+          ...entry,
+          searchId: entry.searchId,
+        }),
+      ),
+    };
+  } catch (error) {
+    if ((error as NodeJS.ErrnoException).code !== "ENOENT") throw error;
+
+    const initialStore: SavedSearchMetaStore = {
+      version: STORE_VERSION,
+      slug: normalizedSlug,
+      updatedAt: new Date().toISOString(),
+      entries: [],
+    };
+
+    await writeSavedSearchMetaStore(normalizedSlug, initialStore);
     return initialStore;
   }
 }
@@ -1194,6 +1427,188 @@ export async function addStoredVisitRequestNote(
   });
 }
 
+export async function listStoredSavedSearches(slug: string): Promise<StoredSavedSearch[]> {
+  const store = await readSavedSearchStore(slug);
+  return [...store.searches].sort((a, b) => b.createdAt.localeCompare(a.createdAt));
+}
+
+export async function getStoredSavedSearchMetaMap(
+  slug: string,
+): Promise<Record<string, { isArchived: boolean; notes: StoredSavedSearchNote[] }>> {
+  const store = await readSavedSearchMetaStore(slug);
+
+  return Object.fromEntries(
+    store.entries.map((entry) => [
+      entry.searchId,
+      {
+        isArchived: entry.isArchived,
+        notes: entry.notes,
+      },
+    ]),
+  );
+}
+
+export async function createStoredSavedSearch(
+  slug: string,
+  input: SavedSearchMutationInput,
+): Promise<StoredSavedSearch> {
+  const normalizedSlug = normalizeSlug(slug);
+  const store = await readSavedSearchStore(normalizedSlug);
+  const now = new Date().toISOString();
+
+  const nextSearch = normalizeSavedSearch({
+    id: buildSavedSearchId(),
+    slug: normalizedSlug,
+    name: input.name,
+    whatsapp: input.whatsapp,
+    operationType: input.operationType,
+    propertyType: input.propertyType,
+    zone: input.zone,
+    budget: input.budget,
+    bedrooms: input.bedrooms,
+    comments: input.comments?.trim() || null,
+    status: "new",
+    notes: null,
+    createdAt: now,
+    updatedAt: now,
+  });
+
+  await writeSavedSearchStore(normalizedSlug, {
+    ...store,
+    searches: [nextSearch, ...store.searches],
+  });
+
+  return nextSearch;
+}
+
+export async function setStoredSavedSearchArchivedState(
+  slug: string,
+  searchId: string,
+  isArchived: boolean,
+) {
+  const normalizedSlug = normalizeSlug(slug);
+  const store = await readSavedSearchMetaStore(normalizedSlug);
+  const entryIndex = store.entries.findIndex((entry) => entry.searchId === searchId);
+  const currentEntry =
+    entryIndex === -1
+      ? ({
+          searchId,
+          isArchived: false,
+          notes: [],
+          updatedAt: new Date().toISOString(),
+        } satisfies SavedSearchMetaEntry)
+      : normalizeSavedSearchMetaEntry(store.entries[entryIndex]!);
+
+  const nextEntry = normalizeSavedSearchMetaEntry({
+    ...currentEntry,
+    isArchived,
+    updatedAt: new Date().toISOString(),
+  });
+
+  const nextEntries = [...store.entries];
+  if (entryIndex === -1) {
+    nextEntries.push(nextEntry);
+  } else {
+    nextEntries[entryIndex] = nextEntry;
+  }
+
+  await writeSavedSearchMetaStore(normalizedSlug, {
+    ...store,
+    entries: nextEntries,
+  });
+
+  return {
+    searchId,
+    isArchived,
+  } as const;
+}
+
+export async function updateStoredSavedSearchStatus(
+  slug: string,
+  searchId: string,
+  status: StoredSavedSearchStatus,
+): Promise<StoredSavedSearch> {
+  const normalizedSlug = normalizeSlug(slug);
+  const store = await readSavedSearchStore(normalizedSlug);
+  const searchIndex = store.searches.findIndex((search) => search.id === searchId);
+
+  if (searchIndex === -1) {
+    throw new Error("Saved search not found");
+  }
+
+  const currentSearch = normalizeSavedSearch(store.searches[searchIndex]!);
+  if (currentSearch.status === status) {
+    return currentSearch;
+  }
+
+  const nextSearch = normalizeSavedSearch({
+    ...currentSearch,
+    status,
+    updatedAt: new Date().toISOString(),
+  });
+
+  const nextSearches = [...store.searches];
+  nextSearches[searchIndex] = nextSearch;
+
+  await writeSavedSearchStore(normalizedSlug, {
+    ...store,
+    searches: nextSearches,
+  });
+
+  return nextSearch;
+}
+
+export async function addStoredSavedSearchNote(
+  slug: string,
+  searchId: string,
+  text: string,
+): Promise<StoredSavedSearchNote> {
+  const normalizedSlug = normalizeSlug(slug);
+  const normalizedText = text.trim();
+
+  if (!normalizedText) {
+    throw new Error("Saved search note is empty");
+  }
+
+  const store = await readSavedSearchMetaStore(normalizedSlug);
+  const entryIndex = store.entries.findIndex((entry) => entry.searchId === searchId);
+  const currentEntry =
+    entryIndex === -1
+      ? ({
+          searchId,
+          isArchived: false,
+          notes: [],
+          updatedAt: new Date().toISOString(),
+        } satisfies SavedSearchMetaEntry)
+      : normalizeSavedSearchMetaEntry(store.entries[entryIndex]!);
+
+  const nextNote: StoredSavedSearchNote = {
+    id: buildSavedSearchNoteId(),
+    text: normalizedText,
+    createdAt: new Date().toISOString(),
+  };
+
+  const nextEntry = normalizeSavedSearchMetaEntry({
+    ...currentEntry,
+    notes: [nextNote, ...currentEntry.notes],
+    updatedAt: new Date().toISOString(),
+  });
+
+  const nextEntries = [...store.entries];
+  if (entryIndex === -1) {
+    nextEntries.push(nextEntry);
+  } else {
+    nextEntries[entryIndex] = nextEntry;
+  }
+
+  await writeSavedSearchMetaStore(normalizedSlug, {
+    ...store,
+    entries: nextEntries,
+  });
+
+  return nextNote;
+}
+
 export async function getStoredBusinessImageOverrides(slug: string) {
   const store = await readBusinessMediaStore(slug);
   return { ...store.fields };
@@ -1261,6 +1676,8 @@ export async function initializeRealEstateTenant(slug: string) {
   await Promise.all([
     readStore(normalizedSlug),
     readVisitRequestStore(normalizedSlug),
+    readSavedSearchStore(normalizedSlug),
+    readSavedSearchMetaStore(normalizedSlug),
     readBusinessMediaStore(normalizedSlug),
   ]);
 

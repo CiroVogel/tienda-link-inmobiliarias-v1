@@ -47,9 +47,11 @@ upsertLocalAdminCredential,
 } from "./db";
 import { createMercadoPagoPreference } from "./mercadopago";
 import {
+  addStoredSavedSearchNote,
   addStoredVisitRequestNote,
   addStoredPropertyImage,
   createStoredBusinessPage,
+  createStoredSavedSearch,
   createStoredVisitRequest,
   createStoredProperty,
   deleteStoredPropertyImage,
@@ -59,24 +61,29 @@ import {
   getStoredLocalAdminCredentialByOpenId,
   getStoredVisitRequest,
   getStoredBusinessImageOverrides,
+  getStoredSavedSearchMetaMap,
   initializeRealEstateTenant,
   listStoredBusinessDirectoryEntries,
   listStoredBusinessProfiles,
+  listStoredSavedSearches,
   listPublicProperties,
   listStoredProperties,
   listStoredVisitRequests,
   mapStoredPropertyToPublic,
   removeStoredBusinessImage,
   reorderStoredPropertyImages,
+  setStoredSavedSearchArchivedState,
   setStoredBusinessImage,
   setStoredBusinessArchivedState,
   setStoredPropertyPrimaryImage,
   storagePut,
   upsertStoredBusinessProfile,
   setStoredLocalAdminCredential,
+  updateStoredSavedSearchStatus,
   updateStoredVisitRequestStatus,
   updateStoredProperty,
 } from "./storage";
+import type { StoredSavedSearch, StoredSavedSearchNote } from "./storage";
 import {
   buildClientPaymentConfirmationTemplate,
   buildOwnerPaymentConfirmationTemplate,
@@ -105,6 +112,36 @@ const visitRequestStatusSchema = z.enum([
   "closed",
   "not_interested",
 ]);
+const savedSearchOperationSchema = z.enum(["buy", "rent", "both"]);
+const savedSearchBedroomSchema = z.enum(["studio", "1", "2", "3", "4_plus", "any"]);
+const savedSearchStatusSchema = z.enum([
+  "new",
+  "searching",
+  "matched",
+  "contacted",
+  "closed",
+  "not_interested",
+]);
+const savedSearchInputSchema = z.object({
+  slug: slugSchema,
+  operationType: savedSearchOperationSchema,
+  propertyType: z.string().min(1).max(120),
+  zone: z.string().min(1).max(200),
+  budget: z.string().min(1).max(200),
+  bedrooms: savedSearchBedroomSchema,
+  name: z.string().min(1).max(200),
+  whatsapp: z.string().min(6).max(40),
+  comments: z.string().max(1200).optional(),
+});
+const savedSearchAdminTargetSchema = z.object({
+  id: z.string().min(1).max(160),
+});
+const savedSearchArchiveInputSchema = savedSearchAdminTargetSchema.extend({
+  isArchived: z.boolean(),
+});
+const savedSearchNoteInputSchema = savedSearchAdminTargetSchema.extend({
+  text: z.string().trim().min(1).max(1000),
+});
 const propertyInputSchema = z.object({
   title: z.string().min(1).max(240),
   operation: propertyOperationSchema,
@@ -278,6 +315,70 @@ function verifyPassword(password: string, storedHash: string) {
   if (computed.length !== original.length) return false;
 
   return timingSafeEqual(computed, original);
+}
+
+type SavedSearchAdminItem = {
+  id: string;
+  slug: string;
+  name: string;
+  whatsapp: string;
+  operationType: "buy" | "rent" | "both";
+  propertyType: string;
+  zone: string;
+  budget: string;
+  bedrooms: "studio" | "1" | "2" | "3" | "4_plus" | "any";
+  comments: string | null;
+  status: "new" | "searching" | "matched" | "contacted" | "closed" | "not_interested";
+  notes: StoredSavedSearchNote[];
+  isArchived: boolean;
+  createdAt: string;
+  updatedAt: string;
+};
+
+function mapStoredSavedSearch(search: StoredSavedSearch): SavedSearchAdminItem {
+  return {
+    id: search.id,
+    slug: search.slug,
+    name: search.name,
+    whatsapp: search.whatsapp,
+    operationType: search.operationType,
+    propertyType: search.propertyType,
+    zone: search.zone,
+    budget: search.budget,
+    bedrooms: search.bedrooms,
+    comments: search.comments ?? null,
+    status: search.status,
+    notes: [],
+    isArchived: false,
+    createdAt: search.createdAt,
+    updatedAt: search.updatedAt,
+  };
+}
+
+function applySavedSearchMeta(
+  item: SavedSearchAdminItem,
+  metaMap: Record<string, { isArchived: boolean; notes: StoredSavedSearchNote[] }>,
+): SavedSearchAdminItem {
+  const meta = metaMap[item.id];
+  if (!meta) {
+    return item;
+  }
+
+  return {
+    ...item,
+    isArchived: meta.isArchived,
+    notes: meta.notes.length > 0 ? meta.notes : item.notes,
+  };
+}
+
+async function listAdminSavedSearchItems(
+  profile: BusinessProfile,
+  _user: User,
+): Promise<SavedSearchAdminItem[]> {
+  const metaMap = await getStoredSavedSearchMetaMap(profile.slug);
+
+  const storedSearches = await listStoredSavedSearches(profile.slug);
+  return storedSearches.map((search) => applySavedSearchMeta(mapStoredSavedSearch(search), metaMap));
 }
 
 function getPaidAmountForBooking(booking: NonNullable<Awaited<ReturnType<typeof getBookingById>>>): string {
@@ -649,7 +750,112 @@ export const appRouter = router({
     ctx.res.clearCookie(COOKIE_NAME, { ...cookieOptions, maxAge: -1 });
     return { success: true } as const;
   }),
-}),
+  }),
+
+  savedSearches: router({
+    create: publicProcedure
+      .input(savedSearchInputSchema)
+      .mutation(async ({ input }) => {
+        const profile = await getResolvedPublicBusinessProfile(input.slug);
+        if (!profile) {
+          throw new TRPCError({
+            code: "NOT_FOUND",
+            message: "Inmobiliaria no encontrada",
+          });
+        }
+
+        const created = await createStoredSavedSearch(input.slug, {
+          name: input.name,
+          whatsapp: input.whatsapp,
+          operationType: input.operationType,
+          propertyType: input.propertyType,
+          zone: input.zone,
+          budget: input.budget,
+          bedrooms: input.bedrooms,
+          comments: input.comments,
+        });
+
+        return {
+          ok: true,
+          id: created.id,
+        };
+      }),
+
+    list: adminProcedure.query(async ({ ctx }) => {
+      const profile = await getAdminBusinessProfile(ctx.user);
+      if (!profile) {
+        throw new TRPCError({ code: "NOT_FOUND", message: "Perfil no encontrado" });
+      }
+
+      return listAdminSavedSearchItems(profile, ctx.user);
+    }),
+
+    updateStatus: adminProcedure
+      .input(
+        z.object({
+          id: z.string().min(1).max(160),
+          status: savedSearchStatusSchema,
+        }),
+      )
+      .mutation(async ({ ctx, input }) => {
+        const profile = await getAdminBusinessProfile(ctx.user);
+        if (!profile) {
+          throw new TRPCError({ code: "NOT_FOUND", message: "Perfil no encontrado" });
+        }
+
+        const updated = await updateStoredSavedSearchStatus(profile.slug, input.id, input.status);
+        const metaMap = await getStoredSavedSearchMetaMap(profile.slug);
+        return applySavedSearchMeta(mapStoredSavedSearch(updated), metaMap);
+      }),
+
+    setArchived: adminProcedure
+      .input(savedSearchArchiveInputSchema)
+      .mutation(async ({ ctx, input }) => {
+        const profile = await getAdminBusinessProfile(ctx.user);
+        if (!profile) {
+          throw new TRPCError({ code: "NOT_FOUND", message: "Perfil no encontrado" });
+        }
+
+        const searches = await listAdminSavedSearchItems(profile, ctx.user);
+        const target = searches.find((search) => search.id === input.id);
+
+        if (!target) {
+          throw new TRPCError({
+            code: "NOT_FOUND",
+            message: "Búsqueda no encontrada",
+          });
+        }
+
+        await setStoredSavedSearchArchivedState(profile.slug, input.id, input.isArchived);
+
+        return {
+          ok: true,
+          id: input.id,
+          isArchived: input.isArchived,
+        };
+      }),
+
+    addNote: adminProcedure
+      .input(savedSearchNoteInputSchema)
+      .mutation(async ({ ctx, input }) => {
+        const profile = await getAdminBusinessProfile(ctx.user);
+        if (!profile) {
+          throw new TRPCError({ code: "NOT_FOUND", message: "Perfil no encontrado" });
+        }
+
+        const searches = await listAdminSavedSearchItems(profile, ctx.user);
+        const target = searches.find((search) => search.id === input.id);
+
+        if (!target) {
+          throw new TRPCError({
+            code: "NOT_FOUND",
+            message: "Búsqueda no encontrada",
+          });
+        }
+
+        return addStoredSavedSearchNote(profile.slug, input.id, input.text);
+      }),
+  }),
 
   visitRequests: router({
     create: publicProcedure

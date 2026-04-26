@@ -10,6 +10,7 @@ import {
   CalendarCheck,
   Users,
   Settings,
+  Search,
   PlusSquare,
   LogOut,
   Menu,
@@ -61,11 +62,12 @@ export default function AdminLayout({ children }: { children: ReactNode }) {
 
   const navItems = useMemo<NavItemConfig[]>(
     () => [
-      { href: "/admin", label: "Consultas", icon: CalendarCheck, exact: true },
-      { href: "/admin/interesados", label: "Interesados", icon: Users },
       { href: "/admin/profile", label: "Perfil de la inmobiliaria", icon: Settings },
       { href: "/admin/services", label: "Propiedades", icon: Briefcase },
-      { href: "/admin/gallery", label: "Galeria", icon: Images },
+      { href: "/admin/gallery", label: "Galer\u00EDa", icon: Images },
+      { href: "/admin", label: "Consultas", icon: CalendarCheck, exact: true },
+      { href: "/admin/interesados", label: "Interesados", icon: Users },
+      { href: "/admin/busquedas-guardadas", label: "B\u00FAsquedas recibidas", icon: Search },
       ...(isPlatformAdmin
         ? [{ href: "/admin/nueva-inmobiliaria", label: "Crear inmobiliaria", icon: PlusSquare }]
         : []),

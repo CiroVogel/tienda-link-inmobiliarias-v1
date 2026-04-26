@@ -1,6 +1,7 @@
 import { useMemo, useState } from "react";
 import { ArrowLeft, Building2 } from "lucide-react";
 import { Link, useParams } from "wouter";
+import SavedSearchSection from "@/components/public/SavedSearchSection";
 import { PropertyCard } from "@/components/PropertyCard";
 import { usePublicProperties } from "@/lib/propertyData";
 import {
@@ -191,6 +192,14 @@ export default function PropertyList() {
             </p>
           </div>
         )}
+
+        <div className="mt-14 border-t border-zinc-200 pt-14 md:mt-16 md:pt-16">
+          <SavedSearchSection
+            slug={safeSlug}
+            eyebrow="Tu búsqueda"
+            className="bg-white py-0"
+          />
+        </div>
       </main>
     </div>
   );
