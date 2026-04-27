@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+﻿import { useMemo, useState } from "react";
 import { Link } from "wouter";
 import {
   Download,
@@ -327,7 +327,7 @@ export default function AdminServices() {
     event.preventDefault();
 
     if (!form.title.trim() || !form.price.trim() || !form.location.trim() || !form.propertyType.trim()) {
-      toast.error("Completa titulo, precio, ubicacion y tipo de propiedad.");
+      toast.error("Completa título, precio, ubicación y tipo de propiedad.");
       return;
     }
 
@@ -356,7 +356,7 @@ export default function AdminServices() {
           <div>
             <h1 className="text-2xl font-black tracking-tight text-black">Propiedades</h1>
             <p className="mt-1 text-sm text-black/50">
-              {totalProperties} propiedad{totalProperties !== 1 ? "es" : ""} en gestion
+              {totalProperties} propiedad{totalProperties !== 1 ? "es" : ""} en gestión
             </p>
           </div>
 
@@ -471,7 +471,7 @@ export default function AdminServices() {
         {totalProperties === 0 ? (
           <div className="rounded-xl border-2 border-dashed border-zinc-200 bg-white px-6 py-16 text-center">
             <Home className="mx-auto mb-3 h-10 w-10 text-zinc-300" />
-            <p className="font-semibold text-zinc-700">Todavia no cargaste propiedades.</p>
+            <p className="font-semibold text-zinc-700">Todavía no cargaste propiedades.</p>
             <p className="mt-1 text-sm text-zinc-500">
               Crea la primera propiedad para empezar a publicar desde el admin.
             </p>
@@ -481,7 +481,7 @@ export default function AdminServices() {
             <Search className="mx-auto mb-3 h-10 w-10 text-zinc-300" />
             <p className="font-semibold text-zinc-700">No encontramos propiedades con esos filtros.</p>
             <p className="mt-1 text-sm text-zinc-500">
-              Prueba otra busqueda o limpia los filtros para volver al listado completo.
+              Prueba otra búsqueda o limpia los filtros para volver al listado completo.
             </p>
           </div>
         ) : (
@@ -598,15 +598,16 @@ export default function AdminServices() {
         )}
 
         <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
-          <DialogContent className="max-w-2xl">
-            <DialogHeader>
+          <DialogContent className="flex max-h-[90vh] max-w-2xl flex-col gap-0 overflow-hidden p-0">
+            <DialogHeader className="sticky top-0 z-10 border-b border-zinc-200 bg-white px-6 py-5 pr-12">
               <DialogTitle>{editingId ? "Editar propiedad" : "Nueva propiedad"}</DialogTitle>
             </DialogHeader>
 
-            <form onSubmit={handleSubmit} className="space-y-5">
-              <div className="grid gap-4 md:grid-cols-2">
+            <form onSubmit={handleSubmit} className="flex min-h-0 flex-1 flex-col">
+              <div className="min-h-0 flex-1 overflow-y-auto px-6 py-5">
+                <div className="grid gap-4 md:grid-cols-2">
                 <div className="md:col-span-2">
-                  <Label className="mb-1.5 block">Titulo</Label>
+                  <Label className="mb-1.5 block">Título</Label>
                   <Input
                     value={form.title}
                     onChange={(event) => setForm((current) => ({ ...current, title: event.target.value }))}
@@ -615,7 +616,7 @@ export default function AdminServices() {
                 </div>
 
                 <div>
-                  <Label className="mb-1.5 block">Operacion</Label>
+                  <Label className="mb-1.5 block">Operación</Label>
                   <select
                     value={form.operation}
                     onChange={(event) =>
@@ -632,7 +633,7 @@ export default function AdminServices() {
                 </div>
 
                 <div>
-                  <Label className="mb-1.5 block">Estado publico</Label>
+                  <Label className="mb-1.5 block">Estado público</Label>
                   <select
                     value={form.status}
                     onChange={(event) =>
@@ -672,7 +673,7 @@ export default function AdminServices() {
                 </div>
 
                 <div>
-                  <Label className="mb-1.5 block">Ubicacion</Label>
+                  <Label className="mb-1.5 block">Ubicación</Label>
                   <Input
                     value={form.location}
                     onChange={(event) =>
@@ -683,13 +684,13 @@ export default function AdminServices() {
                 </div>
 
                 <div>
-                  <Label className="mb-1.5 block">Direccion</Label>
+                  <Label className="mb-1.5 block">Dirección</Label>
                   <Input
                     value={form.address}
                     onChange={(event) =>
                       setForm((current) => ({ ...current, address: event.target.value }))
                     }
-                    placeholder="Entre Rios al 900"
+                    placeholder="Entre Ríos al 900"
                   />
                 </div>
 
@@ -707,7 +708,7 @@ export default function AdminServices() {
                 </div>
 
                 <div>
-                  <Label className="mb-1.5 block">Banos</Label>
+                  <Label className="mb-1.5 block">Baños</Label>
                   <Input
                     type="number"
                     min={0}
@@ -720,7 +721,7 @@ export default function AdminServices() {
                 </div>
 
                 <div>
-                  <Label className="mb-1.5 block">Superficie m2</Label>
+                  <Label className="mb-1.5 block">Superficie m²</Label>
                   <Input
                     type="number"
                     min={0}
@@ -746,7 +747,7 @@ export default function AdminServices() {
                 </div>
 
                 <div className="md:col-span-2">
-                  <Label className="mb-1.5 block">Descripcion</Label>
+                  <Label className="mb-1.5 block">Descripción</Label>
                   <textarea
                     value={form.description}
                     onChange={(event) =>
@@ -754,12 +755,12 @@ export default function AdminServices() {
                     }
                     rows={4}
                     className="w-full resize-none rounded-md border border-input bg-background px-3 py-2 text-sm"
-                    placeholder="Descripcion breve de la propiedad"
+                    placeholder="Descripción breve de la propiedad"
                   />
                 </div>
 
                 <div className="md:col-span-2">
-                  <Label className="mb-1.5 block">Caracteristicas</Label>
+                  <Label className="mb-1.5 block">Características</Label>
                   <textarea
                     value={form.featuresText}
                     onChange={(event) =>
@@ -767,12 +768,13 @@ export default function AdminServices() {
                     }
                     rows={4}
                     className="w-full resize-none rounded-md border border-input bg-background px-3 py-2 text-sm"
-                    placeholder={"Una por linea\nBalcon al frente\nCocina separada"}
+                    placeholder={"Una por línea\nBalcón al frente\nCocina separada"}
                   />
                 </div>
               </div>
+              </div>
 
-              <DialogFooter className="gap-2">
+              <DialogFooter className="sticky bottom-0 border-t border-zinc-200 bg-white px-6 py-4 gap-2">
                 <Button type="button" variant="outline" onClick={() => setDialogOpen(false)}>
                   Cancelar
                 </Button>
@@ -793,3 +795,7 @@ export default function AdminServices() {
     </AdminLayout>
   );
 }
+
+
+
+
