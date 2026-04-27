@@ -164,8 +164,8 @@ function Hero({
 
 function ValueBlock() {
   const values = [
-    "Precio, zona, operacion y estado visibles desde el primer vistazo.",
-    "Fotos, medidas y caracteristicas reunidas para comparar con calma.",
+    "Precio, zona, operación y estado visibles desde el primer vistazo.",
+    "Fotos, medidas y características reunidas para comparar con calma.",
     "Solicitud de visita directa para coordinar una fecha posible.",
   ];
 
@@ -177,7 +177,7 @@ function ValueBlock() {
             Buscar con claridad
           </p>
           <h2 className="text-3xl font-black leading-tight tracking-tight text-zinc-950 md:text-4xl">
-            Informacion ordenada para elegir la proxima visita.
+            Información ordenada para elegir la próxima visita.
           </h2>
         </div>
 
@@ -236,11 +236,11 @@ function HowItWorks({ slug }: { slug: string }) {
   const steps = [
     [
       "Explora propiedades",
-      "Recorre opciones en venta y alquiler segun zona, precio y tipo de propiedad.",
+      "Recorre opciones en venta y alquiler según zona, precio y tipo de propiedad.",
     ],
     [
       "Revisa la ficha",
-      "Mira fotos, ubicacion, medidas, ambientes y detalles principales antes de consultar.",
+      "Mira fotos, ubicación, medidas, ambientes y detalles principales antes de consultar.",
     ],
     [
       "Solicita visita",
@@ -570,8 +570,8 @@ function Contact({
             Coordinemos una visita a la propiedad que te interesa.
           </h2>
           <p className="mt-5 max-w-xl text-sm leading-7 text-white/55">
-            Envianos tus datos y tu disponibilidad. Si tenes una consulta
-            puntual, tambien podes escribirnos por WhatsApp.
+            Envíanos tus datos y tu disponibilidad. Si tenes una consulta
+            puntual, también podes escribirnos por WhatsApp.
           </p>
 
           <div className="mt-7 flex flex-col gap-3 sm:flex-row">
