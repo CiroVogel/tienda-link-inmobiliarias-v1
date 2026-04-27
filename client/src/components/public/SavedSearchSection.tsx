@@ -94,7 +94,7 @@ export default function SavedSearchSection({
               {"\u00BFNo encontraste lo que busc\u00E1s?"}
             </h2>
             <p className="mt-4 max-w-xl text-sm leading-7 text-zinc-500">
-              {"Dejanos tu búsqueda y te avisamos cuando tengamos una propiedad que se ajuste a lo que necesitás."}
+              {"Dejanos tu b\u00FAsqueda y te avisamos cuando tengamos una propiedad que se ajuste a lo que necesit\u00E1s."}
             </p>
 
             {!isOpen ? (
@@ -103,7 +103,7 @@ export default function SavedSearchSection({
                 onClick={() => setIsOpen(true)}
                 className="mt-6 inline-flex items-center gap-2 bg-zinc-950 px-6 py-4 text-xs font-black uppercase tracking-[0.16em] text-white"
               >
-                {"Dejar mi búsqueda"}
+                {"Dejar mi b\u00FAsqueda"}
                 <ArrowRight className="h-4 w-4" />
               </button>
             ) : null}
@@ -114,23 +114,23 @@ export default function SavedSearchSection({
               {isSubmitted ? (
                 <div className="space-y-3">
                   <p className="text-xs font-bold uppercase tracking-[0.18em] text-zinc-400">
-                    {"Búsqueda guardada"}
+                    {"B\u00FAsqueda guardada"}
                   </p>
                   <p className="text-sm leading-7 text-zinc-600">
-                    {"La inmobiliaria podrá contactarte cuando tenga una propiedad que coincida con lo que necesitás."}
+                    {"La inmobiliaria podr\u00E1 contactarte cuando tenga una propiedad que coincida con lo que necesit\u00E1s."}
                   </p>
                   <button
                     type="button"
                     onClick={() => setIsSubmitted(false)}
                     className="inline-flex border border-zinc-200 px-4 py-3 text-xs font-black uppercase tracking-[0.16em] text-zinc-700"
                   >
-                    {"Cargar otra búsqueda"}
+                    {"Cargar otra b\u00FAsqueda"}
                   </button>
                 </div>
               ) : (
                 <form onSubmit={handleSubmit} className="grid gap-4 md:grid-cols-2">
                   <label className="grid gap-2 text-xs font-bold uppercase tracking-[0.14em] text-zinc-500">
-                    {"Operación"}
+                    {"Operaci\u00F3n"}
                     <select
                       value={form.operationType}
                       onChange={(event) =>
@@ -259,7 +259,7 @@ export default function SavedSearchSection({
                       disabled={createSavedSearch.isPending}
                       className="inline-flex items-center gap-2 bg-zinc-950 px-6 py-4 text-xs font-black uppercase tracking-[0.16em] text-white disabled:cursor-not-allowed disabled:opacity-40"
                     >
-                      {"Enviar búsqueda"}
+                      {"Enviar b\u00FAsqueda"}
                       <ArrowRight className="h-4 w-4" />
                     </button>
                   </div>

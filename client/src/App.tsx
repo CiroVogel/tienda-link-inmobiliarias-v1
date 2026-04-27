@@ -10,6 +10,7 @@ import Home from "./pages/Home";
 import Booking from "./pages/Booking";
 import PropertyDetail from "./pages/PropertyDetail";
 import PropertyList from "./pages/PropertyList";
+import LandingInmobiliarias from "./pages/LandingInmobiliarias";
 import LegalResponsabilidadComercial from "./pages/LegalResponsabilidadComercial";
 import LegalMiniWebServicios from "./pages/LegalMiniWebServicios";
 
@@ -50,6 +51,7 @@ function Router() {
       <Route path="/admin/availability" component={AdminAvailability} />
       <Route path="/admin/create-page" component={AdminCreatePage} />
       <Route path="/admin/nueva-inmobiliaria" component={AdminCreatePage} />
+      <Route path="/mini-web-inmobiliarias" component={LandingInmobiliarias} />
 
       <Route
         path="/"

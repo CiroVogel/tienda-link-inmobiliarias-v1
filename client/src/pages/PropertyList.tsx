@@ -29,7 +29,10 @@ export default function PropertyList() {
   const [statusFilter, setStatusFilter] = useState<Exclude<PropertyStatus, "hidden"> | "all">(
     "all",
   );
-  const { data: publicProfile, isLoading: isPublicProfileLoading } = trpc.business.getPublic.useQuery(
+  const {
+    data: publicProfile,
+    isLoading: isPublicProfileLoading,
+  } = trpc.business.getPublic.useQuery(
     { slug: safeSlug },
     { enabled: Boolean(safeSlug) },
   );
@@ -43,7 +46,7 @@ export default function PropertyList() {
             Inmobiliaria no disponible
           </p>
           <h1 className="mb-4 text-4xl font-black text-zinc-950">
-            Este listado no está visible públicamente.
+            Este listado no est\u00E1 visible p\u00FAblicamente.
           </h1>
           <p className="text-sm leading-7 text-zinc-500">
             Puede estar archivado o el slug no coincide con una inmobiliaria activa.
@@ -53,12 +56,9 @@ export default function PropertyList() {
     );
   }
 
-  const businessName =
-    publicProfile?.businessName?.trim() || realEstateProfile.name;
+  const businessName = publicProfile?.businessName?.trim() || realEstateProfile.name;
   const brandImageUrl =
-    publicProfile?.logoUrl?.trim() ||
-    publicProfile?.ownerImageUrl?.trim() ||
-    null;
+    publicProfile?.logoUrl?.trim() || publicProfile?.ownerImageUrl?.trim() || null;
   const filteredProperties = useMemo(
     () =>
       properties.filter((property) => {
@@ -120,8 +120,8 @@ export default function PropertyList() {
             Listado de propiedades
           </h1>
           <p className="mt-4 text-sm leading-7 text-zinc-500">
-            Opciones en venta y alquiler en Rosario, con estado actualizado para
-            consultar o coordinar una visita.
+            Opciones en venta y alquiler en Rosario, con estado actualizado para consultar o
+            coordinar una visita.
           </p>
         </div>
 
@@ -146,9 +146,10 @@ export default function PropertyList() {
               }
               className={getFilterClasses(operationFilter === operation)}
             >
-              {getOperationLabel(operation as "sale" | "rent")}
+              {getOperationLabel(operation)}
             </button>
           ))}
+
           {statusFilters.map((status) => (
             <button
               key={status}
@@ -156,7 +157,7 @@ export default function PropertyList() {
               onClick={() => setStatusFilter((current) => (current === status ? "all" : status))}
               className={getFilterClasses(statusFilter === status)}
             >
-              {getStatusLabel(status as "available" | "reserved" | "sold" | "rented")}
+              {getStatusLabel(status)}
             </button>
           ))}
         </div>
@@ -196,7 +197,7 @@ export default function PropertyList() {
         <div className="mt-14 border-t border-zinc-200 pt-14 md:mt-16 md:pt-16">
           <SavedSearchSection
             slug={safeSlug}
-            eyebrow="Tu búsqueda"
+            eyebrow={"Tu b\u00FAsqueda"}
             className="bg-white py-0"
           />
         </div>
