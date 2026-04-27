@@ -46,19 +46,19 @@ const palette = {
 const differenceCards = [
   {
     title: "Tu marca, sin competencia al lado",
-    body: "Tus propiedades aparecen dentro de tu propia pÃ¡gina, con tu nombre, tu estilo y tus datos de contacto.",
+    body: "Tus propiedades aparecen dentro de tu propia página, con tu nombre, tu estilo y tus datos de contacto.",
   },
   {
     title: "Consultas directas",
-    body: "El interesado consulta desde tu web y queda registrado de forma mÃ¡s ordenada.",
+    body: "El interesado consulta desde tu web y queda registrado de forma más ordenada.",
   },
   {
-    title: "BÃºsquedas recibidas",
-    body: "Si alguien no encuentra lo que busca, deja su pedido. RecibÃ­s zona, presupuesto, tipo de propiedad y WhatsApp.",
+    title: "Búsquedas recibidas",
+    body: "Si alguien no encuentra lo que busca, deja su pedido. Recibís zona, presupuesto, tipo de propiedad y WhatsApp.",
   },
   {
     title: "Mensualidad fija",
-    body: "PagÃ¡s lo mismo todos los meses. Sin comisiÃ³n por publicaciÃ³n ni por consultas recibidas.",
+    body: "Pagás lo mismo todos los meses. Sin comisión por publicación ni por consultas recibidas.",
   },
 ];
 
@@ -66,7 +66,7 @@ const toolCards = [
   {
     icon: FileText,
     title: "Ficha en PDF para enviar",
-    body: "GenerÃ¡ una ficha profesional de cada propiedad y compartila por WhatsApp o email sin armar nada a mano.",
+    body: "Generá una ficha profesional de cada propiedad y compartila por WhatsApp o email sin armar nada a mano.",
   },
   {
     icon: Users,
@@ -75,13 +75,13 @@ const toolCards = [
   },
   {
     icon: Search,
-    title: "BÃºsquedas recibidas",
-    body: "CapturÃ¡ demanda aunque no tengas la propiedad publicada. El interesado deja lo que busca y vos lo seguÃ­s desde el panel.",
+    title: "Búsquedas recibidas",
+    body: "Capturá demanda aunque no tengas la propiedad publicada. El interesado deja lo que busca y vos lo seguís desde el panel.",
   },
   {
     icon: LayoutPanelLeft,
     title: "Panel simple",
-    body: "AdministrÃ¡s propiedades, fotos, estados, consultas e interesados desde una pantalla clara.",
+    body: "Administrás propiedades, fotos, estados, consultas e interesados desde una pantalla clara.",
   },
 ];
 
@@ -97,22 +97,22 @@ const demoCards = [
     live: true,
   },
   {
-    label: "PrÃ³ximamente",
-    title: "Nueva demo en preparaciÃ³n",
-    body: "Espacio reservado para una segunda inmobiliaria publicada dentro de la lÃ­nea Inmobiliarias.",
+    label: "Próximamente",
+    title: "Nueva demo en preparación",
+    body: "Espacio reservado para una segunda inmobiliaria publicada dentro de la línea Inmobiliarias.",
     image: demoListImage,
     href: "#",
-    cta: "PrÃ³ximamente",
+    cta: "Próximamente",
     featured: false,
     live: false,
   },
   {
-    label: "PrÃ³ximamente",
+    label: "Próximamente",
     title: "Tercera demo futura",
     body: "Otra muestra preparada para presentar una inmobiliaria con el mismo criterio visual y comercial.",
     image: demoDetailImage,
     href: "#",
-    cta: "PrÃ³ximamente",
+    cta: "Próximamente",
     featured: false,
     live: false,
   },
@@ -121,13 +121,13 @@ const demoCards = [
 const processSteps = [
   {
     n: "1",
-    title: "Me escribÃ­s por WhatsApp",
-    body: "Te respondo y te digo quÃ© informaciÃ³n necesito para empezar.",
+    title: "Me escribís por WhatsApp",
+    body: "Te respondo y te digo qué información necesito para empezar.",
   },
   {
     n: "2",
-    title: "PasÃ¡s los datos",
-    body: "Nombre de la inmobiliaria, contacto, imÃ¡genes, propiedades iniciales y textos bÃ¡sicos.",
+    title: "Pasás los datos",
+    body: "Nombre de la inmobiliaria, contacto, imágenes, propiedades iniciales y textos básicos.",
   },
   {
     n: "3",
@@ -136,8 +136,8 @@ const processSteps = [
   },
   {
     n: "4",
-    title: "La revisÃ¡s",
-    body: "Ves cÃ³mo queda antes de activarla como pÃ¡gina de trabajo.",
+    title: "La revisás",
+    body: "Ves cómo queda antes de activarla como página de trabajo.",
   },
   {
     n: "5",
@@ -147,16 +147,16 @@ const processSteps = [
 ];
 
 const includes = [
-  "PÃ¡gina profesional con tu marca",
+  "Página profesional con tu marca",
   "Listado de propiedades con filtros",
   "Ficha individual por propiedad",
-  "GalerÃ­a de fotos por propiedad",
+  "Galería de fotos por propiedad",
   "Formulario de consulta por propiedad",
   "Estados de propiedad",
   "PDF descargable por propiedad",
   "Base de interesados con notas",
-  "BÃºsquedas recibidas",
-  "Panel de autogestiÃ³n",
+  "Búsquedas recibidas",
+  "Panel de autogestión",
   "Contacto directo visible",
 ];
 
@@ -170,14 +170,14 @@ const excludes = [
 ];
 
 const planItems = [
-  "PÃ¡gina profesional con tu marca",
+  "Página profesional con tu marca",
   "Listado de propiedades",
-  "Ficha individual con galerÃ­a",
+  "Ficha individual con galería",
   "Formulario de consulta",
   "PDF descargable por propiedad",
   "Base de interesados",
-  "BÃºsquedas recibidas",
-  "Panel de autogestiÃ³n",
+  "Búsquedas recibidas",
+  "Panel de autogestión",
   "Contacto directo",
 ];
 
@@ -337,21 +337,21 @@ export default function LandingInmobiliarias() {
 
             <p className="mt-8 max-w-3xl text-lg leading-8 text-white/84">
               Una mini web propia para mostrar tus propiedades con tu marca, recibir consultas directas y captar
-              bÃºsquedas de personas que todavÃ­a no encontraron lo que necesitan.
+              búsquedas de personas que todavía no encontraron lo que necesitan.
             </p>
 
             <div className="mt-10 flex flex-wrap gap-3">
               <HeroButton href={`#${sections.plan}`} primary>
                 Ver plan
               </HeroButton>
-              <HeroButton href={`#${sections.process}`}>CÃ³mo funciona</HeroButton>
+              <HeroButton href={`#${sections.process}`}>Cómo funciona</HeroButton>
               <HeroButton href={whatsappHref} external>
                 Escribinos por WhatsApp
               </HeroButton>
             </div>
 
             <p className="mt-6 text-sm text-white/64">
-              Desde $35.000/mes Â· Lista en menos de 24 hs hÃ¡biles Â· Sin comisiÃ³n por publicaciÃ³n
+              Desde $35.000/mes · Lista en menos de 24 hs hábiles · Sin comisión por publicación
             </p>
           </div>
         </div>
@@ -362,17 +362,17 @@ export default function LandingInmobiliarias() {
           <div>
             <SectionLabel>EL PROBLEMA</SectionLabel>
             <h2 className="max-w-2xl text-4xl font-black tracking-tight text-zinc-950 md:text-5xl">
-              Publicar en un listado gigante reparte la atenciÃ³n de tu cliente.
+              Publicar en un listado gigante reparte la atención de tu cliente.
             </h2>
           </div>
           <div className="grid gap-5">
             <p className="text-base leading-8" style={{ color: palette.text }}>
               Cuando una propiedad aparece junto a muchas opciones similares, el interesado compara antes de escribir.
-              Tu marca queda mezclada, la atenciÃ³n se dispersa y muchas oportunidades se pierden antes de llegar a una
+              Tu marca queda mezclada, la atención se dispersa y muchas oportunidades se pierden antes de llegar a una
               consulta real.
             </p>
             <p className="text-base leading-8" style={{ color: palette.text }}>
-              Y si no tenÃ©s justo lo que la persona busca, normalmente no queda ningÃºn registro Ãºtil: ni contacto, ni
+              Y si no tenés justo lo que la persona busca, normalmente no queda ningún registro útil: ni contacto, ni
               presupuesto, ni zona buscada.
             </p>
           </div>
@@ -388,7 +388,7 @@ export default function LandingInmobiliarias() {
           <SectionLabel>LA DIFERENCIA</SectionLabel>
           <h2 className="max-w-4xl text-4xl font-black tracking-tight text-zinc-950 md:text-5xl">
             Con Tienda Link, tu cliente ve tu marca.
-Y si no encuentra la propiedad ideal, puede dejar su bÃºsqueda.
+Y si no encuentra la propiedad ideal, puede dejar su búsqueda.
           </h2>
 
           <div className="mt-10 grid gap-4 md:grid-cols-2 xl:grid-cols-4">
@@ -408,7 +408,7 @@ Y si no encuentra la propiedad ideal, puede dejar su bÃºsqueda.
         <div className="mx-auto max-w-6xl px-5 py-20">
           <SectionLabel>HERRAMIENTAS</SectionLabel>
           <h2 className="max-w-4xl text-4xl font-black tracking-tight text-zinc-950 md:text-5xl">
-            Tu pÃ¡gina no solo muestra propiedades. TambiÃ©n te ayuda a trabajar mejor.
+            Tu página no solo muestra propiedades. También te ayuda a trabajar mejor.
           </h2>
 
           <div className="mt-10 grid gap-4 md:grid-cols-2 xl:grid-cols-4">
@@ -442,7 +442,7 @@ Y si no encuentra la propiedad ideal, puede dejar su bÃºsqueda.
         <div className="mx-auto max-w-6xl px-5 py-20">
           <SectionLabel>DEMOS REALES</SectionLabel>
           <h2 className="max-w-4xl text-4xl font-black tracking-tight text-zinc-950 md:text-5xl">
-            MirÃ¡ cÃ³mo se ve una inmobiliaria con pÃ¡gina propia.
+            Mirá cómo se ve una inmobiliaria con página propia.
           </h2>
           <p className="mt-4 max-w-3xl text-base leading-8" style={{ color: palette.text }}>
             Demos pensadas para mostrar propiedades sin compartir espacio con otras marcas.
@@ -458,9 +458,9 @@ Y si no encuentra la propiedad ideal, puede dejar su bÃºsqueda.
 
       <section id={sections.process} className="border-b" style={{ borderColor: palette.line }}>
         <div className="mx-auto max-w-6xl px-5 py-20">
-          <SectionLabel>CÃ“MO FUNCIONA</SectionLabel>
+          <SectionLabel>CÓMO FUNCIONA</SectionLabel>
           <h2 className="max-w-4xl text-4xl font-black tracking-tight text-zinc-950 md:text-5xl">
-            De la informaciÃ³n inicial a tu pÃ¡gina lista.
+            De la información inicial a tu página lista.
           </h2>
 
           <div className="mt-10 grid gap-4 md:grid-cols-2 xl:grid-cols-5">
@@ -532,7 +532,7 @@ Y si no encuentra la propiedad ideal, puede dejar su bÃºsqueda.
             Un solo plan. Todo incluido. Sin comisiones ni sorpresas.
           </h2>
           <p className="mt-4 max-w-3xl text-base leading-8" style={{ color: palette.text }}>
-            Una mini web para mostrar propiedades, recibir consultas y capturar bÃºsquedas sin depender de una estructura pesada.
+            Una mini web para mostrar propiedades, recibir consultas y capturar búsquedas sin depender de una estructura pesada.
           </p>
 
           <div className="mt-10 max-w-3xl rounded-[30px] border bg-white p-7 sm:p-8" style={{ borderColor: palette.line }}>
@@ -540,11 +540,11 @@ Y si no encuentra la propiedad ideal, puede dejar su bÃºsqueda.
               MINI WEB INMOBILIARIAS
             </p>
             <h3 className="mt-4 max-w-2xl text-3xl font-black tracking-tight text-zinc-950">
-              Una mini web para mostrar propiedades, recibir consultas y capturar bÃºsquedas sin depender de una estructura pesada.
+              Una mini web para mostrar propiedades, recibir consultas y capturar búsquedas sin depender de una estructura pesada.
             </h3>
             <p className="mt-6 text-5xl font-black tracking-tight text-zinc-950">$35.000 / mes</p>
             <p className="mt-3 text-sm" style={{ color: palette.muted }}>
-              Armado inicial incluido Â· Sin comisiÃ³n por publicaciÃ³n Â· Sin lÃ­mite de consultas
+              Armado inicial incluido · Sin comisión por publicación · Sin límite de consultas
             </p>
 
             <ul className="mt-8 grid gap-3 text-sm leading-7" style={{ color: palette.text }}>
@@ -563,7 +563,7 @@ Y si no encuentra la propiedad ideal, puede dejar su bÃºsqueda.
               className="mt-8 inline-flex items-center justify-center gap-2 rounded-full px-6 py-3.5 text-sm font-bold text-white transition hover:opacity-95"
               style={{ backgroundColor: palette.hero }}
             >
-              Quiero mi pÃ¡gina
+              Quiero mi página
               <ArrowRight className="h-4 w-4" />
             </a>
           </div>
@@ -574,13 +574,13 @@ Y si no encuentra la propiedad ideal, puede dejar su bÃºsqueda.
         <div className="mx-auto max-w-6xl px-5 py-24">
           <div className="mx-auto max-w-4xl text-center">
             <p className="inline-flex rounded-full border px-4 py-2 text-[11px] font-bold uppercase tracking-[0.18em] text-white/60" style={{ borderColor: "rgba(255,255,255,0.12)" }}>
-              EMPEZÃ HOY
+              EMPEZÁ HOY
             </p>
             <h2 className="mt-8 text-4xl font-black tracking-tight text-white md:text-5xl">
-              Tu inmobiliaria merece una pÃ¡gina propia.
+              Tu inmobiliaria merece una página propia.
             </h2>
             <p className="mx-auto mt-5 max-w-3xl text-base leading-8 text-white/70">
-              MostrÃ¡ tus propiedades con tu marca, recibÃ­ consultas directas y capturÃ¡ bÃºsquedas que de otra forma se pierden.
+              Mostrá tus propiedades con tu marca, recibí consultas directas y capturá búsquedas que de otra forma se pierden.
             </p>
 
             <a
@@ -590,7 +590,7 @@ Y si no encuentra la propiedad ideal, puede dejar su bÃºsqueda.
               className="mt-8 inline-flex items-center justify-center gap-2 rounded-full px-6 py-3.5 text-sm font-bold text-zinc-950 transition hover:opacity-95"
               style={{ backgroundColor: palette.white }}
             >
-              Quiero mi pÃ¡gina de inmobiliaria
+              Quiero mi página de inmobiliaria
             </a>
           </div>
 
@@ -598,10 +598,10 @@ Y si no encuentra la propiedad ideal, puede dejar su bÃºsqueda.
             <div>
               <SectionLabel>CONTACTO</SectionLabel>
               <h3 className="max-w-xl text-3xl font-black tracking-tight text-white md:text-4xl">
-                Â¿QuerÃ©s consultarnos antes de avanzar?
+                ¿Querés consultarnos antes de avanzar?
               </h3>
               <p className="mt-4 max-w-lg text-base leading-8 text-white/66">
-                Escribinos por WhatsApp o encontranos en nuestros canales para resolver dudas antes de activar tu pÃ¡gina.
+                Escribinos por WhatsApp o encontranos en nuestros canales para resolver dudas antes de activar tu página.
               </p>
             </div>
 
@@ -618,7 +618,7 @@ Y si no encuentra la propiedad ideal, puede dejar su bÃºsqueda.
               <div style={{ borderTop: "1px solid rgba(255,255,255,0.08)" }} />
               <ContactRow icon={Mail} label="Email" value="tiendalinkok@gmail.com" href="mailto:tiendalinkok@gmail.com" />
               <div style={{ borderTop: "1px solid rgba(255,255,255,0.08)" }} />
-              <ContactRow icon={MapPin} label="UbicaciÃ³n" value="Rosario, Santa Fe, Argentina" />
+              <ContactRow icon={MapPin} label="Ubicación" value="Rosario, Santa Fe, Argentina" />
             </div>
           </div>
         </div>
@@ -628,12 +628,12 @@ Y si no encuentra la propiedad ideal, puede dejar su bÃºsqueda.
             <div>
               <p className="text-sm font-black text-white">Tienda Link</p>
               <p className="mt-4 max-w-xs text-sm leading-7 text-white/54">
-                Una marca paraguas con lÃ­neas claras para mostrar, vender o trabajar con mÃ¡s orden online.
+                Una marca paraguas con líneas claras para mostrar, vender o trabajar con más orden online.
               </p>
             </div>
 
             <div>
-              <p className="text-[11px] font-bold uppercase tracking-[0.18em] text-white/42">LÃ­neas</p>
+              <p className="text-[11px] font-bold uppercase tracking-[0.18em] text-white/42">Líneas</p>
               <ul className="mt-4 grid gap-3 text-sm text-white/68">
                 <li>Tienda Mini</li>
                 <li>Comercio</li>
@@ -646,7 +646,7 @@ Y si no encuentra la propiedad ideal, puede dejar su bÃºsqueda.
               <p className="text-[11px] font-bold uppercase tracking-[0.18em] text-white/42">Ruta</p>
               <ul className="mt-4 grid gap-3 text-sm text-white/68">
                 <li><a href={`#${sections.demos}`}>Demos reales</a></li>
-                <li><a href={`#${sections.process}`}>CÃ³mo funciona</a></li>
+                <li><a href={`#${sections.process}`}>Cómo funciona</a></li>
                 <li><a href={`#${sections.plan}`}>Plan y precio</a></li>
                 <li><a href={`#${sections.contact}`}>Contacto</a></li>
               </ul>
@@ -665,7 +665,7 @@ Y si no encuentra la propiedad ideal, puede dejar su bÃºsqueda.
           <div style={{ borderTop: "1px solid rgba(255,255,255,0.08)" }}>
             <div className="mx-auto flex max-w-6xl flex-col gap-3 px-5 py-5 text-xs text-white/38 sm:flex-row sm:items-center sm:justify-between">
               <span>Mini Web Inmobiliarias</span>
-              <span>PÃ¡ginas propias, consultas directas y bÃºsquedas recibidas.</span>
+              <span>Páginas propias, consultas directas y búsquedas recibidas.</span>
             </div>
           </div>
         </footer>
@@ -673,4 +673,5 @@ Y si no encuentra la propiedad ideal, puede dejar su bÃºsqueda.
     </main>
   );
 }
+
 
