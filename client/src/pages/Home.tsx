@@ -1,4 +1,4 @@
-import {
+﻿import {
   ArrowRight,
   Building2,
   CheckCircle2,
@@ -114,8 +114,8 @@ function Hero({
         alt={featured?.title ?? businessName}
         className="absolute inset-0 h-full w-full object-cover object-center"
       />
-      <div className="absolute inset-0 bg-gradient-to-r from-black/75 via-black/60 to-black/20" />
-      <div className="absolute inset-0 bg-black/18" />
+      <div className="absolute inset-0 bg-gradient-to-r from-black/58 via-black/42 to-black/12" />
+      <div className="absolute inset-0 bg-black/10" />
 
       <div className="relative mx-auto flex min-h-[620px] max-w-6xl items-center px-5 py-16 sm:min-h-[680px] lg:min-h-[720px]">
         <div className="max-w-2xl">
@@ -164,8 +164,8 @@ function Hero({
 
 function ValueBlock() {
   const values = [
-    "Precio, zona, operación y estado visibles desde el primer vistazo.",
-    "Fotos, medidas y características reunidas para comparar con calma.",
+    "Precio, zona, operaciÃ³n y estado visibles desde el primer vistazo.",
+    "Fotos, medidas y caracterÃ­sticas reunidas para comparar con calma.",
     "Solicitud de visita directa para coordinar una fecha posible.",
   ];
 
@@ -177,7 +177,7 @@ function ValueBlock() {
             Buscar con claridad
           </p>
           <h2 className="text-3xl font-black leading-tight tracking-tight text-zinc-950 md:text-4xl">
-            Información ordenada para elegir la próxima visita.
+            InformaciÃ³n ordenada para elegir la prÃ³xima visita.
           </h2>
         </div>
 
@@ -236,11 +236,11 @@ function HowItWorks({ slug }: { slug: string }) {
   const steps = [
     [
       "Explora propiedades",
-      "Recorre opciones en venta y alquiler según zona, precio y tipo de propiedad.",
+      "Recorre opciones en venta y alquiler segÃºn zona, precio y tipo de propiedad.",
     ],
     [
       "Revisa la ficha",
-      "Mira fotos, ubicación, medidas, ambientes y detalles principales antes de consultar.",
+      "Mira fotos, ubicaciÃ³n, medidas, ambientes y detalles principales antes de consultar.",
     ],
     [
       "Solicita visita",
@@ -322,11 +322,11 @@ function SavedSearchSection({ slug }: { slug: string }) {
       });
       setIsSubmitted(true);
       toast.success(
-        "Búsqueda guardada. La inmobiliaria podrá contactarte cuando tenga una propiedad que coincida con lo que necesitás.",
+        "BÃºsqueda guardada. La inmobiliaria podrÃ¡ contactarte cuando tenga una propiedad que coincida con lo que necesitÃ¡s.",
       );
     },
     onError: (error) => {
-      toast.error(error.message || "No pudimos guardar la búsqueda");
+      toast.error(error.message || "No pudimos guardar la bÃºsqueda");
     },
   });
 
@@ -357,14 +357,14 @@ function SavedSearchSection({ slug }: { slug: string }) {
         <div className="grid gap-8 md:grid-cols-[0.9fr_1.1fr] md:items-start">
           <div>
             <p className="mb-3 text-xs font-bold uppercase tracking-[0.18em] text-zinc-400">
-              Tu búsqueda
+              Tu bÃºsqueda
             </p>
             <h2 className="text-4xl font-black tracking-tight text-zinc-950">
-              ¿No encontraste lo que buscas?
+              Â¿No encontraste lo que buscas?
             </h2>
             <p className="mt-4 max-w-xl text-sm leading-7 text-zinc-500">
-              Dejanos tu búsqueda y te avisamos cuando tengamos una propiedad que se ajuste a lo
-              que necesitás.
+              Dejanos tu bÃºsqueda y te avisamos cuando tengamos una propiedad que se ajuste a lo
+              que necesitÃ¡s.
             </p>
 
             {!isOpen ? (
@@ -373,7 +373,7 @@ function SavedSearchSection({ slug }: { slug: string }) {
                 onClick={() => setIsOpen(true)}
                 className="mt-6 inline-flex items-center gap-2 bg-zinc-950 px-6 py-4 text-xs font-black uppercase tracking-[0.16em] text-white"
               >
-                Dejar mi búsqueda
+                Dejar mi bÃºsqueda
                 <ArrowRight className="h-4 w-4" />
               </button>
             ) : null}
@@ -384,24 +384,24 @@ function SavedSearchSection({ slug }: { slug: string }) {
               {isSubmitted ? (
                 <div className="space-y-3">
                   <p className="text-xs font-bold uppercase tracking-[0.18em] text-zinc-400">
-                    Búsqueda guardada
+                    BÃºsqueda guardada
                   </p>
                   <p className="text-sm leading-7 text-zinc-600">
-                    La inmobiliaria podrá contactarte cuando tenga una propiedad que coincida con
-                    lo que necesitás.
+                    La inmobiliaria podrÃ¡ contactarte cuando tenga una propiedad que coincida con
+                    lo que necesitÃ¡s.
                   </p>
                   <button
                     type="button"
                     onClick={() => setIsSubmitted(false)}
                     className="inline-flex border border-zinc-200 px-4 py-3 text-xs font-black uppercase tracking-[0.16em] text-zinc-700"
                   >
-                    Cargar otra búsqueda
+                    Cargar otra bÃºsqueda
                   </button>
                 </div>
               ) : (
                 <form onSubmit={handleSubmit} className="grid gap-4 md:grid-cols-2">
                   <label className="grid gap-2 text-xs font-bold uppercase tracking-[0.14em] text-zinc-500">
-                    Operación
+                    OperaciÃ³n
                     <select
                       value={form.operationType}
                       onChange={(event) =>
@@ -530,7 +530,7 @@ function SavedSearchSection({ slug }: { slug: string }) {
                       disabled={createSavedSearch.isPending}
                       className="inline-flex items-center gap-2 bg-zinc-950 px-6 py-4 text-xs font-black uppercase tracking-[0.16em] text-white disabled:cursor-not-allowed disabled:opacity-40"
                     >
-                      Enviar búsqueda
+                      Enviar bÃºsqueda
                       <ArrowRight className="h-4 w-4" />
                     </button>
                   </div>
@@ -570,8 +570,8 @@ function Contact({
             Coordinemos una visita a la propiedad que te interesa.
           </h2>
           <p className="mt-5 max-w-xl text-sm leading-7 text-white/55">
-            Envíanos tus datos y tu disponibilidad. Si tenes una consulta
-            puntual, también podes escribirnos por WhatsApp.
+            EnvÃ­anos tus datos y tu disponibilidad. Si tenes una consulta
+            puntual, tambiÃ©n podes escribirnos por WhatsApp.
           </p>
 
           <div className="mt-7 flex flex-col gap-3 sm:flex-row">
@@ -657,10 +657,10 @@ export default function Home({ forcedSlug }: HomeProps) {
             Inmobiliaria no disponible
           </p>
           <h1 className="mb-4 text-4xl font-black text-zinc-950">
-            Esta página no está pública en este momento.
+            Esta pÃ¡gina no estÃ¡ pÃºblica en este momento.
           </h1>
           <p className="text-sm leading-7 text-zinc-500">
-            Si necesitas acceso, te conviene revisar el slug o entrar desde la administración central.
+            Si necesitas acceso, te conviene revisar el slug o entrar desde la administraciÃ³n central.
           </p>
         </div>
       </div>
@@ -736,3 +736,4 @@ export default function Home({ forcedSlug }: HomeProps) {
     </div>
   );
 }
+
