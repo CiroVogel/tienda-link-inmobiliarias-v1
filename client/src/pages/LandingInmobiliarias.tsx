@@ -11,9 +11,9 @@
   Search,
   Users,
 } from "lucide-react";
-import demoMainImage from "@/assets/real-estate-landing/clave-urbana-demo-main.png";
-import demoListImage from "@/assets/real-estate-landing/clave-urbana-listado.png";
-import demoDetailImage from "@/assets/real-estate-landing/clave-urbana-ficha.png";
+import demoMainImage from "@/assets/real-estate-landing/clave-urbana-demo.png";
+import demoNorthImage from "@/assets/real-estate-landing/norte-propiedades-demo.png";
+import demoEjeImage from "@/assets/real-estate-landing/eje-urbano-demo.png";
 
 const whatsappHref =
   "https://wa.me/543415634632?text=Hola%2C%20quiero%20saber%20m%C3%A1s%20sobre%20Mini%20Web%20Inmobiliarias";
@@ -87,9 +87,9 @@ const toolCards = [
 
 const demoCards = [
   {
-    label: "Demo principal",
+    label: "DEMO PRINCIPAL",
     title: "Clave Urbana Propiedades",
-    body: "Sobria, clara y profesional. Propiedades, contacto y marca propia sin distracciones.",
+    body: "Una inmobiliaria urbana, sobria y clara para mostrar propiedades, consultas y búsquedas recibidas con marca propia.",
     image: demoMainImage,
     href: "https://inmobiliarias.tienda-link.com/clave-urbana-propiedades",
     cta: "Ver demo",
@@ -97,24 +97,24 @@ const demoCards = [
     live: true,
   },
   {
-    label: "Próximamente",
-    title: "Nueva demo en preparación",
-    body: "Espacio reservado para una segunda inmobiliaria publicada dentro de la línea Inmobiliarias.",
-    image: demoListImage,
-    href: "#",
-    cta: "Próximamente",
+    label: "ZONA RESIDENCIAL",
+    title: "Norte Propiedades",
+    body: "Una demo pensada para casas familiares, barrios residenciales y propiedades con una presentación cálida y profesional.",
+    image: demoNorthImage,
+    href: "https://inmobiliarias.tienda-link.com/norte-propiedades",
+    cta: "Ver demo",
     featured: false,
-    live: false,
+    live: true,
   },
   {
-    label: "Próximamente",
-    title: "Tercera demo futura",
-    body: "Otra muestra preparada para presentar una inmobiliaria con el mismo criterio visual y comercial.",
-    image: demoDetailImage,
-    href: "#",
-    cta: "Próximamente",
+    label: "URBANA Y MODERNA",
+    title: "Eje Urbano Inmobiliaria",
+    body: "Una demo orientada a departamentos, alquileres y propiedades urbanas con una imagen más moderna y directa.",
+    image: demoEjeImage,
+    href: "https://inmobiliarias.tienda-link.com/eje-urbano-inmobiliaria",
+    cta: "Ver demo",
     featured: false,
-    live: false,
+    live: true,
   },
 ];
 
@@ -673,5 +673,6 @@ Y si no encuentra la propiedad ideal, puede dejar su búsqueda.
     </main>
   );
 }
+
 
 
