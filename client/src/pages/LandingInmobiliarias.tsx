@@ -556,6 +556,10 @@ Y si no encuentra la propiedad ideal, puede dejar su búsqueda.
               ))}
             </ul>
 
+            <p className="mt-5 max-w-2xl text-sm leading-7" style={{ color: palette.muted }}>
+              Tu suscripción incluye la página activa, mantenimiento básico y futuras mejoras del sistema sin costo extra dentro del plan.
+            </p>
+
             <a
               href={whatsappHref}
               target="_blank"
@@ -673,6 +677,7 @@ Y si no encuentra la propiedad ideal, puede dejar su búsqueda.
     </main>
   );
 }
+
 
 
 
