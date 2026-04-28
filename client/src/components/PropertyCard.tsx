@@ -1,4 +1,4 @@
-import { Bath, BedDouble, Building2, MapPin, Ruler, Tag } from "lucide-react";
+﻿import { Bath, BedDouble, Building2, MapPin, Ruler, Tag } from "lucide-react";
 import { Link } from "wouter";
 import {
   DemoProperty,
@@ -80,7 +80,7 @@ export function PropertyCard({ property, slug }: PropertyCardProps) {
           {property.areaM2 ? (
             <span className="flex items-center gap-1.5">
               <Ruler className="h-3.5 w-3.5" />
-              {property.areaM2} m2
+              {property.areaM2} m²
             </span>
           ) : null}
         </div>
@@ -109,3 +109,4 @@ export function PropertyCard({ property, slug }: PropertyCardProps) {
     </article>
   );
 }
+

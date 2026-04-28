@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+﻿import { useMemo, useState } from "react";
 import { ArrowLeft, Building2 } from "lucide-react";
 import { Link, useParams } from "wouter";
 import SavedSearchSection from "@/components/public/SavedSearchSection";
@@ -46,7 +46,7 @@ export default function PropertyList() {
             Inmobiliaria no disponible
           </p>
           <h1 className="mb-4 text-4xl font-black text-zinc-950">
-            Este listado no est\u00E1 visible p\u00FAblicamente.
+            Este listado no está visible públicamente.
           </h1>
           <p className="text-sm leading-7 text-zinc-500">
             Puede estar archivado o el slug no coincide con una inmobiliaria activa.
@@ -197,7 +197,7 @@ export default function PropertyList() {
         <div className="mt-14 border-t border-zinc-200 pt-14 md:mt-16 md:pt-16">
           <SavedSearchSection
             slug={safeSlug}
-            eyebrow={"Tu b\u00FAsqueda"}
+            eyebrow={"Tu búsqueda"}
             className="bg-white py-0"
           />
         </div>
@@ -205,3 +205,4 @@ export default function PropertyList() {
     </div>
   );
 }
+

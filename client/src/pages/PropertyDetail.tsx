@@ -1,4 +1,4 @@
-import { useState } from "react";
+﻿import { useState } from "react";
 import {
   ArrowLeft,
   Bath,
@@ -176,7 +176,7 @@ export default function PropertyDetail() {
                   Superficie
                 </p>
                 <p className="mt-1 font-bold text-zinc-950">
-                  {property.areaM2 ? `${property.areaM2} m2` : "A consultar"}
+                  {property.areaM2 ? `${property.areaM2} m²` : "A consultar"}
                 </p>
               </div>
               <div className="bg-zinc-50 p-3">
@@ -191,7 +191,7 @@ export default function PropertyDetail() {
               <div className="bg-zinc-50 p-3">
                 <Bath className="mb-2 h-5 w-5 text-zinc-400" />
                 <p className="text-xs font-bold uppercase tracking-[0.14em] text-zinc-400">
-                  Banos
+                  Baños
                 </p>
                 <p className="mt-1 font-bold text-zinc-950">
                   {property.bathrooms ?? "A consultar"}
@@ -217,7 +217,7 @@ export default function PropertyDetail() {
 
             <div className="mt-5 border-t border-zinc-200 pt-5">
               <h2 className="mb-3 text-sm font-black uppercase tracking-[0.16em] text-zinc-950">
-                Descripcion
+                Descripción
               </h2>
               <p className="text-sm leading-7 text-zinc-600">{property.description}</p>
             </div>
@@ -252,3 +252,4 @@ export default function PropertyDetail() {
     </div>
   );
 }
+

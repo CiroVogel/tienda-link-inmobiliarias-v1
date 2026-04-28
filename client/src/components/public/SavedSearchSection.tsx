@@ -1,4 +1,4 @@
-import { useState } from "react";
+﻿import { useState } from "react";
 import { ArrowRight } from "lucide-react";
 import { toast } from "sonner";
 import {
@@ -10,7 +10,7 @@ import { trpc } from "@/lib/trpc";
 
 export default function SavedSearchSection({
   slug,
-  eyebrow = "Tu b\u00FAsqueda",
+  eyebrow = "Tu búsqueda",
   className = "bg-zinc-50 py-14 md:py-18",
 }: {
   slug: string;
@@ -53,11 +53,11 @@ export default function SavedSearchSection({
       });
       setIsSubmitted(true);
       toast.success(
-        "B\u00FAsqueda guardada. La inmobiliaria podr\u00E1 contactarte cuando tenga una propiedad que coincida con lo que necesit\u00E1s.",
+        "Búsqueda guardada. La inmobiliaria podrá contactarte cuando tenga una propiedad que coincida con lo que necesitás.",
       );
     },
     onError: (error) => {
-      toast.error(error.message || "No pudimos guardar la b\u00FAsqueda");
+      toast.error(error.message || "No pudimos guardar la búsqueda");
     },
   });
 
@@ -65,7 +65,7 @@ export default function SavedSearchSection({
     event.preventDefault();
 
     if (!form.zone.trim() || !form.budget.trim() || !form.name.trim() || !form.whatsapp.trim()) {
-      toast.error("Complet\u00E1 zona, presupuesto, nombre y WhatsApp.");
+      toast.error("Completá zona, presupuesto, nombre y WhatsApp.");
       return;
     }
 
@@ -91,10 +91,10 @@ export default function SavedSearchSection({
               {eyebrow}
             </p>
             <h2 className="text-4xl font-black tracking-tight text-zinc-950">
-              {"\u00BFNo encontraste lo que busc\u00E1s?"}
+              {"¿No encontraste lo que buscás?"}
             </h2>
             <p className="mt-4 max-w-xl text-sm leading-7 text-zinc-500">
-              {"Dejanos tu b\u00FAsqueda y te avisamos cuando tengamos una propiedad que se ajuste a lo que necesit\u00E1s."}
+              {"Dejanos tu búsqueda y te avisamos cuando tengamos una propiedad que se ajuste a lo que necesitás."}
             </p>
 
             {!isOpen ? (
@@ -103,7 +103,7 @@ export default function SavedSearchSection({
                 onClick={() => setIsOpen(true)}
                 className="mt-6 inline-flex items-center gap-2 bg-zinc-950 px-6 py-4 text-xs font-black uppercase tracking-[0.16em] text-white"
               >
-                {"Dejar mi b\u00FAsqueda"}
+                {"Dejar mi búsqueda"}
                 <ArrowRight className="h-4 w-4" />
               </button>
             ) : null}
@@ -114,23 +114,23 @@ export default function SavedSearchSection({
               {isSubmitted ? (
                 <div className="space-y-3">
                   <p className="text-xs font-bold uppercase tracking-[0.18em] text-zinc-400">
-                    {"B\u00FAsqueda guardada"}
+                    {"Búsqueda guardada"}
                   </p>
                   <p className="text-sm leading-7 text-zinc-600">
-                    {"La inmobiliaria podr\u00E1 contactarte cuando tenga una propiedad que coincida con lo que necesit\u00E1s."}
+                    {"La inmobiliaria podrá contactarte cuando tenga una propiedad que coincida con lo que necesitás."}
                   </p>
                   <button
                     type="button"
                     onClick={() => setIsSubmitted(false)}
                     className="inline-flex border border-zinc-200 px-4 py-3 text-xs font-black uppercase tracking-[0.16em] text-zinc-700"
                   >
-                    {"Cargar otra b\u00FAsqueda"}
+                    {"Cargar otra búsqueda"}
                   </button>
                 </div>
               ) : (
                 <form onSubmit={handleSubmit} className="grid gap-4 md:grid-cols-2">
                   <label className="grid gap-2 text-xs font-bold uppercase tracking-[0.14em] text-zinc-500">
-                    {"Operaci\u00F3n"}
+                    {"Operación"}
                     <select
                       value={form.operationType}
                       onChange={(event) =>
@@ -259,7 +259,7 @@ export default function SavedSearchSection({
                       disabled={createSavedSearch.isPending}
                       className="inline-flex items-center gap-2 bg-zinc-950 px-6 py-4 text-xs font-black uppercase tracking-[0.16em] text-white disabled:cursor-not-allowed disabled:opacity-40"
                     >
-                      {"Enviar b\u00FAsqueda"}
+                      {"Enviar búsqueda"}
                       <ArrowRight className="h-4 w-4" />
                     </button>
                   </div>
@@ -272,3 +272,4 @@ export default function SavedSearchSection({
     </section>
   );
 }
+
