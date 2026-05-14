@@ -27,9 +27,14 @@ import {
 import { trpc } from "@/lib/trpc";
 import { generatePropertyPdf } from "@/lib/propertyPdf";
 import {
+  detailedPropertyFeatureGroups,
   getOperationLabel,
   getStatusLabel,
+  propertyDispositionOptions,
+  propertyOrientationOptions,
+  type PropertyDisposition,
   type PropertyOperation,
+  type PropertyOrientation,
   type PropertyStatus,
 } from "@/lib/realEstateDemo";
 
@@ -42,9 +47,18 @@ type AdminProperty = {
   location: string;
   address: string;
   propertyType: string;
+  rooms: number | null;
   bedrooms: number | null;
   bathrooms: number | null;
+  garages: number | null;
+  ageYears: number | null;
+  expenses: string | null;
+  coveredAreaM2: number | null;
+  uncoveredAreaM2: number | null;
   areaM2: number | null;
+  disposition: PropertyDisposition | null;
+  orientation: PropertyOrientation | null;
+  detailedFeatures: string[];
   features: string[];
   description: string;
   featured: boolean;
@@ -61,9 +75,18 @@ type PropertyForm = {
   location: string;
   address: string;
   propertyType: string;
+  rooms: string;
   bedrooms: string;
   bathrooms: string;
+  garages: string;
+  ageYears: string;
+  expenses: string;
+  coveredAreaM2: string;
+  uncoveredAreaM2: string;
   areaM2: string;
+  disposition: PropertyDisposition | "";
+  orientation: PropertyOrientation | "";
+  detailedFeatures: string[];
   description: string;
   featuresText: string;
   featured: boolean;
@@ -83,9 +106,18 @@ const EMPTY_FORM: PropertyForm = {
   location: "",
   address: "",
   propertyType: "",
+  rooms: "",
   bedrooms: "",
   bathrooms: "",
+  garages: "",
+  ageYears: "",
+  expenses: "",
+  coveredAreaM2: "",
+  uncoveredAreaM2: "",
   areaM2: "",
+  disposition: "",
+  orientation: "",
+  detailedFeatures: [],
   description: "",
   featuresText: "",
   featured: false,
@@ -113,9 +145,18 @@ function toForm(property: AdminProperty): PropertyForm {
     location: property.location,
     address: property.address,
     propertyType: property.propertyType,
+    rooms: property.rooms != null ? String(property.rooms) : "",
     bedrooms: property.bedrooms != null ? String(property.bedrooms) : "",
     bathrooms: property.bathrooms != null ? String(property.bathrooms) : "",
+    garages: property.garages != null ? String(property.garages) : "",
+    ageYears: property.ageYears != null ? String(property.ageYears) : "",
+    expenses: property.expenses ?? "",
+    coveredAreaM2: property.coveredAreaM2 != null ? String(property.coveredAreaM2) : "",
+    uncoveredAreaM2: property.uncoveredAreaM2 != null ? String(property.uncoveredAreaM2) : "",
     areaM2: property.areaM2 != null ? String(property.areaM2) : "",
+    disposition: property.disposition ?? "",
+    orientation: property.orientation ?? "",
+    detailedFeatures: property.detailedFeatures ?? [],
     description: property.description,
     featuresText: property.features.join("\n"),
     featured: property.featured,
@@ -131,9 +172,18 @@ function toPayload(form: PropertyForm) {
     location: form.location.trim(),
     address: form.address.trim(),
     propertyType: form.propertyType.trim(),
+    rooms: parseOptionalInt(form.rooms),
     bedrooms: parseOptionalInt(form.bedrooms),
     bathrooms: parseOptionalInt(form.bathrooms),
+    garages: parseOptionalInt(form.garages),
+    ageYears: parseOptionalInt(form.ageYears),
+    expenses: form.expenses.trim() || null,
+    coveredAreaM2: parseOptionalInt(form.coveredAreaM2),
+    uncoveredAreaM2: parseOptionalInt(form.uncoveredAreaM2),
     areaM2: parseOptionalInt(form.areaM2),
+    disposition: form.disposition || null,
+    orientation: form.orientation || null,
+    detailedFeatures: form.detailedFeatures,
     description: form.description.trim(),
     features: toFeatureList(form.featuresText),
     featured: form.featured,
@@ -259,6 +309,15 @@ export default function AdminServices() {
     setEditingId(property.id);
     setForm(toForm(property));
     setDialogOpen(true);
+  }
+
+  function toggleDetailedFeature(feature: string, checked: boolean) {
+    setForm((current) => ({
+      ...current,
+      detailedFeatures: checked
+        ? Array.from(new Set([...current.detailedFeatures, feature]))
+        : current.detailedFeatures.filter((item) => item !== feature),
+    }));
   }
 
   async function runQuickUpdate(
@@ -598,7 +657,7 @@ export default function AdminServices() {
         )}
 
         <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
-          <DialogContent className="flex max-h-[90vh] max-w-2xl flex-col gap-0 overflow-hidden p-0">
+          <DialogContent className="flex max-h-[90vh] max-w-4xl flex-col gap-0 overflow-hidden p-0">
             <DialogHeader className="sticky top-0 z-10 border-b border-zinc-200 bg-white px-6 py-5 pr-12">
               <DialogTitle>{editingId ? "Editar propiedad" : "Nueva propiedad"}</DialogTitle>
             </DialogHeader>
@@ -694,44 +753,222 @@ export default function AdminServices() {
                   />
                 </div>
 
-                <div>
-                  <Label className="mb-1.5 block">Dormitorios</Label>
-                  <Input
-                    type="number"
-                    min={0}
-                    value={form.bedrooms}
-                    onChange={(event) =>
-                      setForm((current) => ({ ...current, bedrooms: event.target.value }))
-                    }
-                    placeholder="2"
-                  />
-                </div>
+                <section className="md:col-span-2 rounded-md border border-zinc-200 bg-zinc-50 p-4">
+                  <h3 className="text-sm font-black uppercase tracking-[0.14em] text-zinc-950">
+                    Características detalladas
+                  </h3>
 
-                <div>
-                  <Label className="mb-1.5 block">Baños</Label>
-                  <Input
-                    type="number"
-                    min={0}
-                    value={form.bathrooms}
-                    onChange={(event) =>
-                      setForm((current) => ({ ...current, bathrooms: event.target.value }))
-                    }
-                    placeholder="1"
-                  />
-                </div>
+                  <div className="mt-4">
+                    <p className="mb-3 text-xs font-black uppercase tracking-[0.12em] text-zinc-500">
+                      Datos principales
+                    </p>
+                    <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+                      <div>
+                        <Label className="mb-1.5 block">Ambientes</Label>
+                        <Input
+                          type="number"
+                          min={0}
+                          value={form.rooms}
+                          onChange={(event) =>
+                            setForm((current) => ({ ...current, rooms: event.target.value }))
+                          }
+                          placeholder="3"
+                        />
+                      </div>
 
-                <div>
-                  <Label className="mb-1.5 block">Superficie m²</Label>
-                  <Input
-                    type="number"
-                    min={0}
-                    value={form.areaM2}
-                    onChange={(event) =>
-                      setForm((current) => ({ ...current, areaM2: event.target.value }))
-                    }
-                    placeholder="72"
-                  />
-                </div>
+                      <div>
+                        <Label className="mb-1.5 block">Dormitorios</Label>
+                        <Input
+                          type="number"
+                          min={0}
+                          value={form.bedrooms}
+                          onChange={(event) =>
+                            setForm((current) => ({ ...current, bedrooms: event.target.value }))
+                          }
+                          placeholder="2"
+                        />
+                      </div>
+
+                      <div>
+                        <Label className="mb-1.5 block">Baños</Label>
+                        <Input
+                          type="number"
+                          min={0}
+                          value={form.bathrooms}
+                          onChange={(event) =>
+                            setForm((current) => ({ ...current, bathrooms: event.target.value }))
+                          }
+                          placeholder="1"
+                        />
+                      </div>
+
+                      <div>
+                        <Label className="mb-1.5 block">Cocheras</Label>
+                        <Input
+                          type="number"
+                          min={0}
+                          value={form.garages}
+                          onChange={(event) =>
+                            setForm((current) => ({ ...current, garages: event.target.value }))
+                          }
+                          placeholder="1"
+                        />
+                      </div>
+
+                      <div>
+                        <Label className="mb-1.5 block">Antigüedad (años)</Label>
+                        <Input
+                          type="number"
+                          min={0}
+                          value={form.ageYears}
+                          onChange={(event) =>
+                            setForm((current) => ({ ...current, ageYears: event.target.value }))
+                          }
+                          placeholder="10"
+                        />
+                      </div>
+
+                      <div>
+                        <Label className="mb-1.5 block">Expensas</Label>
+                        <Input
+                          value={form.expenses}
+                          onChange={(event) =>
+                            setForm((current) => ({ ...current, expenses: event.target.value }))
+                          }
+                          placeholder="$ 35.000"
+                        />
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="mt-5">
+                    <p className="mb-3 text-xs font-black uppercase tracking-[0.12em] text-zinc-500">
+                      Superficies
+                    </p>
+                    <div className="grid gap-4 sm:grid-cols-3">
+                      <div>
+                        <Label className="mb-1.5 block">Superficie cubierta</Label>
+                        <Input
+                          type="number"
+                          min={0}
+                          value={form.coveredAreaM2}
+                          onChange={(event) =>
+                            setForm((current) => ({
+                              ...current,
+                              coveredAreaM2: event.target.value,
+                            }))
+                          }
+                          placeholder="60"
+                        />
+                      </div>
+
+                      <div>
+                        <Label className="mb-1.5 block">Superficie descubierta</Label>
+                        <Input
+                          type="number"
+                          min={0}
+                          value={form.uncoveredAreaM2}
+                          onChange={(event) =>
+                            setForm((current) => ({
+                              ...current,
+                              uncoveredAreaM2: event.target.value,
+                            }))
+                          }
+                          placeholder="12"
+                        />
+                      </div>
+
+                      <div>
+                        <Label className="mb-1.5 block">Superficie total</Label>
+                        <Input
+                          type="number"
+                          min={0}
+                          value={form.areaM2}
+                          onChange={(event) =>
+                            setForm((current) => ({ ...current, areaM2: event.target.value }))
+                          }
+                          placeholder="72"
+                        />
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="mt-5">
+                    <p className="mb-3 text-xs font-black uppercase tracking-[0.12em] text-zinc-500">
+                      Ubicación / disposición
+                    </p>
+                    <div className="grid gap-4 sm:grid-cols-2">
+                      <div>
+                        <Label className="mb-1.5 block">Disposición</Label>
+                        <select
+                          value={form.disposition}
+                          onChange={(event) =>
+                            setForm((current) => ({
+                              ...current,
+                              disposition: event.target.value as PropertyDisposition | "",
+                            }))
+                          }
+                          className="h-10 w-full rounded-md border border-input bg-background px-3 text-sm"
+                        >
+                          <option value="">Sin especificar</option>
+                          {propertyDispositionOptions.map((option) => (
+                            <option key={option} value={option}>
+                              {option}
+                            </option>
+                          ))}
+                        </select>
+                      </div>
+
+                      <div>
+                        <Label className="mb-1.5 block">Orientación</Label>
+                        <select
+                          value={form.orientation}
+                          onChange={(event) =>
+                            setForm((current) => ({
+                              ...current,
+                              orientation: event.target.value as PropertyOrientation | "",
+                            }))
+                          }
+                          className="h-10 w-full rounded-md border border-input bg-background px-3 text-sm"
+                        >
+                          <option value="">Sin especificar</option>
+                          {propertyOrientationOptions.map((option) => (
+                            <option key={option} value={option}>
+                              {option}
+                            </option>
+                          ))}
+                        </select>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="mt-5 grid gap-5">
+                    {detailedPropertyFeatureGroups.map((group) => (
+                      <div key={group.title}>
+                        <p className="mb-3 text-xs font-black uppercase tracking-[0.12em] text-zinc-500">
+                          {group.title}
+                        </p>
+                        <div className="grid gap-2 sm:grid-cols-2 lg:grid-cols-3">
+                          {group.options.map((feature) => (
+                            <label
+                              key={feature}
+                              className="flex min-h-10 items-center gap-2 rounded-md border border-zinc-200 bg-white px-3 py-2 text-sm font-medium text-zinc-700"
+                            >
+                              <input
+                                type="checkbox"
+                                checked={form.detailedFeatures.includes(feature)}
+                                onChange={(event) =>
+                                  toggleDetailedFeature(feature, event.target.checked)
+                                }
+                              />
+                              {feature}
+                            </label>
+                          ))}
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </section>
 
                 <div className="flex items-end">
                   <label className="flex items-center gap-2 text-sm font-medium text-zinc-700">

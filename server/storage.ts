@@ -6,7 +6,9 @@ import {
   demoProperties,
   realEstateProfile,
   type DemoProperty,
+  type PropertyDisposition,
   type PropertyOperation,
+  type PropertyOrientation,
   type PropertyStatus,
 } from "../client/src/lib/realEstateDemo";
 import {
@@ -67,9 +69,18 @@ export type StoredProperty = {
   location: string;
   address: string;
   propertyType: string;
+  rooms: number | null;
   bedrooms: number | null;
   bathrooms: number | null;
+  garages: number | null;
+  ageYears: number | null;
+  expenses: string | null;
+  coveredAreaM2: number | null;
+  uncoveredAreaM2: number | null;
   areaM2: number | null;
+  disposition: PropertyDisposition | null;
+  orientation: PropertyOrientation | null;
+  detailedFeatures: string[];
   features: string[];
   description: string;
   featured: boolean;
@@ -87,9 +98,18 @@ export type PropertyMutationInput = {
   location: string;
   address: string;
   propertyType: string;
+  rooms?: number | null;
   bedrooms?: number | null;
   bathrooms?: number | null;
+  garages?: number | null;
+  ageYears?: number | null;
+  expenses?: string | null;
+  coveredAreaM2?: number | null;
+  uncoveredAreaM2?: number | null;
   areaM2?: number | null;
+  disposition?: PropertyDisposition | null;
+  orientation?: PropertyOrientation | null;
+  detailedFeatures?: string[];
   features?: string[];
   description: string;
   featured?: boolean;
@@ -356,9 +376,20 @@ function normalizeProperty(property: StoredProperty): StoredProperty {
   return {
     ...property,
     slug: normalizeSlug(property.slug),
+    rooms: property.rooms ?? null,
     bedrooms: property.bedrooms ?? null,
     bathrooms: property.bathrooms ?? null,
+    garages: property.garages ?? null,
+    ageYears: property.ageYears ?? null,
+    expenses: property.expenses?.trim() || null,
+    coveredAreaM2: property.coveredAreaM2 ?? null,
+    uncoveredAreaM2: property.uncoveredAreaM2 ?? null,
     areaM2: property.areaM2 ?? null,
+    disposition: property.disposition ?? null,
+    orientation: property.orientation ?? null,
+    detailedFeatures: (property.detailedFeatures ?? [])
+      .map((feature) => feature.trim())
+      .filter(Boolean),
     features: (property.features ?? []).map((feature) => feature.trim()).filter(Boolean),
     featured: Boolean(property.featured),
     images: normalizeImages(property.images),
@@ -441,9 +472,18 @@ function seedProperty(property: DemoProperty, slug: string, sortOrder: number): 
     location: property.location,
     address: property.address,
     propertyType: property.propertyType,
+    rooms: property.rooms ?? null,
     bedrooms: property.bedrooms ?? null,
     bathrooms: property.bathrooms ?? null,
+    garages: property.garages ?? null,
+    ageYears: property.ageYears ?? null,
+    expenses: property.expenses?.trim() || null,
+    coveredAreaM2: property.coveredAreaM2 ?? null,
+    uncoveredAreaM2: property.uncoveredAreaM2 ?? null,
     areaM2: property.areaM2 ?? null,
+    disposition: property.disposition ?? null,
+    orientation: property.orientation ?? null,
+    detailedFeatures: [...(property.detailedFeatures ?? [])],
     features: [...property.features],
     description: property.description,
     featured: Boolean(property.featured),
@@ -1101,9 +1141,18 @@ export function mapStoredPropertyToPublic(property: StoredProperty): DemoPropert
     location: normalized.location,
     address: normalized.address,
     propertyType: normalized.propertyType,
+    rooms: normalized.rooms ?? undefined,
     bedrooms: normalized.bedrooms ?? undefined,
     bathrooms: normalized.bathrooms ?? undefined,
+    garages: normalized.garages ?? undefined,
+    ageYears: normalized.ageYears ?? undefined,
+    expenses: normalized.expenses ?? undefined,
+    coveredAreaM2: normalized.coveredAreaM2 ?? undefined,
+    uncoveredAreaM2: normalized.uncoveredAreaM2 ?? undefined,
     areaM2: normalized.areaM2 ?? undefined,
+    disposition: normalized.disposition ?? undefined,
+    orientation: normalized.orientation ?? undefined,
+    detailedFeatures: normalized.detailedFeatures,
     features: normalized.features,
     description: normalized.description,
     images: sortImages(normalized.images).map((image) => image.url),
@@ -1150,9 +1199,20 @@ export async function createStoredProperty(slug: string, input: PropertyMutation
     location: input.location.trim(),
     address: input.address.trim(),
     propertyType: input.propertyType.trim(),
+    rooms: input.rooms ?? null,
     bedrooms: input.bedrooms ?? null,
     bathrooms: input.bathrooms ?? null,
+    garages: input.garages ?? null,
+    ageYears: input.ageYears ?? null,
+    expenses: input.expenses?.trim() || null,
+    coveredAreaM2: input.coveredAreaM2 ?? null,
+    uncoveredAreaM2: input.uncoveredAreaM2 ?? null,
     areaM2: input.areaM2 ?? null,
+    disposition: input.disposition ?? null,
+    orientation: input.orientation ?? null,
+    detailedFeatures: (input.detailedFeatures ?? [])
+      .map((feature) => feature.trim())
+      .filter(Boolean),
     features: (input.features ?? []).map((feature) => feature.trim()).filter(Boolean),
     description: input.description.trim(),
     featured: Boolean(input.featured),
@@ -1184,9 +1244,20 @@ export async function updateStoredProperty(
     location: input.location.trim(),
     address: input.address.trim(),
     propertyType: input.propertyType.trim(),
+    rooms: input.rooms ?? null,
     bedrooms: input.bedrooms ?? null,
     bathrooms: input.bathrooms ?? null,
+    garages: input.garages ?? null,
+    ageYears: input.ageYears ?? null,
+    expenses: input.expenses?.trim() || null,
+    coveredAreaM2: input.coveredAreaM2 ?? null,
+    uncoveredAreaM2: input.uncoveredAreaM2 ?? null,
     areaM2: input.areaM2 ?? null,
+    disposition: input.disposition ?? null,
+    orientation: input.orientation ?? null,
+    detailedFeatures: (input.detailedFeatures ?? [])
+      .map((feature) => feature.trim())
+      .filter(Boolean),
     features: (input.features ?? []).map((feature) => feature.trim()).filter(Boolean),
     description: input.description.trim(),
     featured: Boolean(input.featured),

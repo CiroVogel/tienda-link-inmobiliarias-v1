@@ -12,6 +12,8 @@ import {
 import { Link, useParams } from "wouter";
 import { usePublicProperty } from "@/lib/propertyData";
 import {
+  detailedPropertyFeatureGroups,
+  type DemoProperty,
   getPropertyGalleryImages,
   getOperationLabel,
   getStatusLabel,
@@ -24,6 +26,46 @@ function buildWhatsappHref(propertyTitle: string) {
   return `https://wa.me/${realEstateProfile.whatsapp.replace(/\D/g, "")}?text=${encodeURIComponent(
     `Hola, quiero consultar por la propiedad: ${propertyTitle}`,
   )}`;
+}
+
+function formatNumberDetail(value?: number | null) {
+  return value != null ? String(value) : null;
+}
+
+function formatAreaDetail(value?: number | null) {
+  return value != null ? `${value} m²` : null;
+}
+
+function formatAgeDetail(value?: number | null) {
+  if (value == null) return null;
+  return value === 0 ? "A estrenar" : `${value} año${value === 1 ? "" : "s"}`;
+}
+
+function formatTextDetail(value?: string | null) {
+  return value?.trim() || null;
+}
+
+function hasDetailValue(item: { label: string; value: string | null }): item is {
+  label: string;
+  value: string;
+} {
+  return Boolean(item.value);
+}
+
+function buildPropertyDetailItems(property: DemoProperty) {
+  return [
+    { label: "Ambientes", value: formatNumberDetail(property.rooms) },
+    { label: "Dormitorios", value: formatNumberDetail(property.bedrooms) },
+    { label: "Baños", value: formatNumberDetail(property.bathrooms) },
+    { label: "Cocheras", value: formatNumberDetail(property.garages) },
+    { label: "Antigüedad", value: formatAgeDetail(property.ageYears) },
+    { label: "Expensas", value: formatTextDetail(property.expenses) },
+    { label: "Superficie cubierta", value: formatAreaDetail(property.coveredAreaM2) },
+    { label: "Superficie descubierta", value: formatAreaDetail(property.uncoveredAreaM2) },
+    { label: "Superficie total", value: formatAreaDetail(property.areaM2) },
+    { label: "Disposición", value: formatTextDetail(property.disposition) },
+    { label: "Orientación", value: formatTextDetail(property.orientation) },
+  ].filter(hasDetailValue);
 }
 
 export default function PropertyDetail() {
@@ -72,6 +114,23 @@ export default function PropertyDetail() {
   }
 
   const requestable = isPropertyRequestable(property);
+  const summaryFacts = [
+    { label: "Tipo", value: property.propertyType, Icon: Building2 },
+    { label: "Superficie", value: formatAreaDetail(property.areaM2), Icon: Ruler },
+    { label: "Dormitorios", value: formatNumberDetail(property.bedrooms), Icon: BedDouble },
+    { label: "Baños", value: formatNumberDetail(property.bathrooms), Icon: Bath },
+  ].filter((fact) => Boolean(fact.value));
+  const detailItems = buildPropertyDetailItems(property);
+  const selectedDetailedFeatureGroups = detailedPropertyFeatureGroups
+    .map((group) => ({
+      title: group.title,
+      options: group.options.filter((feature) =>
+        (property.detailedFeatures ?? []).includes(feature),
+      ),
+    }))
+    .filter((group) => group.options.length > 0);
+  const hasDetailedBlock = detailItems.length > 0 || selectedDetailedFeatureGroups.length > 0;
+  const hasFreeFeatures = property.features.length > 0;
 
   return (
     <div className="min-h-screen bg-white">
@@ -163,57 +222,77 @@ export default function PropertyDetail() {
             <p className="mt-4 text-3xl font-black text-zinc-950">{property.price}</p>
 
             <div className="mt-5 grid grid-cols-2 gap-px bg-zinc-200">
-              <div className="bg-zinc-50 p-3">
-                <Building2 className="mb-2 h-5 w-5 text-zinc-400" />
-                <p className="text-xs font-bold uppercase tracking-[0.14em] text-zinc-400">
-                  Tipo
-                </p>
-                <p className="mt-1 font-bold text-zinc-950">{property.propertyType}</p>
-              </div>
-              <div className="bg-zinc-50 p-3">
-                <Ruler className="mb-2 h-5 w-5 text-zinc-400" />
-                <p className="text-xs font-bold uppercase tracking-[0.14em] text-zinc-400">
-                  Superficie
-                </p>
-                <p className="mt-1 font-bold text-zinc-950">
-                  {property.areaM2 ? `${property.areaM2} m²` : "A consultar"}
-                </p>
-              </div>
-              <div className="bg-zinc-50 p-3">
-                <BedDouble className="mb-2 h-5 w-5 text-zinc-400" />
-                <p className="text-xs font-bold uppercase tracking-[0.14em] text-zinc-400">
-                  Dormitorios
-                </p>
-                <p className="mt-1 font-bold text-zinc-950">
-                  {property.bedrooms ?? "No aplica"}
-                </p>
-              </div>
-              <div className="bg-zinc-50 p-3">
-                <Bath className="mb-2 h-5 w-5 text-zinc-400" />
-                <p className="text-xs font-bold uppercase tracking-[0.14em] text-zinc-400">
-                  Baños
-                </p>
-                <p className="mt-1 font-bold text-zinc-950">
-                  {property.bathrooms ?? "A consultar"}
-                </p>
-              </div>
+              {summaryFacts.map(({ label, value, Icon }) => (
+                <div key={label} className="bg-zinc-50 p-3">
+                  <Icon className="mb-2 h-5 w-5 text-zinc-400" />
+                  <p className="text-xs font-bold uppercase tracking-[0.14em] text-zinc-400">
+                    {label}
+                  </p>
+                  <p className="mt-1 font-bold text-zinc-950">{value}</p>
+                </div>
+              ))}
             </div>
 
-            <div className="mt-5">
-              <h2 className="mb-3 text-sm font-black uppercase tracking-[0.16em] text-zinc-950">
-                Caracteristicas
-              </h2>
-              <div className="flex flex-wrap gap-2">
-                {property.features.map((feature) => (
-                  <span
-                    key={feature}
-                    className="border border-zinc-200 bg-white px-3 py-2 text-sm text-zinc-600"
-                  >
-                    {feature}
-                  </span>
-                ))}
+            {hasDetailedBlock ? (
+              <div className="mt-5 border-t border-zinc-200 pt-5">
+                <h2 className="mb-3 text-sm font-black uppercase tracking-[0.16em] text-zinc-950">
+                  Detalles de la propiedad
+                </h2>
+
+                {detailItems.length > 0 ? (
+                  <div className="grid gap-px bg-zinc-200 sm:grid-cols-2">
+                    {detailItems.map((item) => (
+                      <div key={item.label} className="bg-zinc-50 p-3">
+                        <p className="text-xs font-bold uppercase tracking-[0.14em] text-zinc-400">
+                          {item.label}
+                        </p>
+                        <p className="mt-1 font-bold text-zinc-950">{item.value}</p>
+                      </div>
+                    ))}
+                  </div>
+                ) : null}
+
+                {selectedDetailedFeatureGroups.length > 0 ? (
+                  <div className="mt-4 grid gap-4">
+                    {selectedDetailedFeatureGroups.map((group) => (
+                      <div key={group.title}>
+                        <p className="mb-2 text-xs font-black uppercase tracking-[0.14em] text-zinc-400">
+                          {group.title}
+                        </p>
+                        <div className="flex flex-wrap gap-2">
+                          {group.options.map((feature) => (
+                            <span
+                              key={feature}
+                              className="border border-zinc-200 bg-white px-3 py-2 text-sm text-zinc-600"
+                            >
+                              {feature}
+                            </span>
+                          ))}
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                ) : null}
               </div>
-            </div>
+            ) : null}
+
+            {hasFreeFeatures ? (
+              <div className="mt-5">
+                <h2 className="mb-3 text-sm font-black uppercase tracking-[0.16em] text-zinc-950">
+                  Características
+                </h2>
+                <div className="flex flex-wrap gap-2">
+                  {property.features.map((feature) => (
+                    <span
+                      key={feature}
+                      className="border border-zinc-200 bg-white px-3 py-2 text-sm text-zinc-600"
+                    >
+                      {feature}
+                    </span>
+                  ))}
+                </div>
+              </div>
+            ) : null}
 
             <div className="mt-5 border-t border-zinc-200 pt-5">
               <h2 className="mb-3 text-sm font-black uppercase tracking-[0.16em] text-zinc-950">

@@ -6,7 +6,11 @@ import { getSessionCookieOptions } from "./_core/cookies";
 import { systemRouter } from "./_core/systemRouter";
 import { protectedProcedure, publicProcedure, router } from "./_core/trpc";
 import { randomBytes, scryptSync, timingSafeEqual } from "crypto";
-import { realEstateProfile } from "../client/src/lib/realEstateDemo";
+import {
+  propertyDispositionOptions,
+  propertyOrientationOptions,
+  realEstateProfile,
+} from "../client/src/lib/realEstateDemo";
 import {
   addGalleryImage,
   archiveBooking,
@@ -104,6 +108,8 @@ const slugSchema = z
 
 const propertyOperationSchema = z.enum(["sale", "rent"]);
 const propertyStatusSchema = z.enum(["available", "reserved", "sold", "rented", "hidden"]);
+const propertyDispositionSchema = z.enum(propertyDispositionOptions);
+const propertyOrientationSchema = z.enum(propertyOrientationOptions);
 const visitRequestStatusSchema = z.enum([
   "new",
   "contacted",
@@ -150,9 +156,18 @@ const propertyInputSchema = z.object({
   location: z.string().min(1).max(160),
   address: z.string().min(1).max(240),
   propertyType: z.string().min(1).max(120),
+  rooms: z.number().int().min(0).max(50).nullable().optional(),
   bedrooms: z.number().int().min(0).max(20).nullable().optional(),
   bathrooms: z.number().int().min(0).max(20).nullable().optional(),
+  garages: z.number().int().min(0).max(20).nullable().optional(),
+  ageYears: z.number().int().min(0).max(300).nullable().optional(),
+  expenses: z.string().trim().max(120).nullable().optional(),
+  coveredAreaM2: z.number().int().min(0).max(50000).nullable().optional(),
+  uncoveredAreaM2: z.number().int().min(0).max(50000).nullable().optional(),
   areaM2: z.number().int().min(0).max(50000).nullable().optional(),
+  disposition: propertyDispositionSchema.nullable().optional(),
+  orientation: propertyOrientationSchema.nullable().optional(),
+  detailedFeatures: z.array(z.string().min(1).max(100)).max(80).default([]),
   features: z.array(z.string().min(1).max(100)).max(30).default([]),
   description: z.string().min(1).max(4000),
   featured: z.boolean().default(false),

@@ -15,9 +15,18 @@ type PdfProperty = {
   location: string;
   address: string;
   propertyType: string;
+  rooms?: number | null;
   bedrooms?: number | null;
   bathrooms?: number | null;
+  garages?: number | null;
+  ageYears?: number | null;
+  expenses?: string | null;
+  coveredAreaM2?: number | null;
+  uncoveredAreaM2?: number | null;
   areaM2?: number | null;
+  disposition?: string | null;
+  orientation?: string | null;
+  detailedFeatures?: string[];
   features: string[];
   description: string;
   images: string[];
@@ -90,7 +99,27 @@ function normalizePdfText(value: string) {
 }
 
 function formatAreaM2(value?: number | null) {
-  return value ? `${value} m\u00b2` : "A consultar";
+  return value != null ? `${value} m\u00b2` : null;
+}
+
+function formatNumberDetail(value?: number | null) {
+  return value != null ? String(value) : null;
+}
+
+function formatAgeDetail(value?: number | null) {
+  if (value == null) return null;
+  return value === 0 ? "A estrenar" : `${value} a\u00f1o${value === 1 ? "" : "s"}`;
+}
+
+function formatTextDetail(value?: string | null) {
+  return value?.trim() || null;
+}
+
+function hasPdfDetailValue(item: { label: string; value: string | null }): item is {
+  label: string;
+  value: string;
+} {
+  return Boolean(item.value);
 }
 
 function buildPdfFilename(title: string) {
@@ -252,7 +281,7 @@ function buildPropertyPdfElement({
       : "#111827";
   const logoUrl = profile.logoUrl?.trim() || "";
   const secondaryImages = property.images.slice(1, 4);
-  const summaryFeatures = property.features.slice(0, 2);
+  const summaryFeatures = [...property.features, ...(property.detailedFeatures ?? [])];
   const city = profile.address?.split(",").pop()?.trim() || property.location;
   const contactLine = [
     profile.phone || profile.whatsapp ? `WhatsApp ${profile.phone || profile.whatsapp}` : "",
@@ -601,18 +630,24 @@ function buildPropertyPdfElement({
     },
   });
 
-  appendTextBlock(dataGrid, "Tipo", normalizePdfText(property.propertyType));
-  appendTextBlock(dataGrid, "Superficie", formatAreaM2(property.areaM2));
-  appendTextBlock(
-    dataGrid,
-    "Dormitorios",
-    property.bedrooms != null ? String(property.bedrooms) : "No aplica",
-  );
-  appendTextBlock(
-    dataGrid,
-    "Ba\u00f1os",
-    property.bathrooms != null ? String(property.bathrooms) : "A consultar",
-  );
+  const propertyDetails = [
+    { label: "Tipo", value: normalizePdfText(property.propertyType) },
+    { label: "Ambientes", value: formatNumberDetail(property.rooms) },
+    { label: "Dormitorios", value: formatNumberDetail(property.bedrooms) },
+    { label: "Ba\u00f1os", value: formatNumberDetail(property.bathrooms) },
+    { label: "Cocheras", value: formatNumberDetail(property.garages) },
+    { label: "Antig\u00fcedad", value: formatAgeDetail(property.ageYears) },
+    { label: "Expensas", value: formatTextDetail(property.expenses) },
+    { label: "Sup. cubierta", value: formatAreaM2(property.coveredAreaM2) },
+    { label: "Sup. descubierta", value: formatAreaM2(property.uncoveredAreaM2) },
+    { label: "Sup. total", value: formatAreaM2(property.areaM2) },
+    { label: "Disposici\u00f3n", value: formatTextDetail(property.disposition) },
+    { label: "Orientaci\u00f3n", value: formatTextDetail(property.orientation) },
+  ].filter(hasPdfDetailValue);
+
+  propertyDetails.forEach((detail) => {
+    appendTextBlock(dataGrid, detail.label, normalizePdfText(detail.value));
+  });
   featuresBlock.appendChild(dataGrid);
 
   if (summaryFeatures.length > 0) {

@@ -2,6 +2,76 @@ export type PropertyOperation = "sale" | "rent";
 
 export type PropertyStatus = "available" | "reserved" | "sold" | "rented" | "hidden";
 
+export const propertyDispositionOptions = ["Frente", "Contrafrente", "Interno", "Lateral"] as const;
+
+export type PropertyDisposition = (typeof propertyDispositionOptions)[number];
+
+export const propertyOrientationOptions = ["Norte", "Sur", "Este", "Oeste", "NE", "NO", "SE", "SO"] as const;
+
+export type PropertyOrientation = (typeof propertyOrientationOptions)[number];
+
+export const detailedPropertyFeatureGroups = [
+  {
+    title: "Ambientes / espacios",
+    options: [
+      "Balcón",
+      "Patio",
+      "Terraza",
+      "Jardín",
+      "Cocina",
+      "Cocina comedor",
+      "Living comedor",
+      "Lavadero",
+      "Vestidor",
+      "Escritorio",
+      "Baulera",
+      "Parrilla",
+      "Quincho",
+      "Pileta",
+    ],
+  },
+  {
+    title: "Servicios",
+    options: [
+      "Agua corriente",
+      "Gas natural",
+      "Electricidad",
+      "Internet",
+      "Cable",
+      "Cloacas",
+    ],
+  },
+  {
+    title: "Instalaciones / comodidades",
+    options: [
+      "Calefacción",
+      "Aire acondicionado",
+      "Alarma",
+      "Ascensor",
+      "Portero eléctrico",
+      "Seguridad",
+      "Solarium",
+      "SUM",
+      "Gimnasio",
+    ],
+  },
+  {
+    title: "Generales",
+    options: [
+      "Permite mascotas",
+      "Apto crédito",
+      "Apto profesional",
+      "Luminoso",
+      "Reciclado",
+      "A estrenar",
+    ],
+  },
+] as const;
+
+export const detailedPropertyFeatures = detailedPropertyFeatureGroups.flatMap((group) => group.options);
+
+export type DetailedPropertyFeature = (typeof detailedPropertyFeatures)[number];
+
 export type DemoProperty = {
   id: string;
   title: string;
@@ -11,9 +81,18 @@ export type DemoProperty = {
   location: string;
   address: string;
   propertyType: string;
+  rooms?: number;
   bedrooms?: number;
   bathrooms?: number;
+  garages?: number;
+  ageYears?: number;
+  expenses?: string;
+  coveredAreaM2?: number;
+  uncoveredAreaM2?: number;
   areaM2?: number;
+  disposition?: PropertyDisposition;
+  orientation?: PropertyOrientation;
+  detailedFeatures?: string[];
   features: string[];
   description: string;
   images: string[];
