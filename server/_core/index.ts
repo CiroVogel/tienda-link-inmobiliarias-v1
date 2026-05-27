@@ -8,6 +8,7 @@ import { registerLocalAuthRoutes } from "./localAuth.ts";
 import { appRouter, handleMercadoPagoWebhook, processDueBookingReminders } from "../routers";
 import { createContext } from "./context";
 import { serveStatic, setupVite } from "./vite";
+import { UPLOADS_DIR } from "../uploads";
 
 function isPortAvailable(port: number): Promise<boolean> {
   return new Promise((resolve) => {
@@ -45,6 +46,14 @@ async function startServer() {
       console.error("[Reminders] Error processing reminders:", error);
     } finally {
       reminderJobRunning = false;
+    }
+  };
+
+  const runReminderJobSafely = async () => {
+    try {
+      await runReminderJob();
+    } catch (error) {
+      console.error("[ReminderJob] Failed:", error);
     }
   };
 
@@ -109,15 +118,21 @@ async function startServer() {
 
   server.listen(port, "0.0.0.0", () => {
     console.log(`Server running on port ${port}`);
+    console.log(`[Startup] NODE_ENV=${process.env.NODE_ENV || ""}`);
+    console.log(`[Startup] PORT=${process.env.PORT || ""}`);
+    console.log(`[Startup] UPLOADS_DIR=${UPLOADS_DIR}`);
+    console.log("[Startup] host=0.0.0.0");
   });
 
   setTimeout(() => {
-    void runReminderJob();
+    void runReminderJobSafely();
   }, 10_000);
 
   setInterval(() => {
-    void runReminderJob();
+    void runReminderJobSafely();
   }, 15 * 60 * 1000);
+
+  console.log("[Startup] Reminder job scheduled");
 }
 
 startServer().catch((error) => {
