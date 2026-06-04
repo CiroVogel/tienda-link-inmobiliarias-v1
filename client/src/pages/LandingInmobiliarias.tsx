@@ -18,6 +18,9 @@ import demoEjeImage from "@/assets/real-estate-landing/eje-urbano-demo.png";
 const whatsappHref =
   "https://wa.me/543415634632?text=Hola%2C%20quiero%20saber%20m%C3%A1s%20sobre%20Mini%20Web%20Inmobiliarias";
 
+const subscriptionHref =
+  "https://www.mercadopago.com.ar/subscriptions/checkout?preapproval_plan_id=7b0c7df6910c43dd97ee0ca619787f57";
+
 const sections = {
   problem: "problema",
   difference: "diferencia",
@@ -204,7 +207,7 @@ function HeroButton({
     <a
       href={href}
       target={external ? "_blank" : undefined}
-      rel={external ? "noreferrer" : undefined}
+      rel={external ? "noopener noreferrer" : undefined}
       className={`inline-flex items-center justify-center gap-2 rounded-full px-6 py-3.5 text-sm font-bold transition ${
         primary ? "text-zinc-950" : "border text-white hover:bg-white/10"
       }`}
@@ -561,15 +564,18 @@ Y si no encuentra la propiedad ideal, puede dejar su búsqueda.
             </p>
 
             <a
-              href={whatsappHref}
+              href={subscriptionHref}
               target="_blank"
-              rel="noreferrer"
+              rel="noopener noreferrer"
               className="mt-8 inline-flex items-center justify-center gap-2 rounded-full px-6 py-3.5 text-sm font-bold text-white transition hover:opacity-95"
               style={{ backgroundColor: palette.hero }}
             >
               Quiero mi página
               <ArrowRight className="h-4 w-4" />
             </a>
+            <p className="mt-4 max-w-xl text-xs leading-6" style={{ color: palette.muted }}>
+              Pago mensual automático con Mercado Pago. Después del pago nos comunicamos para cargar tu inmobiliaria.
+            </p>
           </div>
         </div>
       </section>
@@ -588,9 +594,9 @@ Y si no encuentra la propiedad ideal, puede dejar su búsqueda.
             </p>
 
             <a
-              href={whatsappHref}
+              href={subscriptionHref}
               target="_blank"
-              rel="noreferrer"
+              rel="noopener noreferrer"
               className="mt-8 inline-flex items-center justify-center gap-2 rounded-full px-6 py-3.5 text-sm font-bold text-zinc-950 transition hover:opacity-95"
               style={{ backgroundColor: palette.white }}
             >
