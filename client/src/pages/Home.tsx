@@ -76,12 +76,12 @@ function Header({
         <div className="flex items-center gap-3">
           <a
             href="/admin"
-            className="hidden items-center rounded border border-white/25 px-3 py-1.5 text-[11px] font-bold uppercase tracking-[0.12em] text-white/70 transition hover:border-white/50 hover:text-white sm:inline-flex"
+            className="hidden items-center rounded-full border border-white/25 px-4 py-2 text-sm font-semibold text-white/80 transition hover:bg-white/10 hover:text-white sm:inline-flex"
           >
             Mi panel
           </a>
           <Link href={`/${slug}/propiedades`}>
-            <span className="hidden bg-[#81856a] px-4 py-2 text-xs font-black uppercase tracking-[0.16em] text-white sm:inline-flex">
+            <span className="hidden rounded-full bg-[#d4a853] px-5 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:bg-[#c49542] sm:inline-flex">
               Ver propiedades
             </span>
           </Link>
@@ -150,7 +150,7 @@ function Hero({
 
           <div className="mt-8 flex flex-col gap-3 sm:flex-row">
             <Link href={`/${slug}/propiedades`}>
-              <span className="inline-flex items-center justify-center gap-2 bg-[#81856a] px-7 py-4 text-xs font-black uppercase tracking-[0.16em] text-white">
+              <span className="inline-flex items-center justify-center gap-2 rounded-full bg-white px-7 py-4 text-sm font-semibold text-[#1A2744] shadow-sm transition hover:bg-zinc-100">
                 Ver propiedades
                 <ArrowRight className="h-4 w-4" />
               </span>
@@ -164,7 +164,7 @@ function Hero({
                 )}
                 target="_blank"
                 rel="noreferrer"
-                className="inline-flex items-center justify-center gap-2 border border-white/25 bg-black/15 px-7 py-4 text-xs font-black uppercase tracking-[0.16em] text-white backdrop-blur-sm transition hover:border-white/40 hover:bg-black/25"
+                className="inline-flex items-center justify-center gap-2 rounded-full border border-white/30 px-7 py-4 text-sm font-semibold text-white/85 backdrop-blur-sm transition hover:bg-white/10 hover:text-white"
               >
                 <MessageCircle className="h-4 w-4" />
                 WhatsApp
@@ -230,7 +230,7 @@ function FeaturedProperties({
           </div>
 
           <Link href={`/${slug}/propiedades`}>
-            <span className="inline-flex items-center gap-2 text-xs font-black uppercase tracking-[0.16em] text-zinc-950">
+            <span className="inline-flex items-center gap-2 text-sm font-semibold text-[#1A2744] transition hover:text-[#142039]">
               Ver listado completo
               <ArrowRight className="h-4 w-4" />
             </span>
@@ -330,7 +330,7 @@ function HowItWorks({ slug }: { slug: string }) {
 
         <div className="mt-8">
           <Link href={`/${slug}/propiedades`}>
-            <span className="inline-flex items-center gap-2 bg-zinc-950 px-6 py-4 text-xs font-black uppercase tracking-[0.16em] text-white">
+            <span className="inline-flex items-center gap-2 rounded-full bg-[#1A2744] px-6 py-3 text-sm font-semibold text-white shadow-sm transition hover:bg-[#142039]">
               Ver propiedades
               <ArrowRight className="h-4 w-4" />
             </span>
@@ -373,7 +373,7 @@ function Contact({
 
           <div className="mt-7 flex flex-col gap-3 sm:flex-row">
             <Link href={`/${slug}/propiedades`}>
-              <span className="inline-flex items-center justify-center gap-2 bg-white px-6 py-4 text-xs font-black uppercase tracking-[0.16em] text-zinc-950">
+              <span className="inline-flex items-center justify-center gap-2 rounded-full bg-white px-6 py-3 text-sm font-semibold text-zinc-900 shadow-sm transition hover:bg-zinc-100">
                 Ver propiedades
                 <HomeIcon className="h-4 w-4" />
               </span>
@@ -386,7 +386,7 @@ function Contact({
                 )}
                 target="_blank"
                 rel="noreferrer"
-                className="inline-flex items-center justify-center gap-2 border border-white/25 px-6 py-4 text-xs font-black uppercase tracking-[0.16em] text-white/80"
+                className="inline-flex items-center justify-center gap-2 rounded-full border border-white/25 px-6 py-3 text-sm font-semibold text-white/80 transition hover:bg-white/10 hover:text-white"
               >
                 WhatsApp
                 <MessageCircle className="h-4 w-4" />
@@ -558,7 +558,7 @@ export default function Home({ forcedSlug }: HomeProps) {
             operaciones recientes.
           </p>
           <Link href={`/${slug}/propiedades`}>
-            <span className="inline-flex items-center gap-2 text-xs font-black uppercase tracking-[0.16em] text-zinc-950">
+            <span className="inline-flex items-center gap-2 text-sm font-semibold text-[#1A2744] transition hover:text-[#142039]">
               Ir al listado
               <ArrowRight className="h-4 w-4" />
             </span>

@@ -33,7 +33,7 @@ export function PropertyCard({ property, slug }: PropertyCardProps) {
             </span>
 
             {property.status !== "available" ? (
-              <span className="bg-zinc-950 px-3 py-1 text-[11px] font-black uppercase tracking-[0.14em] text-white shadow-sm">
+              <span className="rounded-full bg-[#1A2744] px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.14em] text-white shadow-sm">
                 {getStatusLabel(property.status)}
               </span>
             ) : null}
@@ -87,7 +87,7 @@ export function PropertyCard({ property, slug }: PropertyCardProps) {
 
         <div className="flex items-center justify-between gap-3 border-t border-zinc-100 pt-4">
           <Link href={`/${slug}/propiedades/${property.id}`}>
-            <span className="inline-flex items-center gap-2 text-xs font-black uppercase tracking-[0.14em] text-zinc-950">
+            <span className="inline-flex items-center gap-2 text-xs font-semibold text-[#1A2744] transition hover:text-[#142039]">
               Ver ficha
               <Tag className="h-3.5 w-3.5" />
             </span>
@@ -95,7 +95,7 @@ export function PropertyCard({ property, slug }: PropertyCardProps) {
 
           {requestable ? (
             <Link href={`/${slug}/solicitar-visita/${property.id}`}>
-              <span className="bg-zinc-950 px-3 py-2 text-xs font-black uppercase tracking-[0.14em] text-white transition hover:bg-zinc-800">
+              <span className="rounded-full bg-[#1A2744] px-3 py-1.5 text-xs font-semibold text-white shadow-sm transition hover:bg-[#142039]">
                 Solicitar visita
               </span>
             </Link>

@@ -142,7 +142,7 @@ export default function PropertyDetail() {
             No pudimos encontrar esta ficha.
           </h1>
           <Link href={`/${safeSlug}/propiedades`}>
-            <span className="inline-flex bg-zinc-950 px-5 py-3 text-xs font-black uppercase tracking-[0.16em] text-white">
+            <span className="inline-flex rounded-full bg-[#1A2744] px-5 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:bg-[#142039]">
               Volver al listado
             </span>
           </Link>
@@ -198,7 +198,7 @@ export default function PropertyDetail() {
           </Link>
           <a
             href="/admin"
-            className="rounded border border-zinc-300 px-3 py-1.5 text-[11px] font-bold uppercase tracking-[0.12em] text-zinc-500 transition hover:border-zinc-400 hover:text-zinc-950"
+            className="rounded-full border border-slate-200 px-4 py-2 text-sm font-semibold text-slate-600 transition hover:border-[#1A2744]/30 hover:bg-slate-50 hover:text-[#1A2744]"
           >
             Mi panel
           </a>
@@ -223,7 +223,7 @@ export default function PropertyDetail() {
                   type="button"
                   onClick={() => setSelectedImage(index)}
                   className={`overflow-hidden border ${
-                    selectedImage === index ? "border-zinc-950" : "border-zinc-200"
+                    selectedImage === index ? "border-[#1A2744]" : "border-zinc-200"
                   }`}
                   aria-label={`Ver foto ${index + 1}`}
                 >
@@ -239,7 +239,7 @@ export default function PropertyDetail() {
 
           <aside>
             <div className="mb-4 flex flex-wrap gap-2">
-              <span className="bg-zinc-950 px-3 py-2 text-xs font-black uppercase tracking-[0.14em] text-white">
+              <span className="rounded-md bg-[#1A2744] px-3 py-2 text-xs font-semibold uppercase tracking-[0.14em] text-white">
                 {getOperationLabel(property.operation)}
               </span>
               <span
@@ -373,7 +373,7 @@ export default function PropertyDetail() {
             <div className="mt-6 flex flex-col gap-3 sm:flex-row">
               {requestable ? (
                 <Link href={`/${safeSlug}/solicitar-visita/${property.id}`}>
-                  <span className="inline-flex items-center justify-center gap-2 bg-zinc-950 px-6 py-4 text-xs font-black uppercase tracking-[0.16em] text-white">
+                  <span className="inline-flex items-center justify-center gap-2 rounded-full bg-[#1A2744] px-6 py-3 text-sm font-semibold text-white shadow-sm transition hover:bg-[#142039]">
                     Solicitar visita
                     <HomeIcon className="h-4 w-4" />
                   </span>
@@ -389,7 +389,7 @@ export default function PropertyDetail() {
                   href={buildWhatsappHref(profileWhatsapp, property.title)}
                   target="_blank"
                   rel="noreferrer"
-                  className="inline-flex items-center justify-center gap-2 border border-zinc-300 px-6 py-4 text-xs font-black uppercase tracking-[0.16em] text-zinc-950"
+                  className="inline-flex items-center justify-center gap-2 rounded-full border border-slate-200 px-6 py-3 text-sm font-semibold text-slate-700 transition hover:border-[#1A2744]/30 hover:bg-slate-50 hover:text-[#1A2744]"
                 >
                   WhatsApp
                   <MessageCircle className="h-4 w-4" />

@@ -66,7 +66,7 @@ export default function Booking() {
             Propiedad no encontrada.
           </h1>
           <Link href={`/${safeSlug}/propiedades`}>
-            <span className="inline-flex bg-zinc-950 px-5 py-3 text-xs font-black uppercase tracking-[0.16em] text-white">
+            <span className="inline-flex rounded-full bg-[#1A2744] px-5 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:bg-[#142039]">
               Volver al listado
             </span>
           </Link>
@@ -124,7 +124,7 @@ export default function Booking() {
           </span>
           <a
             href="/admin"
-            className="rounded border border-zinc-300 px-3 py-1.5 text-[11px] font-bold uppercase tracking-[0.12em] text-zinc-500 transition hover:border-zinc-400 hover:text-zinc-950"
+            className="rounded-full border border-slate-200 px-4 py-2 text-sm font-semibold text-slate-600 transition hover:border-[#1A2744]/30 hover:bg-slate-50 hover:text-[#1A2744]"
           >
             Mi panel
           </a>
@@ -166,7 +166,7 @@ export default function Booking() {
               </p>
               <div className="mt-7 flex flex-col gap-3 sm:flex-row">
                 <Link href={`/${safeSlug}`}>
-                  <span className="inline-flex justify-center bg-zinc-950 px-5 py-3 text-xs font-black uppercase tracking-[0.16em] text-white">
+                  <span className="inline-flex justify-center rounded-full bg-[#1A2744] px-5 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:bg-[#142039]">
                     Volver al inicio
                   </span>
                 </Link>
@@ -175,7 +175,7 @@ export default function Booking() {
                     href={whatsappHref(profileWhatsapp, property.title)}
                     target="_blank"
                     rel="noreferrer"
-                    className="inline-flex items-center justify-center gap-2 border border-zinc-300 px-5 py-3 text-xs font-black uppercase tracking-[0.16em] text-zinc-950"
+                    className="inline-flex items-center justify-center gap-2 rounded-full border border-slate-200 px-5 py-2.5 text-sm font-semibold text-slate-700 transition hover:border-[#1A2744]/30 hover:bg-slate-50 hover:text-[#1A2744]"
                   >
                     WhatsApp
                     <MessageCircle className="h-4 w-4" />
@@ -270,7 +270,7 @@ export default function Booking() {
                 <button
                   type="submit"
                   disabled={!requestable || createVisitRequest.isPending}
-                  className="inline-flex flex-1 justify-center bg-zinc-950 px-5 py-4 text-xs font-black uppercase tracking-[0.16em] text-white disabled:cursor-not-allowed disabled:bg-zinc-300"
+                  className="inline-flex flex-1 justify-center rounded-full bg-[#1A2744] px-5 py-3 text-sm font-semibold text-white shadow-sm transition hover:bg-[#142039] disabled:cursor-not-allowed disabled:bg-zinc-300"
                 >
                   {createVisitRequest.isPending ? "Enviando..." : "Enviar solicitud"}
                 </button>
@@ -280,7 +280,7 @@ export default function Booking() {
                     href={whatsappHref(profileWhatsapp, property.title)}
                     target="_blank"
                     rel="noreferrer"
-                    className="inline-flex items-center justify-center gap-2 border border-zinc-300 px-5 py-4 text-xs font-black uppercase tracking-[0.16em] text-zinc-950"
+                    className="inline-flex items-center justify-center gap-2 rounded-full border border-slate-200 px-5 py-3 text-sm font-semibold text-slate-700 transition hover:border-[#1A2744]/30 hover:bg-slate-50 hover:text-[#1A2744]"
                   >
                     WhatsApp
                     <MessageCircle className="h-4 w-4" />

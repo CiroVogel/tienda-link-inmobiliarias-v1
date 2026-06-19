@@ -81,10 +81,10 @@ export default function PropertyList() {
   const showingAll = operationFilter === "all" && statusFilter === "all";
 
   function getFilterClasses(active: boolean) {
-    return `border px-3 py-2 text-xs font-bold uppercase tracking-[0.14em] transition-colors ${
+    return `rounded-full border px-3 py-1.5 text-xs font-semibold transition-colors ${
       active
-        ? "border-zinc-950 bg-zinc-950 text-white"
-        : "border-zinc-200 bg-white text-zinc-500 hover:border-zinc-300 hover:text-zinc-950"
+        ? "border-[#1A2744] bg-[#1A2744] text-white"
+        : "border-slate-200 bg-white text-slate-600 hover:border-[#1A2744]/30 hover:text-[#1A2744]"
     }`;
   }
 
@@ -116,7 +116,7 @@ export default function PropertyList() {
           </Link>
           <a
             href="/admin"
-            className="rounded border border-zinc-300 px-3 py-1.5 text-[11px] font-bold uppercase tracking-[0.12em] text-zinc-500 transition hover:border-zinc-400 hover:text-zinc-950"
+            className="rounded-full border border-slate-200 px-4 py-2 text-sm font-semibold text-slate-600 transition hover:border-[#1A2744]/30 hover:bg-slate-50 hover:text-[#1A2744]"
           >
             Mi panel
           </a>
