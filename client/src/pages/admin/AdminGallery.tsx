@@ -236,8 +236,8 @@ export default function AdminGallery() {
       <div className="mx-auto max-w-6xl p-6">
         <div className="mb-8 flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
           <div>
-            <h1 className="text-2xl font-black tracking-tight text-black">Fotos de propiedades</h1>
-            <p className="mt-1 text-sm text-black/65">
+            <h1 className="text-2xl font-black tracking-tight text-slate-900">Fotos de propiedades</h1>
+            <p className="mt-1 text-sm text-slate-500">
               Elegí una propiedad, subí sus imágenes y definí la principal.
             </p>
           </div>
@@ -283,7 +283,7 @@ export default function AdminGallery() {
                   Subir imágenes
                 </p>
                 <div
-                  className="cursor-pointer border-2 border-dashed border-black/15 p-10 text-center transition-colors hover:border-black/40"
+                  className="cursor-pointer rounded-xl border-2 border-dashed border-slate-200 p-10 text-center transition-colors hover:border-[#1A2744]/40"
                   onClick={() => fileInputRef.current?.click()}
                   onDragOver={(event) => event.preventDefault()}
                   onDrop={(event) => {

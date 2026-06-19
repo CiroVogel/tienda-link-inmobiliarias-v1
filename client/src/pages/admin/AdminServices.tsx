@@ -413,8 +413,8 @@ export default function AdminServices() {
       <div className="mx-auto max-w-6xl p-6">
         <div className="mb-8 flex flex-col gap-4 xl:flex-row xl:items-end xl:justify-between">
           <div>
-            <h1 className="text-2xl font-black tracking-tight text-black">Propiedades</h1>
-            <p className="mt-1 text-sm text-black/65">
+            <h1 className="text-2xl font-black tracking-tight text-slate-900">Propiedades</h1>
+            <p className="mt-1 text-sm text-slate-500">
               {totalProperties} propiedad{totalProperties !== 1 ? "es" : ""} en gestión
             </p>
           </div>
@@ -453,7 +453,7 @@ export default function AdminServices() {
               <option value="oldest">Mas antiguas</option>
             </select>
 
-            <Button onClick={openCreate} className="gap-2 bg-black text-white hover:bg-black/85">
+            <Button onClick={openCreate} className="gap-2 bg-[#1A2744] text-white hover:bg-[#142039]">
               <Plus className="h-4 w-4" />
               Nueva propiedad
             </Button>
@@ -520,7 +520,7 @@ export default function AdminServices() {
                 setVisibilityFilter("all");
                 setSortOrder("recent");
               }}
-              className="text-xs font-bold uppercase tracking-[0.14em] text-zinc-700 hover:text-black"
+              className="text-xs font-bold uppercase tracking-[0.14em] text-zinc-700 hover:text-slate-900"
             >
               Limpiar filtros
             </button>
@@ -556,7 +556,7 @@ export default function AdminServices() {
                 >
                   <div className="min-w-0">
                     <div className="mb-2 flex flex-wrap items-center gap-2">
-                      <span className="bg-zinc-950 px-3 py-1 text-[11px] font-black uppercase tracking-[0.14em] text-white">
+                      <span className="rounded-md bg-[#1A2744] px-3 py-1 text-[11px] font-black uppercase tracking-[0.14em] text-white">
                         {getOperationLabel(property.operation)}
                       </span>
                       <span className="bg-zinc-100 px-3 py-1 text-[11px] font-black uppercase tracking-[0.14em] text-zinc-600">
@@ -1015,7 +1015,7 @@ export default function AdminServices() {
                 <Button type="button" variant="outline" onClick={() => setDialogOpen(false)}>
                   Cancelar
                 </Button>
-                <Button type="submit" disabled={isSaving} className="bg-black text-white hover:bg-black/85">
+                <Button type="submit" disabled={isSaving} className="bg-[#1A2744] text-white hover:bg-[#142039]">
                   {isSaving ? (
                     <Loader2 className="h-4 w-4 animate-spin" />
                   ) : editingId ? (

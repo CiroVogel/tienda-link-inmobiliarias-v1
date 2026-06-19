@@ -103,9 +103,7 @@ export default function AdminAvailability() {
       <div className="p-6 max-w-3xl mx-auto">
         {/* Header */}
         <div className="mb-8">
-          <h1
-            className="text-2xl font-black text-black tracking-tight"
-          >
+          <h1 className="text-2xl font-black text-slate-900 tracking-tight">
             Disponibilidad
           </h1>
           <p className="text-zinc-600 text-sm mt-0.5">
@@ -153,8 +151,7 @@ export default function AdminAvailability() {
                       size="sm"
                       onClick={() => saveDay(day.id)}
                       disabled={saving === day.id}
-                      className="gap-1.5 text-xs h-8"
-                      style={{ background: "black", color: "white" }}
+                      className="gap-1.5 text-xs h-8 bg-[#1A2744] text-white hover:bg-[#142039]"
                     >
                       {saving === day.id ? (
                         <Loader2 className="w-3.5 h-3.5 animate-spin" />

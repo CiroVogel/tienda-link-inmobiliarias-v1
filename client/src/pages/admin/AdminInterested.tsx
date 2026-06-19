@@ -90,10 +90,10 @@ export default function AdminInterested() {
       <div className="mx-auto max-w-6xl p-6">
         <div className="mb-6 flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
           <div>
-            <h1 className="text-2xl font-black tracking-tight text-black">
+            <h1 className="text-2xl font-black tracking-tight text-slate-900">
               Interesados
             </h1>
-            <p className="mt-1 text-sm text-black/65">
+            <p className="mt-1 text-sm text-slate-500">
               Seguimiento de cada consulta con estado, notas e historial.
             </p>
           </div>
@@ -121,12 +121,12 @@ export default function AdminInterested() {
               onClick={() => setFilter("all")}
               className={`whitespace-nowrap rounded-xl border px-4 py-2 text-sm font-medium transition-all ${
                 filter === "all"
-                  ? "border-transparent bg-black text-white"
-                  : "border-black/15 text-black/65 hover:border-black/40 hover:text-black"
+                  ? "border-transparent bg-[#1A2744] text-white"
+                  : "border-slate-200 text-slate-600 hover:border-slate-300 hover:text-slate-900"
               }`}
             >
               Todos
-              <span className={`ml-2 rounded-full px-1.5 py-0.5 text-xs ${filter === "all" ? "bg-white/15" : "bg-black/5 text-black/70"}`}>
+              <span className={`ml-2 rounded-full px-1.5 py-0.5 text-xs ${filter === "all" ? "bg-white/15" : "bg-slate-100 text-slate-600"}`}>
                 {counts.all}
               </span>
             </button>
@@ -141,12 +141,12 @@ export default function AdminInterested() {
                   onClick={() => setFilter(option.value)}
                   className={`whitespace-nowrap rounded-xl border px-4 py-2 text-sm font-medium transition-all ${
                     isSelected
-                      ? "border-transparent bg-black text-white"
-                      : "border-black/15 text-black/65 hover:border-black/40 hover:text-black"
+                      ? "border-transparent bg-[#1A2744] text-white"
+                      : "border-slate-200 text-slate-600 hover:border-slate-300 hover:text-slate-900"
                   }`}
                 >
                   {option.label}
-                  <span className={`ml-2 rounded-full px-1.5 py-0.5 text-xs ${isSelected ? "bg-white/15" : "bg-black/5 text-black/70"}`}>
+                  <span className={`ml-2 rounded-full px-1.5 py-0.5 text-xs ${isSelected ? "bg-white/15" : "bg-slate-100 text-slate-600"}`}>
                     {counts[option.value]}
                   </span>
                 </button>
@@ -167,7 +167,7 @@ export default function AdminInterested() {
 
         {isLoading ? (
           <div className="flex justify-center py-12">
-            <div className="h-8 w-8 animate-spin rounded-full border-2 border-black/20 border-t-black" />
+            <div className="h-8 w-8 animate-spin rounded-full border-2 border-slate-200 border-t-[#1A2744]" />
           </div>
         ) : filteredRequests.length === 0 ? (
           <div className="rounded-xl border border-zinc-200 bg-white px-6 py-16 text-center">
@@ -256,7 +256,7 @@ export default function AdminInterested() {
                       </Select>
 
                       <Link href={`/admin/interesados/${request.id}`}>
-                        <span className="inline-flex h-9 w-full items-center justify-center rounded-md border border-black/15 px-3 text-sm font-medium text-black hover:border-black/35 hover:bg-black/[0.02]">
+                        <span className="inline-flex h-9 w-full items-center justify-center rounded-md border border-slate-200 px-3 text-sm font-medium text-slate-700 hover:border-slate-300 hover:bg-slate-50">
                           Ver ficha
                         </span>
                       </Link>
@@ -268,7 +268,7 @@ export default function AdminInterested() {
                         )}
                         target="_blank"
                         rel="noreferrer"
-                        className="inline-flex h-9 w-full items-center justify-center gap-2 rounded-md border border-black/15 px-3 text-sm font-medium text-black hover:border-black/35 hover:bg-black/[0.02]"
+                        className="inline-flex h-9 w-full items-center justify-center gap-2 rounded-md border border-slate-200 px-3 text-sm font-medium text-slate-700 hover:border-slate-300 hover:bg-slate-50"
                       >
                         <MessageCircle className="h-4 w-4" />
                         WhatsApp

@@ -128,7 +128,7 @@ export default function AdminInterestedDetail() {
       <div className="mx-auto max-w-6xl p-6">
         <div className="mb-6 flex flex-wrap items-center gap-3">
           <Link href="/admin/interesados">
-            <span className="inline-flex items-center gap-2 text-sm font-medium text-zinc-600 hover:text-black">
+            <span className="inline-flex items-center gap-2 text-sm font-medium text-zinc-600 hover:text-slate-900">
               <ArrowLeft className="h-4 w-4" />
               Volver a Interesados
             </span>
@@ -137,7 +137,7 @@ export default function AdminInterestedDetail() {
 
         {isLoading ? (
           <div className="flex justify-center py-20">
-            <div className="h-8 w-8 animate-spin rounded-full border-2 border-black/20 border-t-black" />
+            <div className="h-8 w-8 animate-spin rounded-full border-2 border-slate-200 border-t-[#1A2744]" />
           </div>
         ) : !interested ? (
           <div className="rounded-xl border border-zinc-200 bg-white px-6 py-16 text-center">
@@ -238,7 +238,7 @@ export default function AdminInterestedDetail() {
                     )}
                     target="_blank"
                     rel="noreferrer"
-                    className="inline-flex h-10 items-center justify-center gap-2 rounded-md bg-black px-4 text-sm font-medium text-white hover:bg-black/85"
+                    className="inline-flex h-10 items-center justify-center gap-2 rounded-md bg-[#1A2744] px-4 text-sm font-medium text-white hover:bg-[#142039]"
                   >
                     <MessageCircle className="h-4 w-4" />
                     WhatsApp
@@ -247,7 +247,7 @@ export default function AdminInterestedDetail() {
                   {interested.email ? (
                     <a
                       href={`mailto:${interested.email}`}
-                      className="inline-flex h-10 items-center justify-center gap-2 rounded-md border border-black/15 px-4 text-sm font-medium text-black hover:border-black/35 hover:bg-black/[0.02]"
+                      className="inline-flex h-10 items-center justify-center gap-2 rounded-md border border-slate-200 px-4 text-sm font-medium text-slate-700 hover:border-slate-300 hover:bg-slate-50"
                     >
                       <Mail className="h-4 w-4" />
                       Email
@@ -259,7 +259,7 @@ export default function AdminInterestedDetail() {
                       href={publicPropertyHref}
                       target="_blank"
                       rel="noreferrer"
-                      className="inline-flex h-10 items-center justify-center gap-2 rounded-md border border-black/15 px-4 text-sm font-medium text-black hover:border-black/35 hover:bg-black/[0.02]"
+                      className="inline-flex h-10 items-center justify-center gap-2 rounded-md border border-slate-200 px-4 text-sm font-medium text-slate-700 hover:border-slate-300 hover:bg-slate-50"
                     >
                       <ExternalLink className="h-4 w-4" />
                       Ver propiedad
@@ -340,7 +340,7 @@ export default function AdminInterestedDetail() {
                     <Button
                       onClick={handleAddNote}
                       disabled={addNote.isPending}
-                      className="gap-2 bg-black text-white hover:bg-black/85"
+                      className="gap-2 bg-[#1A2744] text-white hover:bg-[#142039]"
                     >
                       <Save className="h-4 w-4" />
                       Guardar nota
