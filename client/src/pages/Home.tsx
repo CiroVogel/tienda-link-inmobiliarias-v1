@@ -102,15 +102,19 @@ function Hero({
   whatsapp: string;
   heroImageUrl?: string | null;
 }) {
-  const coverImage = heroImageUrl?.trim() || getPropertyCoverImage(featured);
+  const coverImage =
+    heroImageUrl?.trim() ||
+    (featured ? getPropertyCoverImage(featured) : undefined);
 
   return (
     <section className="relative isolate overflow-hidden bg-zinc-950 text-white">
-      <img
-        src={coverImage}
-        alt={featured?.title ?? businessName}
-        className="absolute inset-0 h-full w-full object-cover object-center"
-      />
+      {coverImage ? (
+        <img
+          src={coverImage}
+          alt={featured?.title ?? businessName}
+          className="absolute inset-0 h-full w-full object-cover object-center"
+        />
+      ) : null}
       <div className="absolute inset-0 bg-gradient-to-r from-black/68 via-black/48 to-black/18" />
       <div className="absolute inset-0 bg-black/8" />
 

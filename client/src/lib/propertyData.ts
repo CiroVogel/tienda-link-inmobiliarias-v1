@@ -14,7 +14,7 @@ export function usePublicProperties(slug: string) {
   const query = trpc.properties.listPublic.useQuery({ slug });
   const properties =
     query.data ??
-    (canUseFallback(slug) && (!query.isFetched || query.isError) ? getVisibleProperties() : []);
+    (canUseFallback(slug) && query.isError ? getVisibleProperties() : []);
 
   return {
     ...query,
@@ -30,7 +30,7 @@ export function usePublicProperty(slug: string, propertyId?: string) {
 
   const property: DemoProperty | null =
     query.data ??
-    (canUseFallback(slug) && propertyId && (!query.isFetched || query.isError)
+    (canUseFallback(slug) && propertyId && query.isError
       ? getPropertyById(propertyId)
       : null);
 
