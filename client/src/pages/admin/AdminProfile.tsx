@@ -1,4 +1,4 @@
-﻿import { useState, useRef } from "react";
+import { useState, useRef } from "react";
 import { trpc } from "@/lib/trpc";
 import AdminLayout from "@/components/AdminLayout";
 import { Input } from "@/components/ui/input";
@@ -79,19 +79,19 @@ function ImageUploader({
 
   return (
     <div>
-      <Label className="text-xs font-bold uppercase tracking-widest text-black/50 mb-2 block">
+      <Label className="text-sm font-medium text-slate-700 mb-2 block">
         {label}
       </Label>
 
       <div
-        className="relative border-2 border-dashed border-black/15 hover:border-black/40 transition-colors cursor-pointer overflow-hidden"
+        className="relative rounded-2xl border-2 border-dashed border-slate-200 bg-slate-50 hover:border-[#1A2744]/40 transition-colors cursor-pointer overflow-hidden"
         style={{ height: tall ? "180px" : "120px" }}
         onClick={() => inputRef.current?.click()}
       >
         {currentUrl ? (
           <img src={currentUrl} alt={label} className="w-full h-full object-cover" />
         ) : (
-          <div className="w-full h-full flex flex-col items-center justify-center text-black/30">
+          <div className="w-full h-full flex flex-col items-center justify-center text-slate-400">
             <Upload className="w-6 h-6 mb-2" />
             <span className="text-xs">Subir imagen</span>
           </div>
@@ -118,7 +118,7 @@ function ImageUploader({
           type="button"
           onClick={handleRemove}
           disabled={removing}
-          className="mt-1.5 flex items-center gap-1 text-xs text-black/40 hover:text-red-600 transition-colors disabled:opacity-30"
+          className="mt-1.5 flex items-center gap-1 text-xs text-slate-400 hover:text-red-500 transition-colors disabled:opacity-30"
         >
           <Trash2 className="w-3 h-3" />
           Eliminar imagen
@@ -278,10 +278,10 @@ export default function AdminProfile() {
       <div className="p-6 max-w-3xl mx-auto">
         <div className="flex items-center justify-between mb-8">
           <div>
-            <h1 className="text-2xl font-black text-black tracking-tight">
+            <h1 className="text-2xl font-bold text-slate-900 tracking-tight">
               Perfil de la inmobiliaria
             </h1>
-            <p className="text-black/65 text-sm mt-0.5">
+            <p className="text-slate-500 text-sm mt-0.5">
               Información que se muestra en tu web pública
             </p>
           </div>
@@ -289,7 +289,7 @@ export default function AdminProfile() {
           <button
             onClick={handleSave}
             disabled={!hasChanges || updateProfile.isPending}
-            className="flex items-center gap-2 px-5 py-2.5 bg-black text-white text-xs font-bold uppercase tracking-widest hover:bg-black/80 transition-colors disabled:opacity-30 disabled:cursor-not-allowed"
+            className="flex items-center gap-2 px-5 py-2.5 bg-[#1A2744] text-white text-sm font-semibold rounded-xl hover:bg-[#142035] transition-colors disabled:opacity-30 disabled:cursor-not-allowed"
           >
             {updateProfile.isPending ? (
               <Loader2 className="w-4 h-4 animate-spin" />
@@ -301,8 +301,8 @@ export default function AdminProfile() {
         </div>
 
         <div className="space-y-6">
-          <section className="bg-white p-6">
-            <h2 className="text-xs font-bold uppercase tracking-widest text-black/65 mb-5">
+          <section className="bg-white p-6 rounded-2xl border border-slate-200">
+            <h2 className="text-sm font-semibold text-slate-900 uppercase tracking-wide mb-5">
               Imágenes
             </h2>
 
@@ -324,7 +324,7 @@ export default function AdminProfile() {
                   onUpload={handleImageUpload}
                   onRemove={handleImageRemove}
                 />
-                <p className="text-xs text-black/60 mt-2 leading-relaxed">
+                <p className="text-xs text-slate-500 mt-2 leading-relaxed">
                   Opcional. Usala para reforzar la identidad visual de la
                   inmobiliaria sin cambiar la estructura actual de la pantalla.
                 </p>
@@ -332,19 +332,19 @@ export default function AdminProfile() {
             </div>
           </section>
 
-          <section className="bg-white p-6">
-            <h2 className="text-xs font-bold uppercase tracking-widest text-black/65 mb-5">
+          <section className="bg-white p-6 rounded-2xl border border-slate-200">
+            <h2 className="text-sm font-semibold text-slate-900 uppercase tracking-wide mb-5">
               Información de la inmobiliaria
             </h2>
 
             <div className="space-y-4">
               <div>
-                <Label className="text-xs font-bold uppercase tracking-widest text-black/50 mb-2 block">
+                <Label className="text-sm font-medium text-slate-700 mb-2 block">
                   URL pública (slug) *
                 </Label>
 
-                <div className="flex items-center border border-black/20 bg-[#f5f5f5]">
-                  <span className="px-3 py-2.5 text-xs text-black/60 border-r border-black/20 whitespace-nowrap">
+                <div className="flex items-center border border-slate-200 bg-slate-50 rounded-xl overflow-hidden">
+                  <span className="px-3 py-2.5 text-xs text-slate-500 border-r border-slate-200 whitespace-nowrap">
                     {typeof window !== "undefined" ? window.location.origin : ""}/
                   </span>
 
@@ -364,102 +364,106 @@ export default function AdminProfile() {
                   />
                 </div>
 
-                <p className="text-xs text-black/60 mt-1">
+                <p className="text-xs text-slate-500 mt-1">
                   Solo letras minúsculas, números y guiones. Ej: clave-urbana-propiedades
                 </p>
               </div>
 
               <div>
-                <Label className="text-xs font-bold uppercase tracking-widest text-black/50 mb-2 block">
+                <Label className="text-sm font-medium text-slate-700 mb-2 block">
                   Nombre de la inmobiliaria *
                 </Label>
                 <Input
                   value={getValue("businessName")}
                   onChange={(e) => handleChange("businessName", e.target.value)}
                   placeholder="Ej: Clave Urbana Propiedades"
+                  className="border-slate-200 focus-visible:border-[#1A2744] focus-visible:ring-[#1A2744]/15"
                 />
               </div>
 
               <div>
-                <Label className="text-xs font-bold uppercase tracking-widest text-black/50 mb-2 block">
+                <Label className="text-sm font-medium text-slate-700 mb-2 block">
                   Frase principal (tagline)
                 </Label>
                 <Input
                   value={getValue("tagline")}
                   onChange={(e) => handleChange("tagline", e.target.value)}
                   placeholder="Ej: Venta y alquiler de propiedades en Rosario"
+                  className="border-slate-200 focus-visible:border-[#1A2744] focus-visible:ring-[#1A2744]/15"
                 />
               </div>
 
               <div>
-                <Label className="text-xs font-bold uppercase tracking-widest text-black/50 mb-2 block">
+                <Label className="text-sm font-medium text-slate-700 mb-2 block">
                   Descripción de la inmobiliaria
                 </Label>
                 <textarea
                   value={getValue("description")}
                   onChange={(e) => handleChange("description", e.target.value)}
                   placeholder="Presentá en pocas palabras a tu inmobiliaria..."
-                  className="w-full border border-black/20 bg-white px-3 py-2.5 text-sm placeholder:text-black/45 focus:outline-none focus:border-black resize-none"
+                  className="w-full rounded-xl border border-slate-200 bg-white px-3 py-2.5 text-sm placeholder:text-slate-400 focus:outline-none focus:border-[#1A2744] focus:ring-2 focus:ring-[#1A2744]/10 resize-none"
                   rows={3}
                 />
               </div>
             </div>
           </section>
 
-          <section className="bg-white p-6">
-            <h2 className="text-xs font-bold uppercase tracking-widest text-black/65 mb-5">
+          <section className="bg-white p-6 rounded-2xl border border-slate-200">
+            <h2 className="text-sm font-semibold text-slate-900 uppercase tracking-wide mb-5">
               Presentación institucional
             </h2>
 
             <div className="space-y-4">
               <div className="grid sm:grid-cols-2 gap-4">
                 <div>
-                  <Label className="text-xs font-bold uppercase tracking-widest text-black/50 mb-2 block">
+                  <Label className="text-sm font-medium text-slate-700 mb-2 block">
                     Responsable o equipo
                   </Label>
                   <Input
                     value={getValue("ownerName")}
                     onChange={(e) => handleChange("ownerName", e.target.value)}
                     placeholder="Ej: Equipo comercial"
+                    className="border-slate-200 focus-visible:border-[#1A2744] focus-visible:ring-[#1A2744]/15"
                   />
                 </div>
 
                 <div>
-                  <Label className="text-xs font-bold uppercase tracking-widest text-black/50 mb-2 block">
+                  <Label className="text-sm font-medium text-slate-700 mb-2 block">
                     Rol o enfoque
                   </Label>
                   <Input
                     value={getValue("ownerTitle")}
                     onChange={(e) => handleChange("ownerTitle", e.target.value)}
                     placeholder="Ej: Tasaciones, ventas y alquileres"
+                    className="border-slate-200 focus-visible:border-[#1A2744] focus-visible:ring-[#1A2744]/15"
                   />
                 </div>
               </div>
 
               <div>
-                <Label className="text-xs font-bold uppercase tracking-widest text-black/50 mb-2 block">
+                <Label className="text-sm font-medium text-slate-700 mb-2 block">
                   Presentación
                 </Label>
                 <textarea
                   value={getValue("ownerBio")}
                   onChange={(e) => handleChange("ownerBio", e.target.value)}
                   placeholder="Contá brevemente cómo trabaja tu inmobiliaria y qué tipo de propiedades gestiona..."
-                  className="w-full border border-black/20 bg-white px-3 py-2.5 text-sm placeholder:text-black/45 focus:outline-none focus:border-black resize-none"
+                  className="w-full rounded-xl border border-slate-200 bg-white px-3 py-2.5 text-sm placeholder:text-slate-400 focus:outline-none focus:border-[#1A2744] focus:ring-2 focus:ring-[#1A2744]/10 resize-none"
                   rows={4}
                 />
               </div>
             </div>
           </section>
 
-          <section className="bg-white p-6">
-            <h2 className="text-xs font-bold uppercase tracking-widest text-black/65 mb-5">
+          <section className="bg-white p-6 rounded-2xl border border-slate-200">
+            <h2 className="text-sm font-semibold text-slate-900 uppercase tracking-wide mb-5">
               Contacto
             </h2>
 
             <div className="space-y-4">
               <div className="grid sm:grid-cols-2 gap-4">
                 <div>
-                  <Label className="text-xs font-bold uppercase tracking-widest text-black/50 mb-2 flex items-center gap-1.5 block">
+                  <Label className="text-sm font-medium text-slate-700 mb-2 flex items-center gap-1.5">
                     <Phone className="w-3.5 h-3.5" />
                     Teléfono
                   </Label>
@@ -467,11 +471,12 @@ export default function AdminProfile() {
                     value={getValue("phone")}
                     onChange={(e) => handleChange("phone", e.target.value)}
                     placeholder="+54 9 11 1234-5678"
+                    className="border-slate-200 focus-visible:border-[#1A2744] focus-visible:ring-[#1A2744]/15"
                   />
                 </div>
 
                 <div>
-                  <Label className="text-xs font-bold uppercase tracking-widest text-black/50 mb-2 flex items-center gap-1.5 block">
+                  <Label className="text-sm font-medium text-slate-700 mb-2 flex items-center gap-1.5">
                     <Globe className="w-3.5 h-3.5" />
                     WhatsApp
                   </Label>
@@ -479,12 +484,13 @@ export default function AdminProfile() {
                     value={getValue("whatsapp")}
                     onChange={(e) => handleChange("whatsapp", e.target.value)}
                     placeholder="+54 9 11 1234-5678"
+                    className="border-slate-200 focus-visible:border-[#1A2744] focus-visible:ring-[#1A2744]/15"
                   />
                 </div>
               </div>
 
               <div>
-                <Label className="text-xs font-bold uppercase tracking-widest text-black/50 mb-2 flex items-center gap-1.5 block">
+                <Label className="text-sm font-medium text-slate-700 mb-2 flex items-center gap-1.5">
                   <Mail className="w-3.5 h-3.5" />
                   Email
                 </Label>
@@ -493,11 +499,12 @@ export default function AdminProfile() {
                   value={getValue("email")}
                   onChange={(e) => handleChange("email", e.target.value)}
                   placeholder="hola@minegocio.com"
+                  className="border-slate-200 focus-visible:border-[#1A2744] focus-visible:ring-[#1A2744]/15"
                 />
               </div>
 
               <div>
-                <Label className="text-xs font-bold uppercase tracking-widest text-black/50 mb-2 flex items-center gap-1.5 block">
+                <Label className="text-sm font-medium text-slate-700 mb-2 flex items-center gap-1.5">
                   <MapPin className="w-3.5 h-3.5" />
                   Dirección
                 </Label>
@@ -505,12 +512,13 @@ export default function AdminProfile() {
                   value={getValue("address")}
                   onChange={(e) => handleChange("address", e.target.value)}
                   placeholder="Av. Corrientes 1234, CABA"
+                  className="border-slate-200 focus-visible:border-[#1A2744] focus-visible:ring-[#1A2744]/15"
                 />
               </div>
 
               <div className="grid sm:grid-cols-2 gap-4">
                 <div>
-                  <Label className="text-xs font-bold uppercase tracking-widest text-black/50 mb-2 flex items-center gap-1.5 block">
+                  <Label className="text-sm font-medium text-slate-700 mb-2 flex items-center gap-1.5">
                     <Instagram className="w-3.5 h-3.5" />
                     Instagram
                   </Label>
@@ -518,11 +526,12 @@ export default function AdminProfile() {
                     value={getValue("instagram")}
                     onChange={(e) => handleChange("instagram", e.target.value)}
                     placeholder="https://instagram.com/tu_negocio"
+                    className="border-slate-200 focus-visible:border-[#1A2744] focus-visible:ring-[#1A2744]/15"
                   />
                 </div>
 
                 <div>
-                  <Label className="text-xs font-bold uppercase tracking-widest text-black/50 mb-2 flex items-center gap-1.5 block">
+                  <Label className="text-sm font-medium text-slate-700 mb-2 flex items-center gap-1.5">
                     <Facebook className="w-3.5 h-3.5" />
                     Facebook
                   </Label>
@@ -530,35 +539,36 @@ export default function AdminProfile() {
                     value={getValue("facebook")}
                     onChange={(e) => handleChange("facebook", e.target.value)}
                     placeholder="https://facebook.com/tu_negocio"
+                    className="border-slate-200 focus-visible:border-[#1A2744] focus-visible:ring-[#1A2744]/15"
                   />
                 </div>
               </div>
             </div>
           </section>
 
-          <section className="bg-white p-6">
-            <h2 className="text-xs font-bold uppercase tracking-widest text-black/40 mb-5">
+          <section className="bg-white p-6 rounded-2xl border border-slate-200">
+            <h2 className="text-sm font-semibold text-slate-900 uppercase tracking-wide mb-5">
               Seguridad
             </h2>
 
             <div className="space-y-4">
               <div>
-                <Label className="text-xs font-bold uppercase tracking-widest text-black/50 mb-2 block">
+                <Label className="text-sm font-medium text-slate-700 mb-2 block">
                   Email de acceso
                 </Label>
                 <Input
                   value={passwordStatus.data?.email ?? ""}
                   disabled
-                  className="bg-[#f5f5f5]"
+                  className="bg-slate-50 border-slate-200"
                 />
-                <p className="text-xs text-black/30 mt-1">
+                <p className="text-xs text-slate-400 mt-1">
                   Este email es el que se usa para entrar a la administración.
                 </p>
               </div>
 
               {passwordStatus.data?.hasCredential && (
                 <div>
-                  <Label className="text-xs font-bold uppercase tracking-widest text-black/50 mb-2 block">
+                  <Label className="text-sm font-medium text-slate-700 mb-2 block">
                     Contraseña actual
                   </Label>
                   <Input
@@ -572,12 +582,13 @@ export default function AdminProfile() {
                     }
                     placeholder="Ingresá tu contraseña actual"
                     autoComplete="current-password"
+                    className="border-slate-200 focus-visible:border-[#1A2744] focus-visible:ring-[#1A2744]/15"
                   />
                 </div>
               )}
 
               <div>
-                <Label className="text-xs font-bold uppercase tracking-widest text-black/50 mb-2 block">
+                <Label className="text-sm font-medium text-slate-700 mb-2 block">
                   Nueva contraseña
                 </Label>
                 <Input
@@ -591,11 +602,12 @@ export default function AdminProfile() {
                   }
                   placeholder="Mínimo 8 caracteres"
                   autoComplete="new-password"
+                  className="border-slate-200 focus-visible:border-[#1A2744] focus-visible:ring-[#1A2744]/15"
                 />
               </div>
 
               <div>
-                <Label className="text-xs font-bold uppercase tracking-widest text-black/50 mb-2 block">
+                <Label className="text-sm font-medium text-slate-700 mb-2 block">
                   Confirmar nueva contraseña
                 </Label>
                 <Input
@@ -609,6 +621,7 @@ export default function AdminProfile() {
                   }
                   placeholder="Repetí la nueva contraseña"
                   autoComplete="new-password"
+                  className="border-slate-200 focus-visible:border-[#1A2744] focus-visible:ring-[#1A2744]/15"
                 />
               </div>
 
@@ -617,7 +630,7 @@ export default function AdminProfile() {
                   type="button"
                   onClick={handlePasswordSave}
                   disabled={setMyPassword.isPending || passwordStatus.isLoading}
-                  className="flex items-center gap-2 px-5 py-2.5 bg-black text-white text-xs font-bold uppercase tracking-widest hover:bg-black/80 transition-colors disabled:opacity-30 disabled:cursor-not-allowed"
+                  className="flex items-center gap-2 px-5 py-2.5 bg-[#1A2744] text-white text-sm font-semibold rounded-xl hover:bg-[#142035] transition-colors disabled:opacity-30 disabled:cursor-not-allowed"
                 >
                   {setMyPassword.isPending ? (
                     <Loader2 className="w-4 h-4 animate-spin" />
@@ -639,7 +652,7 @@ export default function AdminProfile() {
             <button
               onClick={handleSave}
               disabled={updateProfile.isPending}
-              className="flex items-center gap-2 px-6 py-3 bg-black text-white text-xs font-bold uppercase tracking-widest hover:bg-black/80 transition-colors shadow-xl disabled:opacity-30"
+              className="flex items-center gap-2 px-6 py-3 bg-[#1A2744] text-white text-sm font-semibold rounded-2xl hover:bg-[#142035] transition-colors shadow-lg disabled:opacity-30"
             >
               {updateProfile.isPending ? (
                 <Loader2 className="w-4 h-4 animate-spin" />
