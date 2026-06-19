@@ -117,7 +117,7 @@ function Hero({
       <div className="relative mx-auto flex min-h-[500px] max-w-6xl items-center px-5 py-12 sm:min-h-[560px] lg:min-h-[610px]">
         <div className="max-w-2xl">
           <p className="text-xs font-bold uppercase tracking-[0.24em] text-white/82">
-            Inmobiliaria urbana en {cityLabel}
+            {cityLabel ? `Inmobiliaria en ${cityLabel}` : "Inmobiliaria"}
           </p>
 
           <h1 className="mt-6 max-w-xl text-5xl font-black leading-[0.9] tracking-tight text-white sm:text-6xl lg:text-[5.5rem]">

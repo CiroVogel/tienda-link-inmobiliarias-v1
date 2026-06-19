@@ -26,7 +26,7 @@ export default function LocalLogin() {
         return;
       }
 
-      // Login OK — redirigir al admin
+      // Login OK: redirigir al admin.
       window.location.href = "/admin";
     } catch {
       setError("Error de conexión. Verificá que el servidor esté corriendo.");
@@ -45,14 +45,14 @@ export default function LocalLogin() {
           <h1 className="text-3xl font-black text-black mb-1 tracking-tight">
             Panel Admin
           </h1>
-          <p className="text-xs text-black/40 uppercase tracking-widest font-bold">
-            Acceso local — desarrollo
+          <p className="text-xs text-black/60 uppercase tracking-widest font-bold">
+            Acceso local - desarrollo
           </p>
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
-            <label className="block text-xs font-bold uppercase tracking-widest text-black/50 mb-2">
+            <label className="block text-xs font-bold uppercase tracking-widest text-black/65 mb-2">
               Email
             </label>
             <input
@@ -67,7 +67,7 @@ export default function LocalLogin() {
           </div>
 
           <div>
-            <label className="block text-xs font-bold uppercase tracking-widest text-black/50 mb-2">
+            <label className="block text-xs font-bold uppercase tracking-widest text-black/65 mb-2">
               Contraseña
             </label>
             <input
@@ -77,7 +77,7 @@ export default function LocalLogin() {
               required
               autoComplete="current-password"
               className="w-full border border-black/20 px-4 py-3 text-sm focus:outline-none focus:border-black transition-colors"
-              placeholder="••••••••"
+              placeholder="********"
             />
           </div>
 
@@ -97,9 +97,9 @@ export default function LocalLogin() {
         <div className="mt-6 text-center">
           <a
             href="/"
-            className="text-xs font-bold uppercase tracking-widest text-black/30 hover:text-black transition-colors"
+            className="text-xs font-bold uppercase tracking-widest text-black/60 hover:text-black transition-colors"
           >
-            ← Volver al inicio
+            Volver al inicio
           </a>
         </div>
       </div>

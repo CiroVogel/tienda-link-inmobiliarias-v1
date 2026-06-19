@@ -414,12 +414,12 @@ export default function AdminServices() {
         <div className="mb-8 flex flex-col gap-4 xl:flex-row xl:items-end xl:justify-between">
           <div>
             <h1 className="text-2xl font-black tracking-tight text-black">Propiedades</h1>
-            <p className="mt-1 text-sm text-black/50">
+            <p className="mt-1 text-sm text-black/65">
               {totalProperties} propiedad{totalProperties !== 1 ? "es" : ""} en gestión
             </p>
           </div>
 
-          <div className="flex flex-wrap gap-3 text-xs font-bold uppercase tracking-[0.14em] text-zinc-500">
+          <div className="flex flex-wrap gap-3 text-xs font-bold uppercase tracking-[0.14em] text-zinc-700">
             <span className="rounded-full border border-zinc-200 bg-white px-3 py-2">
               {visibleProperties} visibles
             </span>
@@ -435,11 +435,11 @@ export default function AdminServices() {
         <div className="mb-6 rounded-xl border border-zinc-200 bg-white p-4">
           <div className="grid gap-3 xl:grid-cols-[minmax(0,1.4fr)_180px_170px]">
             <div className="relative">
-              <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-zinc-400" />
+              <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-zinc-600" />
               <Input
                 value={search}
                 onChange={(event) => setSearch(event.target.value)}
-                placeholder="Buscar por titulo, ubicacion, direccion o tipo"
+                placeholder="Buscar por título, ubicación, dirección o tipo"
                 className="pl-9"
               />
             </div>

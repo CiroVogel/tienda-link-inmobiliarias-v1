@@ -265,8 +265,8 @@ export default function AdminProfile() {
             <h1 className="text-2xl font-black text-black tracking-tight">
               Perfil de la inmobiliaria
             </h1>
-            <p className="text-black/40 text-sm mt-0.5">
-              Informacion que se muestra en tu web publica
+            <p className="text-black/65 text-sm mt-0.5">
+              Información que se muestra en tu web pública
             </p>
           </div>
 
@@ -286,7 +286,7 @@ export default function AdminProfile() {
 
         <div className="space-y-6">
           <section className="bg-white p-6">
-            <h2 className="text-xs font-bold uppercase tracking-widest text-black/40 mb-5">
+            <h2 className="text-xs font-bold uppercase tracking-widest text-black/65 mb-5">
               Imágenes
             </h2>
 
@@ -308,7 +308,7 @@ export default function AdminProfile() {
                   onUpload={handleImageUpload}
                   onRemove={handleImageRemove}
                 />
-                <p className="text-xs text-black/40 mt-2 leading-relaxed">
+                <p className="text-xs text-black/60 mt-2 leading-relaxed">
                   Opcional. Usala para reforzar la identidad visual de la
                   inmobiliaria sin cambiar la estructura actual de la pantalla.
                 </p>
@@ -317,8 +317,8 @@ export default function AdminProfile() {
           </section>
 
           <section className="bg-white p-6">
-            <h2 className="text-xs font-bold uppercase tracking-widest text-black/40 mb-5">
-              Informacion de la inmobiliaria
+            <h2 className="text-xs font-bold uppercase tracking-widest text-black/65 mb-5">
+              Información de la inmobiliaria
             </h2>
 
             <div className="space-y-4">
@@ -328,7 +328,7 @@ export default function AdminProfile() {
                 </Label>
 
                 <div className="flex items-center border border-black/20 bg-[#f5f5f5]">
-                  <span className="px-3 py-2.5 text-xs text-black/40 border-r border-black/20 whitespace-nowrap">
+                  <span className="px-3 py-2.5 text-xs text-black/60 border-r border-black/20 whitespace-nowrap">
                     {typeof window !== "undefined" ? window.location.origin : ""}/
                   </span>
 
@@ -348,8 +348,8 @@ export default function AdminProfile() {
                   />
                 </div>
 
-                <p className="text-xs text-black/30 mt-1">
-                  Solo letras minusculas, numeros y guiones. Ej: clave-urbana-propiedades
+                <p className="text-xs text-black/60 mt-1">
+                  Solo letras minúsculas, números y guiones. Ej: clave-urbana-propiedades
                 </p>
               </div>
 
@@ -377,13 +377,13 @@ export default function AdminProfile() {
 
               <div>
                 <Label className="text-xs font-bold uppercase tracking-widest text-black/50 mb-2 block">
-                  Descripcion de la inmobiliaria
+                  Descripción de la inmobiliaria
                 </Label>
                 <textarea
                   value={getValue("description")}
                   onChange={(e) => handleChange("description", e.target.value)}
-                  placeholder="Presenta en pocas palabras a tu inmobiliaria..."
-                  className="w-full border border-black/20 bg-white px-3 py-2.5 text-sm placeholder:text-black/30 focus:outline-none focus:border-black resize-none"
+                  placeholder="Presentá en pocas palabras a tu inmobiliaria..."
+                  className="w-full border border-black/20 bg-white px-3 py-2.5 text-sm placeholder:text-black/45 focus:outline-none focus:border-black resize-none"
                   rows={3}
                 />
               </div>
@@ -391,8 +391,8 @@ export default function AdminProfile() {
           </section>
 
           <section className="bg-white p-6">
-            <h2 className="text-xs font-bold uppercase tracking-widest text-black/40 mb-5">
-              Presentacion institucional
+            <h2 className="text-xs font-bold uppercase tracking-widest text-black/65 mb-5">
+              Presentación institucional
             </h2>
 
             <div className="space-y-4">
@@ -422,13 +422,13 @@ export default function AdminProfile() {
 
               <div>
                 <Label className="text-xs font-bold uppercase tracking-widest text-black/50 mb-2 block">
-                  Presentacion
+                  Presentación
                 </Label>
                 <textarea
                   value={getValue("ownerBio")}
                   onChange={(e) => handleChange("ownerBio", e.target.value)}
-                  placeholder="Conta brevemente como trabaja tu inmobiliaria y que tipo de propiedades gestiona..."
-                  className="w-full border border-black/20 bg-white px-3 py-2.5 text-sm placeholder:text-black/30 focus:outline-none focus:border-black resize-none"
+                  placeholder="Contá brevemente cómo trabaja tu inmobiliaria y qué tipo de propiedades gestiona..."
+                  className="w-full border border-black/20 bg-white px-3 py-2.5 text-sm placeholder:text-black/45 focus:outline-none focus:border-black resize-none"
                   rows={4}
                 />
               </div>
@@ -436,7 +436,7 @@ export default function AdminProfile() {
           </section>
 
           <section className="bg-white p-6">
-            <h2 className="text-xs font-bold uppercase tracking-widest text-black/40 mb-5">
+            <h2 className="text-xs font-bold uppercase tracking-widest text-black/65 mb-5">
               Contacto
             </h2>
 

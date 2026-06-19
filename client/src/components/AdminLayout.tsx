@@ -42,7 +42,7 @@ function NavItem({
         className={`w-full flex items-center gap-3 px-4 py-3 text-sm font-medium transition-all duration-150 ${
           isActive
             ? "bg-white text-black font-bold"
-            : "text-white/50 hover:text-white hover:bg-white/10"
+            : "text-white/70 hover:text-white hover:bg-white/10"
         }`}
       >
         <Icon className="w-4 h-4 shrink-0" />
@@ -77,7 +77,7 @@ export default function AdminLayout({ children }: { children: ReactNode }) {
 
   const handleLogout = async () => {
     await logout();
-    toast.success("Sesion cerrada");
+    toast.success("Sesión cerrada");
     window.location.href = getLoginUrl();
   };
 
@@ -98,11 +98,11 @@ export default function AdminLayout({ children }: { children: ReactNode }) {
           </div>
           <h1 className="text-3xl font-black text-black mb-2 tracking-tight">Panel Admin</h1>
           <p className="text-sm text-black/50 mb-8">
-            Inicia sesion para acceder al panel de gestion de tu inmobiliaria.
+            Iniciá sesión para acceder al panel de gestión de tu inmobiliaria.
           </p>
           <a href={getLoginUrl()}>
             <button className="w-full py-4 bg-black text-white text-xs font-bold uppercase tracking-widest hover:bg-black/80 transition-colors">
-              Iniciar sesion
+              Iniciar sesión
             </button>
           </a>
           <div className="mt-4">
@@ -125,7 +125,7 @@ export default function AdminLayout({ children }: { children: ReactNode }) {
             Acceso restringido
           </h1>
           <p className="text-sm text-black/50 mb-6">
-            No tenes permisos para acceder al panel de administracion.
+            No tenés permisos para acceder al panel de administración.
           </p>
           <Link href="/">
             <button className="text-xs font-bold uppercase tracking-widest text-black border-b border-black pb-1 hover:opacity-60 transition-opacity">
@@ -145,7 +145,7 @@ export default function AdminLayout({ children }: { children: ReactNode }) {
             <p className="text-white font-black text-sm tracking-widest uppercase leading-tight">
               {profile?.businessName ?? (isPlatformAdmin ? "Admin Central" : "Mi inmobiliaria")}
             </p>
-            <p className="text-white/30 text-xs mt-0.5 uppercase tracking-widest">
+            <p className="text-white/55 text-xs mt-0.5 uppercase tracking-widest">
               Panel Admin
             </p>
           </div>
@@ -192,12 +192,12 @@ export default function AdminLayout({ children }: { children: ReactNode }) {
           </div>
           <div className="flex-1 min-w-0">
             <p className="text-white text-xs font-bold truncate">{user.name ?? "Admin"}</p>
-            <p className="text-white/30 text-xs truncate">{user.email ?? ""}</p>
+            <p className="text-white/55 text-xs truncate">{user.email ?? ""}</p>
           </div>
           <button
             onClick={handleLogout}
-            className="text-white/30 hover:text-white transition-colors"
-            title="Cerrar sesion"
+            className="text-white/55 hover:text-white transition-colors"
+            title="Cerrar sesión"
           >
             <LogOut className="w-4 h-4" />
           </button>

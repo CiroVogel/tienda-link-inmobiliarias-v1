@@ -137,7 +137,7 @@ export default function AdminGallery() {
 
     for (const file of files) {
       if (file.size > 5 * 1024 * 1024) {
-        toast.error(`"${file.name}" supera el maximo de 5MB.`);
+        toast.error(`"${file.name}" supera el máximo de 5MB.`);
         return;
       }
     }
@@ -214,8 +214,8 @@ export default function AdminGallery() {
             <h1 className="text-2xl font-black tracking-tight text-zinc-950">
               Fotos de propiedades
             </h1>
-            <p className="mt-3 text-sm text-zinc-500">
-              Crea una propiedad primero y despues carga sus imagenes desde este panel.
+            <p className="mt-3 text-sm text-zinc-700">
+              Creá una propiedad primero y después cargá sus imágenes desde este panel.
             </p>
           </div>
         </div>
@@ -237,8 +237,8 @@ export default function AdminGallery() {
         <div className="mb-8 flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
           <div>
             <h1 className="text-2xl font-black tracking-tight text-black">Fotos de propiedades</h1>
-            <p className="mt-1 text-sm text-black/50">
-              Elegi una propiedad, subi sus imagenes y defini la principal.
+            <p className="mt-1 text-sm text-black/65">
+              Elegí una propiedad, subí sus imágenes y definí la principal.
             </p>
           </div>
 
@@ -268,19 +268,19 @@ export default function AdminGallery() {
                 />
                 <div className="space-y-2 p-5">
                   <h2 className="text-lg font-black text-zinc-950">{selectedProperty.title}</h2>
-                  <p className="text-sm text-zinc-500">
+                  <p className="text-sm text-zinc-700">
                     {selectedProperty.location} | {selectedProperty.propertyType}
                   </p>
                   <p className="text-sm font-semibold text-zinc-950">{selectedProperty.price}</p>
-                  <p className="text-xs uppercase tracking-[0.14em] text-zinc-400">
+                  <p className="text-xs uppercase tracking-[0.14em] text-zinc-600">
                     {currentImages.length} foto{currentImages.length !== 1 ? "s" : ""}
                   </p>
                 </div>
               </div>
 
               <div className="rounded-xl border border-zinc-200 bg-white p-6">
-                <p className="mb-4 text-xs font-black uppercase tracking-[0.16em] text-zinc-400">
-                  Subir imagenes
+                <p className="mb-4 text-xs font-black uppercase tracking-[0.16em] text-zinc-600">
+                  Subir imágenes
                 </p>
                 <div
                   className="cursor-pointer border-2 border-dashed border-black/15 p-10 text-center transition-colors hover:border-black/40"
@@ -294,17 +294,17 @@ export default function AdminGallery() {
                   }}
                 >
                   {uploading ? (
-                    <div className="flex flex-col items-center gap-2 text-zinc-500">
+                    <div className="flex flex-col items-center gap-2 text-zinc-700">
                       <Loader2 className="h-8 w-8 animate-spin" />
                       <span className="text-sm">Subiendo fotos...</span>
                     </div>
                   ) : (
-                    <div className="flex flex-col items-center gap-2 text-zinc-500">
+                    <div className="flex flex-col items-center gap-2 text-zinc-700">
                       <Upload className="h-8 w-8" />
                       <p className="text-sm font-medium">
-                        Hace clic o arrastra imagenes para esta propiedad
+                        Hacé clic o arrastrá imágenes para esta propiedad
                       </p>
-                      <p className="text-xs">PNG, JPG, WEBP · Maximo 5MB por archivo</p>
+                      <p className="text-xs">PNG, JPG, WEBP · Máximo 5MB por archivo</p>
                     </div>
                   )}
                 </div>
@@ -326,9 +326,9 @@ export default function AdminGallery() {
             {currentImages.length === 0 ? (
               <div className="rounded-xl border-2 border-dashed border-zinc-200 bg-white px-6 py-16 text-center">
                 <ImagePlus className="mx-auto mb-3 h-10 w-10 text-zinc-300" />
-                <p className="font-semibold text-zinc-700">Todavia no hay fotos cargadas.</p>
-                <p className="mt-1 text-sm text-zinc-500">
-                  La web usara un fallback visual hasta que subas imagenes reales.
+                <p className="font-semibold text-zinc-700">Todavía no hay fotos cargadas.</p>
+                <p className="mt-1 text-sm text-zinc-700">
+                  La web usará un fallback visual hasta que subas imágenes reales.
                 </p>
               </div>
             ) : (
