@@ -75,10 +75,10 @@ function Header({
 
         <div className="flex items-center gap-3">
           <a
-            href="/admin-login"
+            href="/admin"
             className="hidden items-center rounded border border-white/25 px-3 py-1.5 text-[11px] font-bold uppercase tracking-[0.12em] text-white/70 transition hover:border-white/50 hover:text-white sm:inline-flex"
           >
-            Ingresar
+            Mi panel
           </a>
           <Link href={`/${slug}/propiedades`}>
             <span className="hidden bg-[#81856a] px-4 py-2 text-xs font-black uppercase tracking-[0.16em] text-white sm:inline-flex">
