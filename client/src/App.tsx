@@ -36,6 +36,10 @@ function ScrollToTop() {
   return null;
 }
 
+// Demo institucional principal de Tienda Link Inmobiliarias.
+// La ruta raíz muestra esta demo pública por diseño.
+const DEMO_REAL_ESTATE_SLUG = "clave-urbana-propiedades";
+
 function Router() {
   return (
     <Switch>
@@ -55,7 +59,7 @@ function Router() {
 
       <Route
         path="/"
-        component={() => <Home forcedSlug="clave-urbana-propiedades" />}
+        component={() => <Home forcedSlug={DEMO_REAL_ESTATE_SLUG} />}
       />
 
       <Route
