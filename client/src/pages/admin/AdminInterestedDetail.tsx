@@ -101,7 +101,7 @@ export default function AdminInterestedDetail() {
   async function handleAddNote() {
     const trimmed = noteText.trim();
     if (!trimmed) {
-      toast.error("Escribe una nota antes de guardarla.");
+      toast.error("Escribí una nota antes de guardarla.");
       return;
     }
 
@@ -113,14 +113,14 @@ export default function AdminInterestedDetail() {
 
   function renderTimelineEntry(entry: InterestedTimelineEntry) {
     if (entry.type === "note_added") {
-      return <NotebookPen className="h-4 w-4 text-zinc-500" />;
+      return <NotebookPen className="h-4 w-4 text-zinc-700" />;
     }
 
     if (entry.type === "status_changed") {
-      return <RefreshCw className="h-4 w-4 text-zinc-500" />;
+      return <RefreshCw className="h-4 w-4 text-zinc-700" />;
     }
 
-    return <MessageSquare className="h-4 w-4 text-zinc-500" />;
+    return <MessageSquare className="h-4 w-4 text-zinc-700" />;
   }
 
   return (
@@ -143,7 +143,7 @@ export default function AdminInterestedDetail() {
           <div className="rounded-xl border border-zinc-200 bg-white px-6 py-16 text-center">
             <UserRound className="mx-auto mb-3 h-10 w-10 text-zinc-300" />
             <p className="font-semibold text-zinc-700">No encontramos este interesado.</p>
-            <p className="mt-1 text-sm text-zinc-500">
+            <p className="mt-1 text-sm text-zinc-700">
               Puede que haya sido eliminado o que la referencia ya no exista.
             </p>
           </div>
@@ -163,14 +163,14 @@ export default function AdminInterestedDetail() {
                         {statusConfig.label}
                       </span>
                     ) : null}
-                    <span className="text-xs font-bold uppercase tracking-[0.14em] text-zinc-400">
+                    <span className="text-xs font-bold uppercase tracking-[0.14em] text-zinc-600">
                       {interested.reference}
                     </span>
                   </div>
 
                   <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
                     <div className="rounded-xl border border-zinc-200 bg-zinc-50 px-4 py-3">
-                      <p className="text-[11px] font-semibold uppercase tracking-[0.16em] text-zinc-400">
+                      <p className="text-[11px] font-semibold uppercase tracking-[0.16em] text-zinc-600">
                         WhatsApp
                       </p>
                       <p className="mt-1 text-sm font-medium text-zinc-950">
@@ -179,7 +179,7 @@ export default function AdminInterestedDetail() {
                     </div>
 
                     <div className="rounded-xl border border-zinc-200 bg-zinc-50 px-4 py-3">
-                      <p className="text-[11px] font-semibold uppercase tracking-[0.16em] text-zinc-400">
+                      <p className="text-[11px] font-semibold uppercase tracking-[0.16em] text-zinc-600">
                         Email
                       </p>
                       <p className="mt-1 text-sm font-medium text-zinc-950">
@@ -188,7 +188,7 @@ export default function AdminInterestedDetail() {
                     </div>
 
                     <div className="rounded-xl border border-zinc-200 bg-zinc-50 px-4 py-3">
-                      <p className="text-[11px] font-semibold uppercase tracking-[0.16em] text-zinc-400">
+                      <p className="text-[11px] font-semibold uppercase tracking-[0.16em] text-zinc-600">
                         Fecha de consulta
                       </p>
                       <p className="mt-1 text-sm font-medium text-zinc-950">
@@ -199,7 +199,7 @@ export default function AdminInterestedDetail() {
                     </div>
 
                     <div className="rounded-xl border border-zinc-200 bg-zinc-50 px-4 py-3">
-                      <p className="text-[11px] font-semibold uppercase tracking-[0.16em] text-zinc-400">
+                      <p className="text-[11px] font-semibold uppercase tracking-[0.16em] text-zinc-600">
                         Propiedad
                       </p>
                       <p className="mt-1 text-sm font-medium text-zinc-950">
@@ -269,7 +269,7 @@ export default function AdminInterestedDetail() {
               </div>
 
               <div className="mt-5 rounded-xl border border-zinc-200 bg-zinc-50 px-4 py-4">
-                <p className="text-[11px] font-semibold uppercase tracking-[0.16em] text-zinc-400">
+                <p className="text-[11px] font-semibold uppercase tracking-[0.16em] text-zinc-600">
                   Mensaje original
                 </p>
                 <p className="mt-2 text-sm leading-7 text-zinc-700">
@@ -283,7 +283,7 @@ export default function AdminInterestedDetail() {
                 <div className="mb-4 flex items-center justify-between gap-3">
                   <div>
                     <h2 className="text-lg font-black text-zinc-950">Timeline</h2>
-                    <p className="mt-1 text-sm text-zinc-500">
+                    <p className="mt-1 text-sm text-zinc-700">
                       Consulta recibida, cambios de estado y notas agregadas.
                     </p>
                   </div>
@@ -303,7 +303,7 @@ export default function AdminInterestedDetail() {
                           <p className="text-sm font-semibold text-zinc-950">
                             {entry.title}
                           </p>
-                          <span className="text-xs text-zinc-400">
+                          <span className="text-xs text-zinc-600">
                             {format(parseISO(entry.createdAt), "d MMM yyyy · HH:mm", {
                               locale: es,
                             })}
@@ -323,8 +323,8 @@ export default function AdminInterestedDetail() {
               <section className="rounded-2xl border border-zinc-200 bg-white p-6">
                 <div className="mb-4">
                   <h2 className="text-lg font-black text-zinc-950">Notas</h2>
-                  <p className="mt-1 text-sm text-zinc-500">
-                    Anota avances, acuerdos o contexto útil para el seguimiento.
+                  <p className="mt-1 text-sm text-zinc-700">
+                    Anotá avances, acuerdos o contexto útil para el seguimiento.
                   </p>
                 </div>
 
@@ -334,7 +334,7 @@ export default function AdminInterestedDetail() {
                     onChange={(event) => setNoteText(event.target.value)}
                     rows={4}
                     className="w-full resize-none border-0 bg-transparent text-sm leading-6 text-zinc-700 outline-none"
-                    placeholder="Escribe una nota breve sobre este interesado..."
+                    placeholder="Escribí una nota breve sobre este interesado..."
                   />
                   <div className="mt-3 flex justify-end">
                     <Button
@@ -350,7 +350,7 @@ export default function AdminInterestedDetail() {
 
                 <div className="mt-4 space-y-3">
                   {notes.length === 0 ? (
-                    <div className="rounded-xl border border-dashed border-zinc-200 px-4 py-8 text-center text-sm text-zinc-500">
+                    <div className="rounded-xl border border-dashed border-zinc-200 px-4 py-8 text-center text-sm text-zinc-700">
                       Todavía no hay notas para este interesado.
                     </div>
                   ) : (
@@ -359,7 +359,7 @@ export default function AdminInterestedDetail() {
                         key={note.id}
                         className="rounded-xl border border-zinc-200 bg-zinc-50 px-4 py-4"
                       >
-                        <div className="mb-2 flex items-center gap-2 text-xs text-zinc-400">
+                        <div className="mb-2 flex items-center gap-2 text-xs text-zinc-600">
                           <Clock className="h-3 w-3" />
                           {format(parseISO(note.createdAt), "d MMM yyyy · HH:mm", {
                             locale: es,

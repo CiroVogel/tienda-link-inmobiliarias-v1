@@ -108,7 +108,7 @@ export default function AdminAvailability() {
           >
             Disponibilidad
           </h1>
-          <p className="text-muted-foreground text-sm mt-0.5">
+          <p className="text-zinc-600 text-sm mt-0.5">
             Configurá los días y horarios en que aceptás reservas
           </p>
         </div>
@@ -137,13 +137,13 @@ export default function AdminAvailability() {
                     <div>
                       <p className="font-semibold text-sm">{day.label}</p>
                       {config.isActive && slotCount > 0 && (
-                        <p className="text-xs text-muted-foreground flex items-center gap-1 mt-0.5">
+                        <p className="text-xs text-zinc-600 flex items-center gap-1 mt-0.5">
                           <Clock className="w-3 h-3" />
                           {slotCount} turno{slotCount !== 1 ? "s" : ""} disponible{slotCount !== 1 ? "s" : ""}
                         </p>
                       )}
                       {!config.isActive && (
-                        <p className="text-xs text-muted-foreground mt-0.5">No disponible</p>
+                        <p className="text-xs text-zinc-600 mt-0.5">No disponible</p>
                       )}
                     </div>
                   </div>
@@ -170,7 +170,7 @@ export default function AdminAvailability() {
                 {config.isActive && (
                   <div className="grid grid-cols-3 gap-4 pt-4 border-t border-border">
                     <div>
-                      <Label className="text-xs font-medium mb-1.5 block text-muted-foreground uppercase tracking-wider">
+                      <Label className="text-xs font-medium mb-1.5 block text-zinc-600 uppercase tracking-wider">
                         Desde
                       </Label>
                       <Input
@@ -181,7 +181,7 @@ export default function AdminAvailability() {
                       />
                     </div>
                     <div>
-                      <Label className="text-xs font-medium mb-1.5 block text-muted-foreground uppercase tracking-wider">
+                      <Label className="text-xs font-medium mb-1.5 block text-zinc-600 uppercase tracking-wider">
                         Hasta
                       </Label>
                       <Input
@@ -192,7 +192,7 @@ export default function AdminAvailability() {
                       />
                     </div>
                     <div>
-                      <Label className="text-xs font-medium mb-1.5 block text-muted-foreground uppercase tracking-wider">
+                      <Label className="text-xs font-medium mb-1.5 block text-zinc-600 uppercase tracking-wider">
                         Duración (min)
                       </Label>
                       <Input
@@ -216,7 +216,7 @@ export default function AdminAvailability() {
 
         {/* Info */}
         <div
-          className="mt-6 rounded-xl p-4 text-sm text-muted-foreground"
+          className="mt-6 rounded-xl p-4 text-sm text-zinc-600"
           style={{ background: "oklch(97% 0 0)" }}
         >
           <p className="font-medium text-foreground mb-1">¿Cómo funciona?</p>

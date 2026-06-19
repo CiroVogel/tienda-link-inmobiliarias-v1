@@ -144,17 +144,17 @@ export default function AdminSavedSearches() {
             <h1 className="text-2xl font-black tracking-tight text-black">
               Búsquedas recibidas
             </h1>
-            <p className="mt-1 text-sm text-black/55">
+            <p className="mt-1 text-sm text-black/65">
               Necesidades cargadas por visitantes cuando todavía no encontraron una
               propiedad.
             </p>
           </div>
 
           <div className="flex flex-wrap gap-2">
-            <span className="rounded-full border border-zinc-200 bg-white px-3 py-2 text-xs font-bold uppercase tracking-[0.14em] text-zinc-500">
+            <span className="rounded-full border border-zinc-200 bg-white px-3 py-2 text-xs font-bold uppercase tracking-[0.14em] text-zinc-700">
               Activas: {counts.all}
             </span>
-            <span className="rounded-full border border-zinc-200 bg-white px-3 py-2 text-xs font-bold uppercase tracking-[0.14em] text-zinc-500">
+            <span className="rounded-full border border-zinc-200 bg-white px-3 py-2 text-xs font-bold uppercase tracking-[0.14em] text-zinc-700">
               Archivadas: {counts.archived}
             </span>
             <Button variant="outline" size="sm" onClick={() => refetch()} className="gap-2">
@@ -171,7 +171,7 @@ export default function AdminSavedSearches() {
                 key={`summary-${option.value}`}
                 className="rounded-xl border border-zinc-200 bg-zinc-50 px-4 py-3"
               >
-                <p className="text-[11px] font-semibold uppercase tracking-[0.16em] text-zinc-400">
+                <p className="text-[11px] font-semibold uppercase tracking-[0.16em] text-zinc-600">
                   {option.label}
                 </p>
                 <p className="mt-2 text-2xl font-black tracking-tight text-zinc-950">
@@ -188,7 +188,7 @@ export default function AdminSavedSearches() {
               className={`whitespace-nowrap rounded-xl border px-4 py-2 text-sm font-medium transition-all ${
                 filter === "all"
                   ? "border-transparent bg-black text-white"
-                  : "border-black/15 text-black/55 hover:border-black/40 hover:text-black"
+                  : "border-black/15 text-black/65 hover:border-black/40 hover:text-black"
               }`}
             >
               Todas
@@ -212,7 +212,7 @@ export default function AdminSavedSearches() {
                   className={`whitespace-nowrap rounded-xl border px-4 py-2 text-sm font-medium transition-all ${
                     isSelected
                       ? "border-transparent bg-black text-white"
-                      : "border-black/15 text-black/55 hover:border-black/40 hover:text-black"
+                      : "border-black/15 text-black/65 hover:border-black/40 hover:text-black"
                   }`}
                 >
                   {option.label}
@@ -233,7 +233,7 @@ export default function AdminSavedSearches() {
               className={`whitespace-nowrap rounded-xl border px-4 py-2 text-sm font-medium transition-all ${
                 filter === "archived"
                   ? "border-transparent bg-black text-white"
-                  : "border-black/15 text-black/55 hover:border-black/40 hover:text-black"
+                  : "border-black/15 text-black/65 hover:border-black/40 hover:text-black"
               }`}
             >
               Archivadas
@@ -248,7 +248,7 @@ export default function AdminSavedSearches() {
           </div>
 
           <div className="relative">
-            <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+            <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-zinc-600" />
             <Input
               value={search}
               onChange={(event) => setSearch(event.target.value)}
@@ -269,7 +269,7 @@ export default function AdminSavedSearches() {
                 ? "No hay búsquedas archivadas para mostrar."
                 : "No hay búsquedas recibidas para mostrar."}
             </p>
-            <p className="mt-1 text-sm text-zinc-500">
+            <p className="mt-1 text-sm text-zinc-700">
               {search || filter !== "all"
                 ? "Probá con otro filtro o una búsqueda diferente."
                 : "Las nuevas búsquedas aparecerán acá para seguimiento manual."}
@@ -306,7 +306,7 @@ export default function AdminSavedSearches() {
                         ) : null}
                       </div>
 
-                      <div className="mb-3 flex flex-wrap gap-x-4 gap-y-1 text-xs text-zinc-500">
+                      <div className="mb-3 flex flex-wrap gap-x-4 gap-y-1 text-xs text-zinc-700">
                         <span>
                           {format(parseISO(item.createdAt), "d 'de' MMMM yyyy · HH:mm", {
                             locale: es,
@@ -317,7 +317,7 @@ export default function AdminSavedSearches() {
 
                       <div className="grid gap-3 md:grid-cols-2">
                         <div className="rounded-xl border border-zinc-200 bg-zinc-50 px-3 py-3">
-                          <p className="text-[11px] font-semibold uppercase tracking-[0.16em] text-zinc-400">
+                          <p className="text-[11px] font-semibold uppercase tracking-[0.16em] text-zinc-600">
                             Búsqueda
                           </p>
                           <p className="mt-1 text-sm text-zinc-950">
@@ -329,7 +329,7 @@ export default function AdminSavedSearches() {
                         </div>
 
                         <div className="rounded-xl border border-zinc-200 bg-zinc-50 px-3 py-3">
-                          <p className="text-[11px] font-semibold uppercase tracking-[0.16em] text-zinc-400">
+                          <p className="text-[11px] font-semibold uppercase tracking-[0.16em] text-zinc-600">
                             Presupuesto
                           </p>
                           <p className="mt-1 text-sm text-zinc-950">{item.budget}</p>
@@ -338,7 +338,7 @@ export default function AdminSavedSearches() {
 
                       {item.comments ? (
                         <div className="mt-3 rounded-xl border border-zinc-200 bg-zinc-50 px-3 py-3">
-                          <p className="text-[11px] font-semibold uppercase tracking-[0.16em] text-zinc-400">
+                          <p className="text-[11px] font-semibold uppercase tracking-[0.16em] text-zinc-600">
                             Comentarios
                           </p>
                           <p className="mt-1 text-sm leading-6 text-zinc-600">{item.comments}</p>
@@ -347,8 +347,8 @@ export default function AdminSavedSearches() {
 
                       <div className="mt-3 rounded-xl border border-zinc-200 bg-white px-4 py-4">
                         <div className="mb-3 flex items-center gap-2">
-                          <StickyNote className="h-4 w-4 text-zinc-500" />
-                          <p className="text-xs font-bold uppercase tracking-[0.16em] text-zinc-500">
+                          <StickyNote className="h-4 w-4 text-zinc-700" />
+                          <p className="text-xs font-bold uppercase tracking-[0.16em] text-zinc-700">
                             Notas internas
                           </p>
                         </div>
@@ -361,7 +361,7 @@ export default function AdminSavedSearches() {
                                 className="rounded-lg border border-zinc-200 bg-zinc-50 px-3 py-3"
                               >
                                 <p className="text-sm leading-6 text-zinc-700">{note.text}</p>
-                                <p className="mt-1 text-[11px] uppercase tracking-[0.12em] text-zinc-400">
+                                <p className="mt-1 text-[11px] uppercase tracking-[0.12em] text-zinc-600">
                                   {format(parseISO(note.createdAt), "d MMM yyyy · HH:mm", {
                                     locale: es,
                                   })}
@@ -370,7 +370,7 @@ export default function AdminSavedSearches() {
                             ))}
                           </div>
                         ) : (
-                          <p className="mb-3 text-sm text-zinc-500">
+                          <p className="mb-3 text-sm text-zinc-700">
                             Todavía no hay notas internas para esta búsqueda.
                           </p>
                         )}
@@ -386,7 +386,7 @@ export default function AdminSavedSearches() {
                             }
                             rows={3}
                             placeholder="Ej: Le ofrecí un departamento en Mendoza 1450. Espera respuesta."
-                            className="resize-none rounded-lg border border-zinc-200 px-3 py-3 text-sm text-zinc-950 outline-none placeholder:text-zinc-400 focus:border-zinc-950"
+                            className="resize-none rounded-lg border border-zinc-200 px-3 py-3 text-sm text-zinc-950 outline-none placeholder:text-zinc-600 focus:border-zinc-950"
                           />
                           <div>
                             <Button

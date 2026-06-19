@@ -168,7 +168,7 @@ export default function AdminCreatePage() {
             <h1 className="text-2xl font-black tracking-tight text-black">
               Crear inmobiliaria
             </h1>
-            <p className="mt-1 text-sm text-black/45">
+            <p className="mt-1 text-sm text-black/65">
               Da de alta una nueva página con el perfil mínimo necesario para que exista
               públicamente y después puedas completarla desde administración.
             </p>
@@ -177,7 +177,7 @@ export default function AdminCreatePage() {
 
         <form onSubmit={handleSubmit} className="space-y-6">
           <section className="bg-white p-6">
-            <h2 className="mb-5 text-xs font-bold uppercase tracking-widest text-black/40">
+            <h2 className="mb-5 text-xs font-bold uppercase tracking-widest text-black/65">
               Datos iniciales
             </h2>
 
@@ -202,7 +202,7 @@ export default function AdminCreatePage() {
                   onChange={(event) => updateField("slug", slugify(event.target.value))}
                   placeholder="clave-urbana-propiedades"
                 />
-                <p className="mt-1 text-xs text-black/30">
+                <p className="mt-1 text-xs text-black/60">
                   Solo minúsculas, números y guiones.
                 </p>
               </div>
@@ -264,14 +264,14 @@ export default function AdminCreatePage() {
                   onChange={(event) => updateField("description", event.target.value)}
                   placeholder="Presentación corta de la inmobiliaria..."
                   rows={4}
-                  className="w-full resize-none border border-black/20 bg-white px-3 py-2.5 text-sm placeholder:text-black/30 focus:border-black focus:outline-none"
+                  className="w-full resize-none border border-black/20 bg-white px-3 py-2.5 text-sm placeholder:text-black/60 focus:border-black focus:outline-none"
                 />
               </div>
             </div>
           </section>
 
           <section className="bg-white p-6">
-            <h2 className="mb-5 text-xs font-bold uppercase tracking-widest text-black/40">
+            <h2 className="mb-5 text-xs font-bold uppercase tracking-widest text-black/65">
               Acceso admin inicial
             </h2>
 
@@ -381,7 +381,7 @@ export default function AdminCreatePage() {
           <h2 className="mb-4 text-lg font-black tracking-tight text-black">
             Inmobiliarias creadas
           </h2>
-          <p className="mb-5 text-sm leading-7 text-black/45">
+          <p className="mb-5 text-sm leading-7 text-black/65">
             Archivar baja la página pública sin borrar datos. Después puedes reactivarla desde
             esta misma lista.
           </p>
@@ -403,17 +403,17 @@ export default function AdminCreatePage() {
                       <div className="flex flex-wrap items-center gap-2">
                         <p className="font-bold text-black">{business.businessName}</p>
                         {business.isArchived ? (
-                          <span className="border border-black/15 px-2 py-1 text-[10px] font-bold uppercase tracking-[0.16em] text-black/55">
+                          <span className="border border-black/15 px-2 py-1 text-[10px] font-bold uppercase tracking-[0.16em] text-black/65">
                             Archivada
                           </span>
                         ) : null}
                         {business.slug === realEstateProfile.slug ? (
-                          <span className="border border-black/15 px-2 py-1 text-[10px] font-bold uppercase tracking-[0.16em] text-black/55">
+                          <span className="border border-black/15 px-2 py-1 text-[10px] font-bold uppercase tracking-[0.16em] text-black/65">
                             Demo principal
                           </span>
                         ) : null}
                       </div>
-                      <p className="text-sm text-black/45">{business.slug}</p>
+                      <p className="text-sm text-black/65">{business.slug}</p>
                     </div>
 
                     <div className="flex flex-wrap gap-2">
@@ -462,7 +462,7 @@ export default function AdminCreatePage() {
               })}
             </div>
           ) : (
-            <p className="text-sm leading-7 text-black/45">
+            <p className="text-sm leading-7 text-black/65">
               Todavía no hay inmobiliarias creadas fuera de la demo inicial.
             </p>
           )}

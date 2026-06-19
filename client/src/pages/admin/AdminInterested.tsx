@@ -93,7 +93,7 @@ export default function AdminInterested() {
             <h1 className="text-2xl font-black tracking-tight text-black">
               Interesados
             </h1>
-            <p className="mt-1 text-sm text-black/55">
+            <p className="mt-1 text-sm text-black/65">
               Seguimiento de cada consulta con estado, notas e historial.
             </p>
           </div>
@@ -102,7 +102,7 @@ export default function AdminInterested() {
             {INTERESTED_STATUS_OPTIONS.map((option) => (
               <span
                 key={option.value}
-                className="rounded-full border border-zinc-200 bg-white px-3 py-2 text-xs font-bold uppercase tracking-[0.14em] text-zinc-500"
+                className="rounded-full border border-zinc-200 bg-white px-3 py-2 text-xs font-bold uppercase tracking-[0.14em] text-zinc-700"
               >
                 {option.label}: {counts[option.value]}
               </span>
@@ -122,7 +122,7 @@ export default function AdminInterested() {
               className={`whitespace-nowrap rounded-xl border px-4 py-2 text-sm font-medium transition-all ${
                 filter === "all"
                   ? "border-transparent bg-black text-white"
-                  : "border-black/15 text-black/55 hover:border-black/40 hover:text-black"
+                  : "border-black/15 text-black/65 hover:border-black/40 hover:text-black"
               }`}
             >
               Todos
@@ -142,7 +142,7 @@ export default function AdminInterested() {
                   className={`whitespace-nowrap rounded-xl border px-4 py-2 text-sm font-medium transition-all ${
                     isSelected
                       ? "border-transparent bg-black text-white"
-                      : "border-black/15 text-black/55 hover:border-black/40 hover:text-black"
+                      : "border-black/15 text-black/65 hover:border-black/40 hover:text-black"
                   }`}
                 >
                   {option.label}
@@ -155,7 +155,7 @@ export default function AdminInterested() {
           </div>
 
           <div className="relative">
-            <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+            <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-zinc-600" />
             <Input
               value={search}
               onChange={(event) => setSearch(event.target.value)}
@@ -173,9 +173,9 @@ export default function AdminInterested() {
           <div className="rounded-xl border border-zinc-200 bg-white px-6 py-16 text-center">
             <UserRound className="mx-auto mb-3 h-10 w-10 text-zinc-300" />
             <p className="font-semibold text-zinc-700">No hay interesados para mostrar.</p>
-            <p className="mt-1 text-sm text-zinc-500">
+            <p className="mt-1 text-sm text-zinc-700">
               {search || filter !== "all"
-                ? "Prueba con otra búsqueda o cambia el filtro."
+                ? "Probá con otra búsqueda o cambiá el filtro."
                 : "Las nuevas consultas aparecerán acá para darles seguimiento."}
             </p>
           </div>
@@ -200,12 +200,12 @@ export default function AdminInterested() {
                         >
                           {statusConfig.label}
                         </span>
-                        <span className="text-xs font-bold uppercase tracking-[0.14em] text-zinc-400">
+                        <span className="text-xs font-bold uppercase tracking-[0.14em] text-zinc-600">
                           {request.reference}
                         </span>
                       </div>
 
-                      <div className="mb-3 flex flex-wrap gap-x-4 gap-y-1 text-xs text-zinc-500">
+                      <div className="mb-3 flex flex-wrap gap-x-4 gap-y-1 text-xs text-zinc-700">
                         <span>{format(parseISO(request.createdAt), "d 'de' MMMM yyyy · HH:mm", { locale: es })}</span>
                         <span className="flex items-center gap-1">
                           <Phone className="h-3 w-3" />
@@ -220,7 +220,7 @@ export default function AdminInterested() {
                       </div>
 
                       <div className="mb-3 rounded-xl border border-zinc-200 bg-zinc-50 px-3 py-3">
-                        <p className="text-[11px] font-semibold uppercase tracking-[0.16em] text-zinc-400">
+                        <p className="text-[11px] font-semibold uppercase tracking-[0.16em] text-zinc-600">
                           Propiedad vinculada
                         </p>
                         <p className="mt-1 text-sm font-medium text-zinc-950">

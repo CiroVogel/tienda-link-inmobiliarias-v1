@@ -102,7 +102,7 @@ export default function AdminBookings() {
             <h1 className="text-2xl font-black tracking-tight text-black">
               Consultas
             </h1>
-            <p className="mt-0.5 text-sm text-muted-foreground">
+            <p className="mt-0.5 text-sm text-zinc-600">
               {counts.new} nuevas · {counts.active} en seguimiento · {counts.resolved} resueltas
             </p>
           </div>
@@ -137,7 +137,7 @@ export default function AdminBookings() {
                     className={`whitespace-nowrap rounded-xl border px-4 py-2 text-sm font-medium transition-all duration-150 ${
                       isSelected
                         ? "border-transparent bg-black text-white"
-                        : "border-black/15 text-black/55 hover:border-black/40 hover:text-black"
+                        : "border-black/15 text-black/65 hover:border-black/40 hover:text-black"
                     }`}
                   >
                     {item.label}
@@ -155,7 +155,7 @@ export default function AdminBookings() {
           </div>
 
           <div className="relative">
-            <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+            <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-zinc-600" />
             <Input
               placeholder="Buscar por nombre, email, WhatsApp, referencia o propiedad..."
               value={search}
@@ -170,7 +170,7 @@ export default function AdminBookings() {
             <div className="h-8 w-8 animate-spin rounded-full border-2 border-black/20 border-t-black" />
           </div>
         ) : filteredRequests.length === 0 ? (
-          <div className="py-16 text-center text-muted-foreground">
+          <div className="py-16 text-center text-zinc-600">
             <Clock className="mx-auto mb-3 h-10 w-10 opacity-30" />
             <p className="font-medium">No hay consultas para mostrar</p>
             <p className="mt-1 text-sm">
@@ -200,12 +200,12 @@ export default function AdminBookings() {
                         >
                           {statusConfig.label}
                         </span>
-                        <span className="text-xs font-medium uppercase tracking-[0.14em] text-black/45">
+                        <span className="text-xs font-medium uppercase tracking-[0.14em] text-black/65">
                           {request.reference}
                         </span>
                       </div>
 
-                      <div className="mb-3 flex flex-wrap gap-x-4 gap-y-1 text-xs text-muted-foreground">
+                      <div className="mb-3 flex flex-wrap gap-x-4 gap-y-1 text-xs text-zinc-600">
                         <span className="flex items-center gap-1">
                           <Clock className="h-3 w-3" />
                           {format(parseISO(request.createdAt), "d 'de' MMMM yyyy · HH:mm", {
@@ -225,7 +225,7 @@ export default function AdminBookings() {
                       </div>
 
                       <div className="mb-3 rounded-xl border border-black/10 bg-black/[0.02] px-3 py-3">
-                        <p className="text-[11px] font-semibold uppercase tracking-[0.16em] text-muted-foreground">
+                        <p className="text-[11px] font-semibold uppercase tracking-[0.16em] text-zinc-600">
                           Propiedad vinculada
                         </p>
                         <p className="mt-1 text-sm font-medium text-black">
