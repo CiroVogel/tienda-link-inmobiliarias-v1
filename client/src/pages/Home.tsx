@@ -35,7 +35,7 @@ function getCityLabel(address?: string | null) {
     .map((item) => item.trim())
     .filter(Boolean);
 
-  return parts?.at(-1) ?? realEstateProfile.city;
+  return parts?.at(-1);
 }
 
 function Header({
@@ -128,13 +128,17 @@ function Hero({
             {businessName}
           </h1>
 
-          <p className="mt-5 max-w-2xl text-2xl font-medium leading-tight text-white/90 sm:text-3xl">
-            {tagline}
-          </p>
+          {tagline ? (
+            <p className="mt-5 max-w-2xl text-2xl font-medium leading-tight text-white/90 sm:text-3xl">
+              {tagline}
+            </p>
+          ) : null}
 
-          <p className="mt-5 max-w-xl text-base leading-8 text-white/84 sm:text-lg">
-            {description}
-          </p>
+          {description ? (
+            <p className="mt-5 max-w-xl text-base leading-8 text-white/84 sm:text-lg">
+              {description}
+            </p>
+          ) : null}
 
           <div className="mt-8 flex flex-col gap-3 sm:flex-row">
             <Link href={`/${slug}/propiedades`}>
@@ -144,18 +148,20 @@ function Hero({
               </span>
             </Link>
 
-            <a
-              href={whatsappHref(
-                whatsapp,
-                `Hola, quiero consultar por propiedades de ${businessName}.`,
-              )}
-              target="_blank"
-              rel="noreferrer"
-              className="inline-flex items-center justify-center gap-2 border border-white/25 bg-black/15 px-7 py-4 text-xs font-black uppercase tracking-[0.16em] text-white backdrop-blur-sm transition hover:border-white/40 hover:bg-black/25"
-            >
-              <MessageCircle className="h-4 w-4" />
-              WhatsApp
-            </a>
+            {whatsapp ? (
+              <a
+                href={whatsappHref(
+                  whatsapp,
+                  `Hola, quiero consultar por propiedades de ${businessName}.`,
+                )}
+                target="_blank"
+                rel="noreferrer"
+                className="inline-flex items-center justify-center gap-2 border border-white/25 bg-black/15 px-7 py-4 text-xs font-black uppercase tracking-[0.16em] text-white backdrop-blur-sm transition hover:border-white/40 hover:bg-black/25"
+              >
+                <MessageCircle className="h-4 w-4" />
+                WhatsApp
+              </a>
+            ) : null}
           </div>
         </div>
       </div>
@@ -323,18 +329,20 @@ function Contact({
                 <HomeIcon className="h-4 w-4" />
               </span>
             </Link>
-            <a
-              href={whatsappHref(
-                whatsapp,
-                "Hola, quiero hacer una consulta sobre una propiedad.",
-              )}
-              target="_blank"
-              rel="noreferrer"
-              className="inline-flex items-center justify-center gap-2 border border-white/25 px-6 py-4 text-xs font-black uppercase tracking-[0.16em] text-white/80"
-            >
-              WhatsApp
-              <MessageCircle className="h-4 w-4" />
-            </a>
+            {whatsapp ? (
+              <a
+                href={whatsappHref(
+                  whatsapp,
+                  "Hola, quiero hacer una consulta sobre una propiedad.",
+                )}
+                target="_blank"
+                rel="noreferrer"
+                className="inline-flex items-center justify-center gap-2 border border-white/25 px-6 py-4 text-xs font-black uppercase tracking-[0.16em] text-white/80"
+              >
+                WhatsApp
+                <MessageCircle className="h-4 w-4" />
+              </a>
+            ) : null}
           </div>
         </div>
 
@@ -344,18 +352,24 @@ function Contact({
               <Building2 className="mt-0.5 h-4 w-4 shrink-0 text-white/55" />
               <span>{businessName}</span>
             </p>
-            <p className="flex items-start gap-3 text-white/78">
-              <Phone className="mt-0.5 h-4 w-4 shrink-0 text-white/55" />
-              <span>{phone}</span>
-            </p>
-            <p className="flex items-start gap-3 text-white/78">
-              <Mail className="mt-0.5 h-4 w-4 shrink-0 text-white/55" />
-              <span>{email}</span>
-            </p>
-            <p className="flex items-start gap-3 text-white/78">
-              <MapPin className="mt-0.5 h-4 w-4 shrink-0 text-white/55" />
-              <span>{address}</span>
-            </p>
+            {phone ? (
+              <p className="flex items-start gap-3 text-white/78">
+                <Phone className="mt-0.5 h-4 w-4 shrink-0 text-white/55" />
+                <span>{phone}</span>
+              </p>
+            ) : null}
+            {email ? (
+              <p className="flex items-start gap-3 text-white/78">
+                <Mail className="mt-0.5 h-4 w-4 shrink-0 text-white/55" />
+                <span>{email}</span>
+              </p>
+            ) : null}
+            {address ? (
+              <p className="flex items-start gap-3 text-white/78">
+                <MapPin className="mt-0.5 h-4 w-4 shrink-0 text-white/55" />
+                <span>{address}</span>
+              </p>
+            ) : null}
           </div>
         </div>
       </div>
@@ -408,8 +422,9 @@ export default function Home({ forcedSlug }: HomeProps) {
     { enabled: Boolean(slug) },
   );
   const isDemoSlug = slug === realEstateProfile.slug;
-  const businessName =
-    publicProfile?.businessName?.trim() || realEstateProfile.name;
+  const businessName = publicProfile
+    ? publicProfile.businessName?.trim() || "Inmobiliaria"
+    : realEstateProfile.name;
 
   usePageMeta(
     `${businessName} | Tienda Link Inmobiliarias`,
@@ -438,19 +453,28 @@ export default function Home({ forcedSlug }: HomeProps) {
     publicProfile?.logoUrl?.trim() ||
     publicProfile?.ownerImageUrl?.trim() ||
     null;
-  const tagline =
-    publicProfile?.tagline?.trim() ||
-    "Propiedades claras para encontrar tu próximo lugar.";
-  const description =
-    publicProfile?.description?.trim() || realEstateProfile.description;
-  const whatsapp = publicProfile?.whatsapp?.trim() || realEstateProfile.whatsapp;
-  const phone = publicProfile?.phone?.trim() || realEstateProfile.phone;
-  const email = publicProfile?.email?.trim() || realEstateProfile.email;
-  const address = publicProfile?.address?.trim() || realEstateProfile.address;
+  const tagline = publicProfile
+    ? publicProfile.tagline?.trim() || ""
+    : "Propiedades claras para encontrar tu próximo lugar.";
+  const description = publicProfile
+    ? publicProfile.description?.trim() || ""
+    : realEstateProfile.description;
+  const whatsapp = publicProfile
+    ? publicProfile.whatsapp?.trim() || ""
+    : realEstateProfile.whatsapp;
+  const phone = publicProfile
+    ? publicProfile.phone?.trim() || ""
+    : realEstateProfile.phone;
+  const email = publicProfile
+    ? publicProfile.email?.trim() || ""
+    : realEstateProfile.email;
+  const address = publicProfile
+    ? publicProfile.address?.trim() || ""
+    : realEstateProfile.address;
   const instagram = publicProfile
     ? publicProfile.instagram?.trim() || ""
     : realEstateProfile.instagram;
-  const cityLabel = getCityLabel(address);
+  const cityLabel = getCityLabel(address) ?? (publicProfile ? "" : realEstateProfile.city);
   const featuredProperties = properties
     .filter((property) => property.featured)
     .slice(0, 3);
