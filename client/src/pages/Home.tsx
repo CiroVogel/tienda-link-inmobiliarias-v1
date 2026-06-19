@@ -247,6 +247,47 @@ function FeaturedProperties({
   );
 }
 
+function AboutSection({
+  ownerName,
+  ownerTitle,
+  ownerBio,
+}: {
+  ownerName: string;
+  ownerTitle: string;
+  ownerBio: string;
+}) {
+  if (!ownerName && !ownerTitle && !ownerBio) return null;
+
+  return (
+    <section className="bg-white py-12 border-b border-zinc-100">
+      <div className="mx-auto max-w-6xl px-5">
+        <p className="mb-5 text-xs font-bold uppercase tracking-[0.18em] text-zinc-500">
+          Sobre la inmobiliaria
+        </p>
+        <div className="rounded-2xl border border-zinc-200 bg-zinc-50 p-8 md:p-10">
+          <div className="max-w-3xl">
+            {ownerName ? (
+              <h2 className="text-2xl font-black tracking-tight text-zinc-950">
+                {ownerName}
+              </h2>
+            ) : null}
+            {ownerTitle ? (
+              <p className={`text-sm font-medium uppercase tracking-[0.14em] text-zinc-500${ownerName ? " mt-2" : ""}`}>
+                {ownerTitle}
+              </p>
+            ) : null}
+            {ownerBio ? (
+              <p className={`text-base leading-8 text-zinc-700${ownerName || ownerTitle ? " mt-5" : ""}`}>
+                {ownerBio}
+              </p>
+            ) : null}
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+}
+
 function HowItWorks({ slug }: { slug: string }) {
   const steps = [
     [
@@ -482,6 +523,9 @@ export default function Home({ forcedSlug }: HomeProps) {
   const instagram = publicProfile
     ? publicProfile.instagram?.trim() || ""
     : realEstateProfile.instagram;
+  const ownerName = publicProfile ? publicProfile.ownerName?.trim() || "" : "";
+  const ownerTitle = publicProfile ? publicProfile.ownerTitle?.trim() || "" : "";
+  const ownerBio = publicProfile ? publicProfile.ownerBio?.trim() || "" : "";
   const cityLabel = getCityLabel(address) ?? (publicProfile ? "" : realEstateProfile.city);
   const featuredProperties = properties
     .filter((property) => property.featured)
@@ -505,6 +549,7 @@ export default function Home({ forcedSlug }: HomeProps) {
         heroImageUrl={publicProfile?.heroImageUrl}
       />
       <ValueBlock />
+      <AboutSection ownerName={ownerName} ownerTitle={ownerTitle} ownerBio={ownerBio} />
       <FeaturedProperties properties={featuredCards} slug={slug} />
       <section className="bg-white py-10">
         <div className="mx-auto flex max-w-6xl flex-col gap-4 px-5 sm:flex-row sm:items-center sm:justify-between">
