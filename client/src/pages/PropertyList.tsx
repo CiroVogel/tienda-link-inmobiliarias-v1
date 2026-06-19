@@ -118,14 +118,14 @@ export default function PropertyList() {
 
       <main className="mx-auto max-w-6xl px-5 py-10 md:py-14">
         <div className="mb-8 max-w-2xl">
-          <p className="mb-3 inline-flex items-center gap-2 text-xs font-bold uppercase tracking-[0.18em] text-zinc-400">
+          <p className="mb-3 inline-flex items-center gap-2 text-xs font-bold uppercase tracking-[0.18em] text-zinc-500">
             <Building2 className="h-4 w-4" />
             {businessName}
           </p>
           <h1 className="text-4xl font-black tracking-tight text-zinc-950 md:text-5xl">
             Listado de propiedades
           </h1>
-          <p className="mt-4 text-sm leading-7 text-zinc-500">
+          <p className="mt-4 text-sm leading-7 text-zinc-600">
             Opciones en venta y alquiler publicadas por {businessName}, con estado actualizado
             para consultar o coordinar una visita.
           </p>
@@ -168,7 +168,7 @@ export default function PropertyList() {
           ))}
         </div>
 
-        <p className="mb-6 text-sm text-zinc-500">
+        <p className="mb-6 text-sm text-zinc-600">
           Mostrando {filteredProperties.length} de {properties.length} propiedades.
         </p>
 

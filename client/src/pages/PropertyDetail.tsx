@@ -243,8 +243,8 @@ export default function PropertyDetail() {
               {property.title}
             </h1>
 
-            <p className="mt-3 flex items-center gap-2 text-sm font-bold uppercase tracking-[0.14em] text-zinc-400">
-              <MapPin className="h-4 w-4" />
+            <p className="mt-3 flex items-center gap-2 text-sm font-bold uppercase tracking-[0.14em] text-zinc-500">
+              <MapPin className="h-4 w-4 text-zinc-500" />
               {property.address}, {property.location}
             </p>
 
@@ -253,8 +253,8 @@ export default function PropertyDetail() {
             <div className="mt-5 grid grid-cols-2 gap-px bg-zinc-200">
               {summaryFacts.map(({ label, value, Icon }) => (
                 <div key={label} className="bg-zinc-50 p-3">
-                  <Icon className="mb-2 h-5 w-5 text-zinc-400" />
-                  <p className="text-xs font-bold uppercase tracking-[0.14em] text-zinc-400">
+                  <Icon className="mb-2 h-5 w-5 text-zinc-500" />
+                  <p className="text-xs font-bold uppercase tracking-[0.14em] text-zinc-500">
                     {label}
                   </p>
                   <p className="mt-1 font-bold text-zinc-950">{value}</p>
@@ -272,7 +272,7 @@ export default function PropertyDetail() {
                   <div className="grid gap-px bg-zinc-200 sm:grid-cols-2">
                     {detailItems.map((item) => (
                       <div key={item.label} className="bg-zinc-50 p-3">
-                        <p className="text-xs font-bold uppercase tracking-[0.14em] text-zinc-400">
+                        <p className="text-xs font-bold uppercase tracking-[0.14em] text-zinc-500">
                           {item.label}
                         </p>
                         <p className="mt-1 font-bold text-zinc-950">{item.value}</p>
@@ -285,14 +285,14 @@ export default function PropertyDetail() {
                   <div className="mt-4 grid gap-4">
                     {selectedDetailedFeatureGroups.map((group) => (
                       <div key={group.title}>
-                        <p className="mb-2 text-xs font-black uppercase tracking-[0.14em] text-zinc-400">
+                        <p className="mb-2 text-xs font-black uppercase tracking-[0.14em] text-zinc-500">
                           {group.title}
                         </p>
                         <div className="flex flex-wrap gap-2">
                           {group.options.map((feature) => (
                             <span
                               key={feature}
-                              className="border border-zinc-200 bg-white px-3 py-2 text-sm text-zinc-600"
+                              className="border border-zinc-300 bg-white px-3 py-2 text-sm text-zinc-700"
                             >
                               {feature}
                             </span>
@@ -314,7 +314,7 @@ export default function PropertyDetail() {
                   {property.features.map((feature) => (
                     <span
                       key={feature}
-                      className="border border-zinc-200 bg-white px-3 py-2 text-sm text-zinc-600"
+                      className="border border-zinc-300 bg-white px-3 py-2 text-sm text-zinc-700"
                     >
                       {feature}
                     </span>
@@ -327,29 +327,29 @@ export default function PropertyDetail() {
               <h2 className="mb-3 text-sm font-black uppercase tracking-[0.16em] text-zinc-950">
                 Descripción
               </h2>
-              <p className="text-sm leading-7 text-zinc-600">{property.description}</p>
+              <p className="text-sm leading-7 text-zinc-700">{property.description}</p>
             </div>
 
             <div className="mt-5 border-t border-zinc-200 pt-5">
               <h2 className="mb-3 text-sm font-black uppercase tracking-[0.16em] text-zinc-950">
                 Consulta directa con {businessName}
               </h2>
-              <div className="grid gap-3 text-sm text-zinc-600">
+              <div className="grid gap-3 text-sm text-zinc-700">
                 {phone || profileWhatsapp ? (
                   <p className="flex items-center gap-2">
-                    <Phone className="h-4 w-4 text-zinc-400" />
+                    <Phone className="h-4 w-4 shrink-0 text-zinc-500" />
                     <span>{phone || profileWhatsapp}</span>
                   </p>
                 ) : null}
                 {email ? (
                   <p className="flex items-center gap-2">
-                    <Mail className="h-4 w-4 text-zinc-400" />
+                    <Mail className="h-4 w-4 shrink-0 text-zinc-500" />
                     <span>{email}</span>
                   </p>
                 ) : null}
                 {address ? (
                   <p className="flex items-center gap-2">
-                    <MapPin className="h-4 w-4 text-zinc-400" />
+                    <MapPin className="h-4 w-4 shrink-0 text-zinc-500" />
                     <span>{address}</span>
                   </p>
                 ) : null}

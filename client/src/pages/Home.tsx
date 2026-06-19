@@ -3,8 +3,11 @@
   Building2,
   CheckCircle2,
   HomeIcon,
+  Instagram,
+  Mail,
   MapPin,
   MessageCircle,
+  Phone,
 } from "lucide-react";
 import { Link, useParams } from "wouter";
 import { PropertyCard } from "@/components/PropertyCard";
@@ -64,7 +67,7 @@ function Header({
           </span>
         </Link>
 
-        <nav className="hidden items-center gap-7 text-xs font-bold uppercase tracking-[0.16em] text-white/70 md:flex">
+        <nav className="hidden items-center gap-7 text-xs font-bold uppercase tracking-[0.16em] text-white/80 md:flex">
           <Link href={`/${slug}/propiedades`}>Propiedades</Link>
           <a href="#como-funciona">Cómo funciona</a>
           <a href="#contacto">Contacto</a>
@@ -108,12 +111,12 @@ function Hero({
         alt={featured?.title ?? businessName}
         className="absolute inset-0 h-full w-full object-cover object-center"
       />
-      <div className="absolute inset-0 bg-gradient-to-r from-black/58 via-black/42 to-black/12" />
-      <div className="absolute inset-0 bg-black/10" />
+      <div className="absolute inset-0 bg-gradient-to-r from-black/68 via-black/48 to-black/18" />
+      <div className="absolute inset-0 bg-black/8" />
 
-      <div className="relative mx-auto flex min-h-[620px] max-w-6xl items-center px-5 py-16 sm:min-h-[680px] lg:min-h-[720px]">
+      <div className="relative mx-auto flex min-h-[500px] max-w-6xl items-center px-5 py-12 sm:min-h-[560px] lg:min-h-[610px]">
         <div className="max-w-2xl">
-          <p className="text-xs font-bold uppercase tracking-[0.24em] text-white/70">
+          <p className="text-xs font-bold uppercase tracking-[0.24em] text-white/82">
             Inmobiliaria urbana en {cityLabel}
           </p>
 
@@ -125,11 +128,11 @@ function Hero({
             {tagline}
           </p>
 
-          <p className="mt-5 max-w-xl text-base leading-8 text-white/72 sm:text-lg">
+          <p className="mt-5 max-w-xl text-base leading-8 text-white/84 sm:text-lg">
             {description}
           </p>
 
-          <div className="mt-10 flex flex-col gap-3 sm:flex-row">
+          <div className="mt-8 flex flex-col gap-3 sm:flex-row">
             <Link href={`/${slug}/propiedades`}>
               <span className="inline-flex items-center justify-center gap-2 bg-[#81856a] px-7 py-4 text-xs font-black uppercase tracking-[0.16em] text-white">
                 Ver propiedades
@@ -167,7 +170,7 @@ function ValueBlock() {
     <section className="border-y border-zinc-200 bg-white py-12">
       <div className="mx-auto grid max-w-6xl gap-8 px-5 md:grid-cols-[0.8fr_1.2fr]">
         <div>
-          <p className="mb-3 text-xs font-bold uppercase tracking-[0.18em] text-zinc-400">
+          <p className="mb-3 text-xs font-bold uppercase tracking-[0.18em] text-zinc-500">
             Buscar con claridad
           </p>
           <h2 className="text-3xl font-black leading-tight tracking-tight text-zinc-950 md:text-4xl">
@@ -179,7 +182,7 @@ function ValueBlock() {
           {values.map((value) => (
             <div key={value} className="border border-zinc-200 bg-zinc-50 p-5">
               <CheckCircle2 className="mb-4 h-5 w-5 text-zinc-950" />
-              <p className="text-sm leading-6 text-zinc-600">{value}</p>
+              <p className="text-sm leading-6 text-zinc-700">{value}</p>
             </div>
           ))}
         </div>
@@ -200,7 +203,7 @@ function FeaturedProperties({
       <div className="mx-auto max-w-6xl px-5">
         <div className="mb-8 flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
           <div>
-            <p className="mb-3 text-xs font-bold uppercase tracking-[0.18em] text-zinc-400">
+            <p className="mb-3 text-xs font-bold uppercase tracking-[0.18em] text-zinc-500">
               Destacadas
             </p>
             <h2 className="text-4xl font-black tracking-tight text-zinc-950">
@@ -246,7 +249,7 @@ function HowItWorks({ slug }: { slug: string }) {
     <section id="como-funciona" className="bg-white py-14 md:py-18">
       <div className="mx-auto max-w-6xl px-5">
         <div className="mb-8 max-w-2xl">
-          <p className="mb-3 text-xs font-bold uppercase tracking-[0.18em] text-zinc-400">
+          <p className="mb-3 text-xs font-bold uppercase tracking-[0.18em] text-zinc-500">
             Cómo funciona
           </p>
           <h2 className="text-4xl font-black tracking-tight text-zinc-950">
@@ -261,7 +264,7 @@ function HowItWorks({ slug }: { slug: string }) {
                 {index + 1}
               </span>
               <h3 className="mb-3 text-xl font-black text-zinc-950">{title}</h3>
-              <p className="text-sm leading-6 text-zinc-500">{text}</p>
+              <p className="text-sm leading-6 text-zinc-700">{text}</p>
             </div>
           ))}
         </div>
@@ -298,13 +301,13 @@ function Contact({
     <section id="contacto" className="bg-zinc-950 py-14 text-white md:py-18">
       <div className="mx-auto grid max-w-6xl gap-10 px-5 md:grid-cols-[1fr_0.85fr]">
         <div>
-          <p className="mb-4 text-xs font-bold uppercase tracking-[0.18em] text-white/35">
+          <p className="mb-4 text-xs font-bold uppercase tracking-[0.18em] text-white/55">
             Contacto
           </p>
           <h2 className="text-4xl font-black tracking-tight">
             Coordinemos una visita a la propiedad que te interesa.
           </h2>
-          <p className="mt-5 max-w-xl text-sm leading-7 text-white/55">
+          <p className="mt-5 max-w-xl text-sm leading-7 text-white/72">
             Envíanos tus datos y tu disponibilidad. Si tenés una consulta
             puntual, también podés escribirnos por WhatsApp.
           </p>
@@ -331,18 +334,24 @@ function Contact({
           </div>
         </div>
 
-        <div className="border border-white/10 p-6">
-          <div className="space-y-5 text-sm">
-            <p className="flex items-start gap-3 text-white/70">
-              <Building2 className="mt-0.5 h-4 w-4 text-white/35" />
+        <div className="border border-white/12 bg-white/[0.03] p-6">
+          <div className="grid gap-4 text-sm">
+            <p className="flex items-start gap-3 text-white/82">
+              <Building2 className="mt-0.5 h-4 w-4 shrink-0 text-white/55" />
               <span>{businessName}</span>
             </p>
-            <p className="flex items-start gap-3 text-white/70">
-              <MapPin className="mt-0.5 h-4 w-4 text-white/35" />
+            <p className="flex items-start gap-3 text-white/78">
+              <Phone className="mt-0.5 h-4 w-4 shrink-0 text-white/55" />
+              <span>{phone}</span>
+            </p>
+            <p className="flex items-start gap-3 text-white/78">
+              <Mail className="mt-0.5 h-4 w-4 shrink-0 text-white/55" />
+              <span>{email}</span>
+            </p>
+            <p className="flex items-start gap-3 text-white/78">
+              <MapPin className="mt-0.5 h-4 w-4 shrink-0 text-white/55" />
               <span>{address}</span>
             </p>
-            <p className="text-white/45">{phone}</p>
-            <p className="text-white/45">{email}</p>
           </div>
         </div>
       </div>
@@ -359,15 +368,27 @@ function Footer({
   businessName: string;
   instagram: string;
 }) {
+  const instagramUrl = instagram.trim();
+
   return (
-    <footer className="border-t border-zinc-200 bg-white py-8">
-      <div className="mx-auto flex max-w-6xl flex-col gap-4 px-5 text-sm text-zinc-500 md:flex-row md:items-center md:justify-between">
-        <p className="font-bold text-zinc-950">{businessName}</p>
-        <div className="flex flex-wrap gap-4">
-          <Link href={`/${slug}/propiedades`}>Propiedades</Link>
-          <a href={instagram} target="_blank" rel="noreferrer">
-            Instagram
-          </a>
+    <footer className="border-t border-white/10 bg-zinc-950 py-8">
+      <div className="mx-auto flex max-w-6xl flex-col gap-4 px-5 text-sm text-white/64 md:flex-row md:items-center md:justify-between">
+        <p className="font-bold text-white">{businessName}</p>
+        <div className="flex flex-wrap items-center gap-5">
+          <Link href={`/${slug}/propiedades`} className="transition hover:text-white">
+            Propiedades
+          </Link>
+          {instagramUrl ? (
+            <a
+              href={instagramUrl}
+              target="_blank"
+              rel="noreferrer"
+              className="inline-flex items-center gap-2 transition hover:text-white"
+            >
+              <Instagram className="h-4 w-4" />
+              Instagram
+            </a>
+          ) : null}
         </div>
       </div>
     </footer>
@@ -450,7 +471,7 @@ export default function Home({ forcedSlug }: HomeProps) {
       <FeaturedProperties properties={featuredCards} slug={slug} />
       <section className="bg-white py-10">
         <div className="mx-auto flex max-w-6xl flex-col gap-4 px-5 sm:flex-row sm:items-center sm:justify-between">
-          <p className="text-sm text-zinc-500">
+          <p className="text-sm text-zinc-600">
             {visibleCount} propiedades publicadas entre venta, alquiler y
             operaciones recientes.
           </p>
