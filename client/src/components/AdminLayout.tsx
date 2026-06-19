@@ -39,10 +39,10 @@ function NavItem({
     <Link href={href}>
       <button
         onClick={onClick}
-        className={`w-full flex items-center gap-3 px-4 py-3 text-sm font-medium transition-all duration-150 ${
+        className={`w-full flex items-center gap-3 px-4 py-3 text-sm font-medium transition-all duration-150 border-l-[3px] ${
           isActive
-            ? "bg-white text-black font-bold"
-            : "text-white/70 hover:text-white hover:bg-white/10"
+            ? "border-[#d4a853] bg-white/10 text-white font-bold"
+            : "border-transparent text-white/70 hover:text-white hover:bg-white/10"
         }`}
       >
         <Icon className="w-4 h-4 shrink-0" />
@@ -138,21 +138,21 @@ export default function AdminLayout({ children }: { children: ReactNode }) {
   }
 
   const Sidebar = ({ mobile = false }: { mobile?: boolean }) => (
-    <div className="flex flex-col h-full bg-black">
+    <div className="flex flex-col h-full bg-[#1A2744]">
       <div className="px-6 py-5 border-b border-white/10">
         <div className="flex items-center justify-between">
           <div>
             <p className="text-white font-black text-sm tracking-widest uppercase leading-tight">
               {profile?.businessName ?? (isPlatformAdmin ? "Admin Central" : "Mi inmobiliaria")}
             </p>
-            <p className="text-white/55 text-xs mt-0.5 uppercase tracking-widest">
+            <p className="text-white/70 text-xs mt-0.5 uppercase tracking-widest">
               Panel Admin
             </p>
           </div>
           {mobile && (
             <button
               onClick={() => setMobileOpen(false)}
-              className="text-white/40 hover:text-white transition-colors"
+              className="text-white/60 hover:text-white transition-colors"
             >
               <X className="w-5 h-5" />
             </button>
@@ -187,16 +187,16 @@ export default function AdminLayout({ children }: { children: ReactNode }) {
         ) : null}
 
         <div className="px-4 py-4 flex items-center gap-3 border-t border-white/10">
-          <div className="w-7 h-7 bg-white flex items-center justify-center text-xs font-black text-black shrink-0">
+          <div className="w-7 h-7 bg-white/10 rounded-lg border border-white/15 flex items-center justify-center text-xs font-black text-white shrink-0">
             {user.name?.[0]?.toUpperCase() ?? "A"}
           </div>
           <div className="flex-1 min-w-0">
             <p className="text-white text-xs font-bold truncate">{user.name ?? "Admin"}</p>
-            <p className="text-white/55 text-xs truncate">{user.email ?? ""}</p>
+            <p className="text-white/70 text-xs truncate">{user.email ?? ""}</p>
           </div>
           <button
             onClick={handleLogout}
-            className="text-white/55 hover:text-white transition-colors"
+            className="text-white/60 hover:text-white transition-colors"
             title="Cerrar sesión"
           >
             <LogOut className="w-4 h-4" />
