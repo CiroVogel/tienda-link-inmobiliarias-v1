@@ -140,28 +140,44 @@ function ImageUploader({
 }
 
 export default function AdminProfile() {
+  const utils = trpc.useUtils();
   const { data: profile, refetch } = trpc.business.get.useQuery();
 
   const updateProfile = trpc.business.update.useMutation({
-    onSuccess: () => {
+    onSuccess: async () => {
       toast.success("Perfil actualizado");
-      refetch();
+      await Promise.all([
+        utils.business.get.invalidate(),
+        utils.business.getPublic.invalidate(),
+        utils.business.listAll.invalidate(),
+      ]);
+      await refetch();
     },
     onError: () => toast.error("Error al guardar los cambios"),
   });
 
   const uploadImage = trpc.business.uploadImage.useMutation({
-    onSuccess: () => {
+    onSuccess: async () => {
       toast.success("Imagen actualizada");
-      refetch();
+      await Promise.all([
+        utils.business.get.invalidate(),
+        utils.business.getPublic.invalidate(),
+        utils.business.listAll.invalidate(),
+      ]);
+      await refetch();
     },
     onError: () => toast.error("Error al subir la imagen"),
   });
 
   const removeImage = trpc.business.removeImage.useMutation({
-    onSuccess: () => {
+    onSuccess: async () => {
       toast.success("Imagen eliminada");
-      refetch();
+      await Promise.all([
+        utils.business.get.invalidate(),
+        utils.business.getPublic.invalidate(),
+        utils.business.listAll.invalidate(),
+      ]);
+      await refetch();
     },
     onError: () => toast.error("Error al eliminar la imagen"),
   });
@@ -211,7 +227,7 @@ export default function AdminProfile() {
         continue;
       }
 
-      if (value !== "") updates[key] = value;
+      updates[key] = value;
     }
 
     if (form.depositPercentage !== undefined) {

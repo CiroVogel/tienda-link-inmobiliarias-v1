@@ -224,11 +224,6 @@ function buildLocalBusinessProfile(userId: number): BusinessProfile {
 }
 
 async function getAdminBusinessProfile(user: User): Promise<BusinessProfile | null> {
-  const profile = await getBusinessProfile(user.id);
-  if (profile) {
-    return applyStoredBusinessImages(profile);
-  }
-
   if (user.openId === "local-admin") {
     const storedDemoProfile = await getStoredBusinessProfile(realEstateProfile.slug);
     return applyStoredBusinessImages(storedDemoProfile ?? buildLocalBusinessProfile(user.id));
@@ -240,6 +235,11 @@ async function getAdminBusinessProfile(user: User): Promise<BusinessProfile | nu
     if (storedProfile) {
       return applyStoredBusinessImages(storedProfile);
     }
+  }
+
+  const profile = await getBusinessProfile(user.id);
+  if (profile) {
+    return applyStoredBusinessImages(profile);
   }
 
   return null;
@@ -284,6 +284,25 @@ async function updateAdminBusinessProfile(
   user: User,
   input: Partial<BusinessProfile>,
 ): Promise<BusinessProfile> {
+  if (user.openId === "local-admin") {
+    return upsertStoredBusinessProfile(realEstateProfile.slug, input);
+  }
+
+  if (user.openId.startsWith("local-admin:")) {
+    const profile = await getBusinessProfile(user.id);
+    if (!profile) {
+      const slug = user.openId.slice("local-admin:".length);
+      if (input.slug && input.slug.trim().toLowerCase() !== slug.trim().toLowerCase()) {
+        throw new TRPCError({
+          code: "BAD_REQUEST",
+          message: "Cambiar el slug no estÃ¡ disponible en este entorno local",
+        });
+      }
+
+      return upsertStoredBusinessProfile(slug, input);
+    }
+  }
+
   const profile = await getBusinessProfile(user.id);
   if (profile) {
     return upsertBusinessProfile(user.id, input);
