@@ -72,7 +72,7 @@ function Header({
 
         <nav className="hidden items-center gap-7 text-xs font-bold uppercase tracking-[0.16em] text-white/70 md:flex">
           <Link href={`/${slug}/propiedades`}>Propiedades</Link>
-          <a href="#como-funciona">Como funciona</a>
+          <a href="#como-funciona">Cómo funciona</a>
           <a href="#contacto">Contacto</a>
         </nav>
 
@@ -146,7 +146,7 @@ function Hero({
             <a
               href={whatsappHref(
                 whatsapp,
-                "Hola, quiero consultar por propiedades de Clave Urbana.",
+                `Hola, quiero consultar por propiedades de ${businessName}.`,
               )}
               target="_blank"
               rel="noreferrer"
@@ -253,7 +253,7 @@ function HowItWorks({ slug }: { slug: string }) {
       <div className="mx-auto max-w-6xl px-5">
         <div className="mb-8 max-w-2xl">
           <p className="mb-3 text-xs font-bold uppercase tracking-[0.18em] text-zinc-400">
-            Como funciona
+            Cómo funciona
           </p>
           <h2 className="text-4xl font-black tracking-tight text-zinc-950">
             Del primer vistazo a la visita, sin vueltas.
@@ -675,7 +675,7 @@ export default function Home({ forcedSlug }: HomeProps) {
     null;
   const tagline =
     publicProfile?.tagline?.trim() ||
-    "Propiedades claras para encontrar tu proximo lugar.";
+    "Propiedades claras para encontrar tu próximo lugar.";
   const description =
     publicProfile?.description?.trim() || realEstateProfile.description;
   const whatsapp = publicProfile?.whatsapp?.trim() || realEstateProfile.whatsapp;

@@ -184,7 +184,7 @@ export const demoProperties: DemoProperty[] = [
     areaM2: 190,
     features: ["Jardín", "Pileta", "Cochera doble", "Parrillero"],
     description:
-      "Casa familiar con ambientes generosos, verde propio y una distribucion pensada para la vida diaria. Actualmente se encuentra reservada, visible como referencia comercial.",
+      "Casa familiar con ambientes generosos, verde propio y una distribución pensada para la vida diaria. Actualmente se encuentra reservada, visible como referencia comercial.",
     images: [
       "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=1400&q=82",
       "https://images.unsplash.com/photo-1600566753190-17f0baa2a6c3?auto=format&fit=crop&w=1400&q=82",
@@ -206,7 +206,7 @@ export const demoProperties: DemoProperty[] = [
     areaM2: 68,
     features: ["Patio", "Reciclado", "Sin expensas", "Ingreso independiente"],
     description:
-      "PH con caracter urbano, reciclado con buen gusto y patio propio. Una propiedad practica para quien busca independencia, escala barrial y buen acceso al transporte.",
+      "PH con carácter urbano, reciclado con buen gusto y patio propio. Una propiedad práctica para quien busca independencia, escala barrial y buen acceso al transporte.",
     images: [
       "https://images.unsplash.com/photo-1560185127-6ed189bf02f4?auto=format&fit=crop&w=1400&q=82",
       "https://images.unsplash.com/photo-1560185008-b033106af5c3?auto=format&fit=crop&w=1400&q=82",
@@ -215,11 +215,11 @@ export const demoProperties: DemoProperty[] = [
   },
   {
     id: "departamento-1-dormitorio-barrio-martin",
-    title: "Departamento 1 dormitorio en Barrio Martin",
+    title: "Departamento 1 dormitorio en Barrio Martín",
     operation: "rent",
     status: "rented",
     price: "$ 360.000 / mes",
-    location: "Barrio Martin, Rosario",
+    location: "Barrio Martín, Rosario",
     address: "Mendoza al 300",
     propertyType: "Departamento",
     bedrooms: 1,
@@ -227,7 +227,7 @@ export const demoProperties: DemoProperty[] = [
     areaM2: 45,
     features: ["Vista abierta", "Balcón", "Cocina integrada", "Excelente zona"],
     description:
-      "Departamento con vista abierta y ubicacion privilegiada, a metros del Monumento y parques. Ya fue alquilado y queda publicado como referencia de operaciones recientes.",
+      "Departamento con vista abierta y ubicación privilegiada, a metros del Monumento y parques. Ya fue alquilado y queda publicado como referencia de operaciones recientes.",
     images: [
       "https://images.unsplash.com/photo-1493809842364-78817add7ffb?auto=format&fit=crop&w=1400&q=82",
       "https://images.unsplash.com/photo-1512918728675-ed5a9ecdebfd?auto=format&fit=crop&w=1400&q=82",
@@ -256,19 +256,19 @@ export const demoProperties: DemoProperty[] = [
   },
   {
     id: "duplex-funes",
-    title: "Duplex en Funes",
+    title: "Dúplex en Funes",
     operation: "sale",
     status: "available",
     price: "USD 168.000",
     location: "Funes, Santa Fe",
     address: "Garita 15",
-    propertyType: "Duplex",
+    propertyType: "Dúplex",
     bedrooms: 3,
     bathrooms: 2,
     areaM2: 128,
     features: ["Cochera", "Patio verde", "Parrillero", "A estrenar"],
     description:
-      "Duplex a estrenar en sector residencial de Funes, con espacios integrados y patio privado. Una alternativa equilibrada para vivir cerca de Rosario con más aire.",
+      "Dúplex a estrenar en sector residencial de Funes, con espacios integrados y patio privado. Una alternativa equilibrada para vivir cerca de Rosario con más aire.",
     images: [
       "https://images.unsplash.com/photo-1605276374104-dee2a0ed3cd6?auto=format&fit=crop&w=1400&q=82",
       "https://images.unsplash.com/photo-1600566753086-00f18fb6b3ea?auto=format&fit=crop&w=1400&q=82",

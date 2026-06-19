@@ -74,7 +74,7 @@ export function PropertyCard({ property, slug }: PropertyCardProps) {
           {property.bathrooms ? (
             <span className="flex items-center gap-1.5">
               <Bath className="h-3.5 w-3.5" />
-              {property.bathrooms} bano
+              {property.bathrooms} {property.bathrooms === 1 ? "baño" : "baños"}
             </span>
           ) : null}
           {property.areaM2 ? (

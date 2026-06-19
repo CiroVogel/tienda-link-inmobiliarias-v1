@@ -120,8 +120,8 @@ export default function PropertyList() {
             Listado de propiedades
           </h1>
           <p className="mt-4 text-sm leading-7 text-zinc-500">
-            Opciones en venta y alquiler en Rosario, con estado actualizado para consultar o
-            coordinar una visita.
+            Opciones en venta y alquiler publicadas por {businessName}, con estado actualizado
+            para consultar o coordinar una visita.
           </p>
         </div>
 

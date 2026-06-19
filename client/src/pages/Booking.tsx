@@ -11,8 +11,8 @@ import {
   realEstateProfile,
 } from "@/lib/realEstateDemo";
 
-function whatsappHref(propertyTitle: string) {
-  return `https://wa.me/${realEstateProfile.whatsapp.replace(/\D/g, "")}?text=${encodeURIComponent(
+function whatsappHref(whatsapp: string, propertyTitle: string) {
+  return `https://wa.me/${whatsapp.replace(/\D/g, "")}?text=${encodeURIComponent(
     `Hola, quiero consultar por la propiedad: ${propertyTitle}`,
   )}`;
 }
@@ -25,6 +25,10 @@ export default function Booking() {
   const safeSlug = slug ?? realEstateProfile.slug;
   const { property, isLoading } = usePublicProperty(safeSlug, propertyId);
   const createVisitRequest = trpc.visitRequests.create.useMutation();
+  const { data: publicProfile } = trpc.business.getPublic.useQuery(
+    { slug: safeSlug },
+    { enabled: Boolean(safeSlug) },
+  );
 
   const [form, setForm] = useState({
     name: "",
@@ -62,12 +66,14 @@ export default function Booking() {
   const requestable = isPropertyRequestable(property);
   const currentProperty = property;
   const coverImage = getPropertyCoverImage(property);
+  const businessName = publicProfile?.businessName?.trim() || realEstateProfile.name;
+  const profileWhatsapp = publicProfile?.whatsapp?.trim() || realEstateProfile.whatsapp;
 
   async function handleSubmit(event: React.FormEvent) {
     event.preventDefault();
 
     if (!requestable) {
-      toast.error("Esta propiedad no esta disponible para solicitar visita.");
+      toast.error("Esta propiedad no está disponible para solicitar visita.");
       return;
     }
 
@@ -89,7 +95,7 @@ export default function Booking() {
       setReference(result.reference);
       toast.success("Solicitud de visita enviada.");
     } catch {
-      toast.error("No pudimos enviar la solicitud. Intenta nuevamente.");
+      toast.error("No pudimos enviar la solicitud. Intentá nuevamente.");
     }
   }
 
@@ -140,7 +146,7 @@ export default function Booking() {
                 Ya tenemos tu solicitud de visita.
               </h2>
               <p className="mt-4 text-sm leading-7 text-zinc-500">
-                La inmobiliaria revisara tu consulta y te contactara por
+                {businessName} revisará tu consulta y te contactará por
                 WhatsApp. Referencia: <strong className="text-zinc-950">{reference}</strong>
               </p>
               <div className="mt-7 flex flex-col gap-3 sm:flex-row">
@@ -150,7 +156,7 @@ export default function Booking() {
                   </span>
                 </Link>
                 <a
-                  href={whatsappHref(property.title)}
+                  href={whatsappHref(profileWhatsapp, property.title)}
                   target="_blank"
                   rel="noreferrer"
                   className="inline-flex items-center justify-center gap-2 border border-zinc-300 px-5 py-3 text-xs font-black uppercase tracking-[0.16em] text-zinc-950"
@@ -169,13 +175,13 @@ export default function Booking() {
                 Consultá por esta propiedad
               </h2>
               <p className="mt-3 text-sm leading-7 text-zinc-500">
-                Dejanos tus datos y te contactamos para brindarte más información
+                Dejanos tus datos y {businessName} te contactará para brindarte más información
                 o coordinar una visita.
               </p>
 
               {!requestable ? (
                 <div className="mt-6 border border-zinc-200 bg-zinc-100 p-4 text-sm text-zinc-600">
-                  Esta propiedad esta {getStatusLabel(property.status).toLowerCase()} y no
+                  Esta propiedad está {getStatusLabel(property.status).toLowerCase()} y no
                   permite solicitud de visita.
                 </div>
               ) : null}
@@ -253,7 +259,7 @@ export default function Booking() {
                 </button>
 
                 <a
-                  href={whatsappHref(property.title)}
+                  href={whatsappHref(profileWhatsapp, property.title)}
                   target="_blank"
                   rel="noreferrer"
                   className="inline-flex items-center justify-center gap-2 border border-zinc-300 px-5 py-4 text-xs font-black uppercase tracking-[0.16em] text-zinc-950"

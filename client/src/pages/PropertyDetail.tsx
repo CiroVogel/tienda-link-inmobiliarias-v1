@@ -5,8 +5,10 @@ import {
   BedDouble,
   Building2,
   HomeIcon,
+  Mail,
   MapPin,
   MessageCircle,
+  Phone,
   Ruler,
 } from "lucide-react";
 import { Link, useParams } from "wouter";
@@ -22,8 +24,8 @@ import {
 } from "@/lib/realEstateDemo";
 import { trpc } from "@/lib/trpc";
 
-function buildWhatsappHref(propertyTitle: string) {
-  return `https://wa.me/${realEstateProfile.whatsapp.replace(/\D/g, "")}?text=${encodeURIComponent(
+function buildWhatsappHref(whatsapp: string, propertyTitle: string) {
+  return `https://wa.me/${whatsapp.replace(/\D/g, "")}?text=${encodeURIComponent(
     `Hola, quiero consultar por la propiedad: ${propertyTitle}`,
   )}`;
 }
@@ -84,6 +86,10 @@ export default function PropertyDetail() {
     publicProfile?.logoUrl?.trim() ||
     publicProfile?.ownerImageUrl?.trim() ||
     null;
+  const profileWhatsapp = publicProfile?.whatsapp?.trim() || realEstateProfile.whatsapp;
+  const phone = publicProfile?.phone?.trim() || realEstateProfile.phone;
+  const email = publicProfile?.email?.trim() || realEstateProfile.email;
+  const address = publicProfile?.address?.trim() || realEstateProfile.address;
 
   if (isLoading && !property) {
     return (
@@ -301,6 +307,32 @@ export default function PropertyDetail() {
               <p className="text-sm leading-7 text-zinc-600">{property.description}</p>
             </div>
 
+            <div className="mt-5 border-t border-zinc-200 pt-5">
+              <h2 className="mb-3 text-sm font-black uppercase tracking-[0.16em] text-zinc-950">
+                Consulta directa con {businessName}
+              </h2>
+              <div className="grid gap-3 text-sm text-zinc-600">
+                {phone || profileWhatsapp ? (
+                  <p className="flex items-center gap-2">
+                    <Phone className="h-4 w-4 text-zinc-400" />
+                    <span>{phone || profileWhatsapp}</span>
+                  </p>
+                ) : null}
+                {email ? (
+                  <p className="flex items-center gap-2">
+                    <Mail className="h-4 w-4 text-zinc-400" />
+                    <span>{email}</span>
+                  </p>
+                ) : null}
+                {address ? (
+                  <p className="flex items-center gap-2">
+                    <MapPin className="h-4 w-4 text-zinc-400" />
+                    <span>{address}</span>
+                  </p>
+                ) : null}
+              </div>
+            </div>
+
             <div className="mt-6 flex flex-col gap-3 sm:flex-row">
               {requestable ? (
                 <Link href={`/${safeSlug}/solicitar-visita/${property.id}`}>
@@ -316,7 +348,7 @@ export default function PropertyDetail() {
               )}
 
               <a
-                href={buildWhatsappHref(property.title)}
+                href={buildWhatsappHref(profileWhatsapp, property.title)}
                 target="_blank"
                 rel="noreferrer"
                 className="inline-flex items-center justify-center gap-2 border border-zinc-300 px-6 py-4 text-xs font-black uppercase tracking-[0.16em] text-zinc-950"
