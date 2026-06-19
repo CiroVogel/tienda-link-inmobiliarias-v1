@@ -443,8 +443,9 @@ export default function Home({ forcedSlug }: HomeProps) {
   const phone = publicProfile?.phone?.trim() || realEstateProfile.phone;
   const email = publicProfile?.email?.trim() || realEstateProfile.email;
   const address = publicProfile?.address?.trim() || realEstateProfile.address;
-  const instagram =
-    publicProfile?.instagram?.trim() || realEstateProfile.instagram;
+  const instagram = publicProfile
+    ? publicProfile.instagram?.trim() || ""
+    : realEstateProfile.instagram;
   const cityLabel = getCityLabel(address);
   const featuredProperties = properties
     .filter((property) => property.featured)
