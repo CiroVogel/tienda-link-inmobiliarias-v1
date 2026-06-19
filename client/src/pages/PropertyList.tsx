@@ -114,7 +114,12 @@ export default function PropertyList() {
               </span>
             </span>
           </Link>
-          <div className="w-14" />
+          <a
+            href="/admin-login"
+            className="rounded border border-zinc-300 px-3 py-1.5 text-[11px] font-bold uppercase tracking-[0.12em] text-zinc-500 transition hover:border-zinc-400 hover:text-zinc-950"
+          >
+            Ingresar
+          </a>
         </div>
       </header>
 

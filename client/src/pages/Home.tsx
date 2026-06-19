@@ -73,11 +73,19 @@ function Header({
           <a href="#contacto">Contacto</a>
         </nav>
 
-        <Link href={`/${slug}/propiedades`}>
-          <span className="hidden bg-[#81856a] px-4 py-2 text-xs font-black uppercase tracking-[0.16em] text-white sm:inline-flex">
-            Ver propiedades
-          </span>
-        </Link>
+        <div className="flex items-center gap-3">
+          <a
+            href="/admin-login"
+            className="hidden items-center rounded border border-white/25 px-3 py-1.5 text-[11px] font-bold uppercase tracking-[0.12em] text-white/70 transition hover:border-white/50 hover:text-white sm:inline-flex"
+          >
+            Ingresar
+          </a>
+          <Link href={`/${slug}/propiedades`}>
+            <span className="hidden bg-[#81856a] px-4 py-2 text-xs font-black uppercase tracking-[0.16em] text-white sm:inline-flex">
+              Ver propiedades
+            </span>
+          </Link>
+        </div>
       </div>
     </header>
   );
