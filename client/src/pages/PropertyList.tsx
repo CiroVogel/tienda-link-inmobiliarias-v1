@@ -180,7 +180,7 @@ export default function PropertyList() {
         </p>
 
         {filteredProperties.length > 0 ? (
-          <div className="grid gap-5 lg:grid-cols-2">
+          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
             {filteredProperties.map((property) => (
               <PropertyCard key={property.id} property={property} slug={safeSlug} />
             ))}
