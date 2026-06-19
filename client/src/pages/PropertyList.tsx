@@ -38,7 +38,9 @@ export default function PropertyList() {
     { enabled: Boolean(safeSlug) },
   );
   const isDemoSlug = safeSlug === realEstateProfile.slug;
-  const businessName = publicProfile?.businessName?.trim() || realEstateProfile.name;
+  const businessName = publicProfile
+    ? publicProfile.businessName?.trim() || "Inmobiliaria"
+    : realEstateProfile.name;
 
   usePageMeta(
     `Propiedades de ${businessName}`,

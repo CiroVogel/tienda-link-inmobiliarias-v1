@@ -98,16 +98,25 @@ export default function PropertyDetail() {
   );
   const [selectedImage, setSelectedImage] = useState(0);
   const galleryImages = getPropertyGalleryImages(property);
-  const businessName =
-    publicProfile?.businessName?.trim() || realEstateProfile.name;
+  const businessName = publicProfile
+    ? publicProfile.businessName?.trim() || "Inmobiliaria"
+    : realEstateProfile.name;
   const brandImageUrl =
     publicProfile?.logoUrl?.trim() ||
     publicProfile?.ownerImageUrl?.trim() ||
     null;
-  const profileWhatsapp = publicProfile?.whatsapp?.trim() || realEstateProfile.whatsapp;
-  const phone = publicProfile?.phone?.trim() || realEstateProfile.phone;
-  const email = publicProfile?.email?.trim() || realEstateProfile.email;
-  const address = publicProfile?.address?.trim() || realEstateProfile.address;
+  const profileWhatsapp = publicProfile
+    ? publicProfile.whatsapp?.trim() || ""
+    : realEstateProfile.whatsapp;
+  const phone = publicProfile
+    ? publicProfile.phone?.trim() || ""
+    : realEstateProfile.phone;
+  const email = publicProfile
+    ? publicProfile.email?.trim() || ""
+    : realEstateProfile.email;
+  const address = publicProfile
+    ? publicProfile.address?.trim() || ""
+    : realEstateProfile.address;
 
   usePageMeta(
     property ? `${property.title} | ${businessName}` : `Propiedad | ${businessName}`,
@@ -370,15 +379,17 @@ export default function PropertyDetail() {
                 </span>
               )}
 
-              <a
-                href={buildWhatsappHref(profileWhatsapp, property.title)}
-                target="_blank"
-                rel="noreferrer"
-                className="inline-flex items-center justify-center gap-2 border border-zinc-300 px-6 py-4 text-xs font-black uppercase tracking-[0.16em] text-zinc-950"
-              >
-                WhatsApp
-                <MessageCircle className="h-4 w-4" />
-              </a>
+              {profileWhatsapp ? (
+                <a
+                  href={buildWhatsappHref(profileWhatsapp, property.title)}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="inline-flex items-center justify-center gap-2 border border-zinc-300 px-6 py-4 text-xs font-black uppercase tracking-[0.16em] text-zinc-950"
+                >
+                  WhatsApp
+                  <MessageCircle className="h-4 w-4" />
+                </a>
+              ) : null}
             </div>
           </aside>
         </section>

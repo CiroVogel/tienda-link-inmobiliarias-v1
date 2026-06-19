@@ -38,8 +38,12 @@ export default function Booking() {
     message: defaultMessage,
   });
   const [reference, setReference] = useState("");
-  const businessName = publicProfile?.businessName?.trim() || realEstateProfile.name;
-  const profileWhatsapp = publicProfile?.whatsapp?.trim() || realEstateProfile.whatsapp;
+  const businessName = publicProfile
+    ? publicProfile.businessName?.trim() || "Inmobiliaria"
+    : realEstateProfile.name;
+  const profileWhatsapp = publicProfile
+    ? publicProfile.whatsapp?.trim() || ""
+    : realEstateProfile.whatsapp;
 
   usePageMeta(
     `Solicitar visita | ${businessName}`,
@@ -161,15 +165,17 @@ export default function Booking() {
                     Volver al inicio
                   </span>
                 </Link>
-                <a
-                  href={whatsappHref(profileWhatsapp, property.title)}
-                  target="_blank"
-                  rel="noreferrer"
-                  className="inline-flex items-center justify-center gap-2 border border-zinc-300 px-5 py-3 text-xs font-black uppercase tracking-[0.16em] text-zinc-950"
-                >
-                  WhatsApp
-                  <MessageCircle className="h-4 w-4" />
-                </a>
+                {profileWhatsapp ? (
+                  <a
+                    href={whatsappHref(profileWhatsapp, property.title)}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="inline-flex items-center justify-center gap-2 border border-zinc-300 px-5 py-3 text-xs font-black uppercase tracking-[0.16em] text-zinc-950"
+                  >
+                    WhatsApp
+                    <MessageCircle className="h-4 w-4" />
+                  </a>
+                ) : null}
               </div>
             </div>
           ) : (
@@ -264,15 +270,17 @@ export default function Booking() {
                   {createVisitRequest.isPending ? "Enviando..." : "Enviar solicitud"}
                 </button>
 
-                <a
-                  href={whatsappHref(profileWhatsapp, property.title)}
-                  target="_blank"
-                  rel="noreferrer"
-                  className="inline-flex items-center justify-center gap-2 border border-zinc-300 px-5 py-4 text-xs font-black uppercase tracking-[0.16em] text-zinc-950"
-                >
-                  WhatsApp
-                  <MessageCircle className="h-4 w-4" />
-                </a>
+                {profileWhatsapp ? (
+                  <a
+                    href={whatsappHref(profileWhatsapp, property.title)}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="inline-flex items-center justify-center gap-2 border border-zinc-300 px-5 py-4 text-xs font-black uppercase tracking-[0.16em] text-zinc-950"
+                  >
+                    WhatsApp
+                    <MessageCircle className="h-4 w-4" />
+                  </a>
+                ) : null}
               </div>
             </form>
           )}
