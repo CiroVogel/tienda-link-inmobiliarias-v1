@@ -22,6 +22,7 @@ import {
   isPropertyRequestable,
   realEstateProfile,
 } from "@/lib/realEstateDemo";
+import { usePageMeta } from "@/lib/seo";
 import { trpc } from "@/lib/trpc";
 
 function buildWhatsappHref(whatsapp: string, propertyTitle: string) {
@@ -70,6 +71,23 @@ function buildPropertyDetailItems(property: DemoProperty) {
   ].filter(hasDetailValue);
 }
 
+function buildPropertyMetaDescription(property: DemoProperty | null, businessName: string) {
+  if (!property) {
+    return `Ficha de propiedad de ${businessName}.`;
+  }
+
+  const details = [
+    getOperationLabel(property.operation),
+    property.propertyType,
+    property.location,
+    property.price,
+  ].filter(Boolean);
+
+  return details.length > 0
+    ? `${details.join(" · ")}. Consulta directa con ${businessName}.`
+    : `Ficha de propiedad de ${businessName}.`;
+}
+
 export default function PropertyDetail() {
   const { slug, propertyId } = useParams<{ slug: string; propertyId: string }>();
   const safeSlug = slug ?? realEstateProfile.slug;
@@ -90,6 +108,11 @@ export default function PropertyDetail() {
   const phone = publicProfile?.phone?.trim() || realEstateProfile.phone;
   const email = publicProfile?.email?.trim() || realEstateProfile.email;
   const address = publicProfile?.address?.trim() || realEstateProfile.address;
+
+  usePageMeta(
+    property ? `${property.title} | ${businessName}` : `Propiedad | ${businessName}`,
+    buildPropertyMetaDescription(property, businessName),
+  );
 
   if (isLoading && !property) {
     return (

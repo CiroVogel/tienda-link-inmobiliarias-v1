@@ -15,6 +15,7 @@ import {
   realEstateProfile,
   type DemoProperty,
 } from "@/lib/realEstateDemo";
+import { usePageMeta } from "@/lib/seo";
 import { trpc } from "@/lib/trpc";
 
 type HomeProps = {
@@ -382,6 +383,13 @@ export default function Home({ forcedSlug }: HomeProps) {
     { enabled: Boolean(slug) },
   );
   const isDemoSlug = slug === realEstateProfile.slug;
+  const businessName =
+    publicProfile?.businessName?.trim() || realEstateProfile.name;
+
+  usePageMeta(
+    `${businessName} | Tienda Link Inmobiliarias`,
+    `Propiedades, consultas y atención directa de ${businessName}.`,
+  );
 
   if (!isDemoSlug && !isPublicProfileLoading && !publicProfile) {
     return (
@@ -401,8 +409,6 @@ export default function Home({ forcedSlug }: HomeProps) {
     );
   }
 
-  const businessName =
-    publicProfile?.businessName?.trim() || realEstateProfile.name;
   const brandImageUrl =
     publicProfile?.logoUrl?.trim() ||
     publicProfile?.ownerImageUrl?.trim() ||

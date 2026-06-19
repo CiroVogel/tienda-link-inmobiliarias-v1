@@ -10,6 +10,7 @@ import {
   isPropertyRequestable,
   realEstateProfile,
 } from "@/lib/realEstateDemo";
+import { usePageMeta } from "@/lib/seo";
 
 function whatsappHref(whatsapp: string, propertyTitle: string) {
   return `https://wa.me/${whatsapp.replace(/\D/g, "")}?text=${encodeURIComponent(
@@ -37,6 +38,13 @@ export default function Booking() {
     message: defaultMessage,
   });
   const [reference, setReference] = useState("");
+  const businessName = publicProfile?.businessName?.trim() || realEstateProfile.name;
+  const profileWhatsapp = publicProfile?.whatsapp?.trim() || realEstateProfile.whatsapp;
+
+  usePageMeta(
+    `Solicitar visita | ${businessName}`,
+    `Enviá una consulta o solicitud de visita directamente a ${businessName}.`,
+  );
 
   if (isLoading && !property) {
     return (
@@ -66,8 +74,6 @@ export default function Booking() {
   const requestable = isPropertyRequestable(property);
   const currentProperty = property;
   const coverImage = getPropertyCoverImage(property);
-  const businessName = publicProfile?.businessName?.trim() || realEstateProfile.name;
-  const profileWhatsapp = publicProfile?.whatsapp?.trim() || realEstateProfile.whatsapp;
 
   async function handleSubmit(event: React.FormEvent) {
     event.preventDefault();

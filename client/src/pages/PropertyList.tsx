@@ -11,6 +11,7 @@ import {
   type PropertyOperation,
   type PropertyStatus,
 } from "@/lib/realEstateDemo";
+import { usePageMeta } from "@/lib/seo";
 import { trpc } from "@/lib/trpc";
 
 const operationFilters: PropertyOperation[] = ["sale", "rent"];
@@ -37,6 +38,12 @@ export default function PropertyList() {
     { enabled: Boolean(safeSlug) },
   );
   const isDemoSlug = safeSlug === realEstateProfile.slug;
+  const businessName = publicProfile?.businessName?.trim() || realEstateProfile.name;
+
+  usePageMeta(
+    `Propiedades de ${businessName}`,
+    `Explorá propiedades disponibles y consultá directamente con ${businessName}.`,
+  );
 
   if (!isDemoSlug && !isPublicProfileLoading && !publicProfile) {
     return (
@@ -56,7 +63,6 @@ export default function PropertyList() {
     );
   }
 
-  const businessName = publicProfile?.businessName?.trim() || realEstateProfile.name;
   const brandImageUrl =
     publicProfile?.logoUrl?.trim() || publicProfile?.ownerImageUrl?.trim() || null;
   const filteredProperties = useMemo(
