@@ -1,4 +1,4 @@
-﻿import { useState } from "react";
+import { useState } from "react";
 import {
   ArrowLeft,
   Bath,
@@ -125,24 +125,24 @@ export default function PropertyDetail() {
 
   if (isLoading && !property) {
     return (
-      <div className="flex min-h-screen items-center justify-center bg-white px-5">
-        <p className="text-sm font-medium text-zinc-500">Cargando propiedad...</p>
+      <div className="flex min-h-screen items-center justify-center bg-[#f7f5ef] px-5">
+        <p className="text-sm font-medium text-[#6a716f]">Cargando propiedad...</p>
       </div>
     );
   }
 
   if (!property) {
     return (
-      <div className="flex min-h-screen items-center justify-center bg-white px-5">
+      <div className="flex min-h-screen items-center justify-center bg-[#f7f5ef] px-5">
         <div className="max-w-sm text-center">
-          <p className="mb-3 text-xs font-bold uppercase tracking-[0.18em] text-zinc-400">
+          <p className="mb-3 text-xs font-bold uppercase tracking-[0.18em] text-[#6a716f]">
             Propiedad no encontrada
           </p>
           <h1 className="mb-6 text-4xl font-black text-zinc-950">
             No pudimos encontrar esta ficha.
           </h1>
           <Link href={`/${safeSlug}/propiedades`}>
-            <span className="inline-flex rounded-full bg-zinc-950 px-5 py-2.5 text-xs font-black uppercase tracking-[0.16em] text-white shadow-sm transition hover:bg-zinc-800">
+            <span className="inline-flex rounded-full bg-[#12383d] px-5 py-2.5 text-xs font-black uppercase tracking-[0.16em] text-white shadow-sm transition hover:bg-[#0f646a]">
               Volver al listado
             </span>
           </Link>
@@ -171,11 +171,11 @@ export default function PropertyDetail() {
   const hasFreeFeatures = property.features.length > 0;
 
   return (
-    <div className="min-h-screen bg-white">
-      <header className="border-b border-zinc-200 bg-white">
+    <div className="min-h-screen bg-[#f7f5ef]">
+      <header className="border-b border-[#ded8cc] bg-white">
         <div className="mx-auto flex h-16 max-w-6xl items-center justify-between px-5">
           <Link href={`/${safeSlug}/propiedades`}>
-            <span className="inline-flex items-center gap-2 text-xs font-black uppercase tracking-[0.16em] text-zinc-500">
+            <span className="inline-flex items-center gap-2 text-xs font-black uppercase tracking-[0.16em] text-[#6a716f]">
               <ArrowLeft className="h-4 w-4" />
               Listado
             </span>
@@ -198,7 +198,7 @@ export default function PropertyDetail() {
           </Link>
           <a
             href="/admin"
-            className="rounded-full border border-zinc-300 px-4 py-2 text-[11px] font-bold uppercase tracking-[0.12em] text-zinc-500 transition hover:border-zinc-400 hover:text-zinc-950"
+            className="rounded-full border border-[#ded8cc] px-4 py-2 text-[11px] font-bold uppercase tracking-[0.12em] text-[#6a716f] transition hover:border-[#0f646a] hover:text-[#12383d]"
           >
             Mi panel
           </a>
@@ -208,7 +208,7 @@ export default function PropertyDetail() {
       <main className="mx-auto max-w-6xl px-5 py-6 md:py-8">
         <section className="grid gap-6 lg:grid-cols-[0.95fr_1.05fr]">
           <div>
-            <div className="overflow-hidden bg-zinc-100">
+            <div className="overflow-hidden bg-[#ece7dc]">
               <img
                 src={galleryImages[selectedImage] ?? galleryImages[0]}
                 alt={property.title}
@@ -223,7 +223,7 @@ export default function PropertyDetail() {
                   type="button"
                   onClick={() => setSelectedImage(index)}
                   className={`overflow-hidden border ${
-                    selectedImage === index ? "border-zinc-950" : "border-zinc-200"
+                    selectedImage === index ? "border-[#12383d]" : "border-[#ded8cc]"
                   }`}
                   aria-label={`Ver foto ${index + 1}`}
                 >
@@ -239,14 +239,14 @@ export default function PropertyDetail() {
 
           <aside>
             <div className="mb-4 flex flex-wrap gap-2">
-              <span className="rounded-md bg-zinc-950 px-3 py-2 text-xs font-black uppercase tracking-[0.14em] text-white">
+              <span className="rounded-md bg-[#12383d] px-3 py-2 text-xs font-black uppercase tracking-[0.14em] text-white">
                 {getOperationLabel(property.operation)}
               </span>
               <span
                 className={`px-3 py-2 text-xs font-black uppercase tracking-[0.14em] ${
                   property.status === "available"
                     ? "bg-emerald-100 text-emerald-800"
-                    : "bg-zinc-200 text-zinc-600"
+                    : "bg-[#ece6dd] text-[#6a716f]"
                 }`}
               >
                 {getStatusLabel(property.status)}
@@ -257,18 +257,18 @@ export default function PropertyDetail() {
               {property.title}
             </h1>
 
-            <p className="mt-3 flex items-center gap-2 text-sm font-bold uppercase tracking-[0.14em] text-zinc-500">
-              <MapPin className="h-4 w-4 text-zinc-500" />
+            <p className="mt-3 flex items-center gap-2 text-sm font-bold uppercase tracking-[0.14em] text-[#6a716f]">
+              <MapPin className="h-4 w-4 text-[#6a716f]" />
               {property.address}, {property.location}
             </p>
 
             <p className="mt-4 text-3xl font-black text-zinc-950">{property.price}</p>
 
-            <div className="mt-5 grid grid-cols-2 gap-px bg-zinc-200">
+            <div className="mt-5 grid grid-cols-2 gap-px bg-[#ded8cc]">
               {summaryFacts.map(({ label, value, Icon }) => (
-                <div key={label} className="bg-zinc-50 p-3">
-                  <Icon className="mb-2 h-5 w-5 text-zinc-500" />
-                  <p className="text-xs font-bold uppercase tracking-[0.14em] text-zinc-500">
+                <div key={label} className="bg-[#fffdf8] p-3">
+                  <Icon className="mb-2 h-5 w-5 text-[#6a716f]" />
+                  <p className="text-xs font-bold uppercase tracking-[0.14em] text-[#6a716f]">
                     {label}
                   </p>
                   <p className="mt-1 font-bold text-zinc-950">{value}</p>
@@ -277,16 +277,16 @@ export default function PropertyDetail() {
             </div>
 
             {hasDetailedBlock ? (
-              <div className="mt-5 border-t border-zinc-200 pt-5">
+              <div className="mt-5 border-t border-[#ded8cc] pt-5">
                 <h2 className="mb-3 text-sm font-black uppercase tracking-[0.16em] text-zinc-950">
                   Detalles de la propiedad
                 </h2>
 
                 {detailItems.length > 0 ? (
-                  <div className="grid gap-px bg-zinc-200 sm:grid-cols-2">
+                  <div className="grid gap-px bg-[#ded8cc] sm:grid-cols-2">
                     {detailItems.map((item) => (
-                      <div key={item.label} className="bg-zinc-50 p-3">
-                        <p className="text-xs font-bold uppercase tracking-[0.14em] text-zinc-500">
+                      <div key={item.label} className="bg-[#fffdf8] p-3">
+                        <p className="text-xs font-bold uppercase tracking-[0.14em] text-[#6a716f]">
                           {item.label}
                         </p>
                         <p className="mt-1 font-bold text-zinc-950">{item.value}</p>
@@ -299,14 +299,14 @@ export default function PropertyDetail() {
                   <div className="mt-4 grid gap-4">
                     {selectedDetailedFeatureGroups.map((group) => (
                       <div key={group.title}>
-                        <p className="mb-2 text-xs font-black uppercase tracking-[0.14em] text-zinc-500">
+                        <p className="mb-2 text-xs font-black uppercase tracking-[0.14em] text-[#6a716f]">
                           {group.title}
                         </p>
                         <div className="flex flex-wrap gap-2">
                           {group.options.map((feature) => (
                             <span
                               key={feature}
-                              className="border border-zinc-300 bg-white px-3 py-2 text-sm text-zinc-700"
+                              className="border border-[#ded8cc] bg-[#fffdf8] px-3 py-2 text-sm text-[#3a3a3a]"
                             >
                               {feature}
                             </span>
@@ -328,7 +328,7 @@ export default function PropertyDetail() {
                   {property.features.map((feature) => (
                     <span
                       key={feature}
-                      className="border border-zinc-300 bg-white px-3 py-2 text-sm text-zinc-700"
+                      className="border border-[#ded8cc] bg-[#fffdf8] px-3 py-2 text-sm text-[#3a3a3a]"
                     >
                       {feature}
                     </span>
@@ -337,33 +337,33 @@ export default function PropertyDetail() {
               </div>
             ) : null}
 
-            <div className="mt-5 border-t border-zinc-200 pt-5">
+            <div className="mt-5 border-t border-[#ded8cc] pt-5">
               <h2 className="mb-3 text-sm font-black uppercase tracking-[0.16em] text-zinc-950">
                 Descripción
               </h2>
-              <p className="text-sm leading-7 text-zinc-700">{property.description}</p>
+              <p className="text-sm leading-7 text-[#3a3a3a]">{property.description}</p>
             </div>
 
-            <div className="mt-5 border-t border-zinc-200 pt-5">
+            <div className="mt-5 border-t border-[#ded8cc] pt-5">
               <h2 className="mb-3 text-sm font-black uppercase tracking-[0.16em] text-zinc-950">
                 Consulta directa con {businessName}
               </h2>
-              <div className="grid gap-3 text-sm text-zinc-700">
+              <div className="grid gap-3 text-sm text-[#3a3a3a]">
                 {phone || profileWhatsapp ? (
                   <p className="flex items-center gap-2">
-                    <Phone className="h-4 w-4 shrink-0 text-zinc-500" />
+                    <Phone className="h-4 w-4 shrink-0 text-[#6a716f]" />
                     <span>{phone || profileWhatsapp}</span>
                   </p>
                 ) : null}
                 {email ? (
                   <p className="flex items-center gap-2">
-                    <Mail className="h-4 w-4 shrink-0 text-zinc-500" />
+                    <Mail className="h-4 w-4 shrink-0 text-[#6a716f]" />
                     <span>{email}</span>
                   </p>
                 ) : null}
                 {address ? (
                   <p className="flex items-center gap-2">
-                    <MapPin className="h-4 w-4 shrink-0 text-zinc-500" />
+                    <MapPin className="h-4 w-4 shrink-0 text-[#6a716f]" />
                     <span>{address}</span>
                   </p>
                 ) : null}
@@ -373,13 +373,13 @@ export default function PropertyDetail() {
             <div className="mt-6 flex flex-col gap-3 sm:flex-row">
               {requestable ? (
                 <Link href={`/${safeSlug}/solicitar-visita/${property.id}`}>
-                  <span className="inline-flex items-center justify-center gap-2 rounded-full bg-zinc-950 px-6 py-3 text-xs font-black uppercase tracking-[0.16em] text-white shadow-sm transition hover:bg-zinc-800">
+                  <span className="inline-flex items-center justify-center gap-2 rounded-full bg-[#12383d] px-6 py-3 text-xs font-black uppercase tracking-[0.16em] text-white shadow-sm transition hover:bg-[#0f646a]">
                     Solicitar visita
                     <HomeIcon className="h-4 w-4" />
                   </span>
                 </Link>
               ) : (
-                <span className="inline-flex items-center justify-center bg-zinc-200 px-6 py-4 text-xs font-black uppercase tracking-[0.16em] text-zinc-500">
+                <span className="inline-flex items-center justify-center bg-[#ece6dd] px-6 py-4 text-xs font-black uppercase tracking-[0.16em] text-[#6a716f]">
                   No disponible para visita
                 </span>
               )}
@@ -389,7 +389,7 @@ export default function PropertyDetail() {
                   href={buildWhatsappHref(profileWhatsapp, property.title)}
                   target="_blank"
                   rel="noreferrer"
-                  className="inline-flex items-center justify-center gap-2 rounded-full border border-zinc-300 px-6 py-3 text-xs font-black uppercase tracking-[0.16em] text-zinc-950 transition hover:border-zinc-400"
+                  className="inline-flex items-center justify-center gap-2 rounded-full border border-[#cfc7b8] px-6 py-3 text-xs font-black uppercase tracking-[0.16em] text-[#12383d] transition hover:border-[#0f646a]"
                 >
                   WhatsApp
                   <MessageCircle className="h-4 w-4" />
@@ -402,4 +402,3 @@ export default function PropertyDetail() {
     </div>
   );
 }
-

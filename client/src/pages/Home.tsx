@@ -190,11 +190,11 @@ function FeaturedProperties({
   facebook?: string | null;
 }) {
   return (
-    <section id="propiedades" className="bg-zinc-50 py-14 md:py-18">
+    <section id="propiedades" className="bg-[#f7f5ef] py-14 md:py-18">
       <div className="mx-auto max-w-[1440px] px-5 lg:px-10">
         <div className="mb-8 flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
           <div>
-            <p className="mb-3 text-xs font-bold uppercase tracking-[0.18em] text-zinc-500">
+            <p className="mb-3 text-xs font-bold uppercase tracking-[0.18em] text-[#6a716f]">
               Destacadas
             </p>
             <h2 className="text-4xl font-black tracking-tight text-zinc-950">
@@ -234,11 +234,11 @@ function AboutSection({
   if (!ownerName && !ownerTitle && !ownerBio) return null;
 
   return (
-    <section className="border-b border-zinc-100 bg-white py-14">
+    <section className="border-b border-[#ece6dd] bg-[#fffdf8] py-14">
       <div className="mx-auto max-w-[1440px] px-5 lg:px-10">
         <div className="grid gap-10 md:grid-cols-[1fr_1.6fr] md:gap-20">
           <div>
-            <p className="mb-5 text-xs font-bold uppercase tracking-[0.18em] text-zinc-500">
+            <p className="mb-5 text-xs font-bold uppercase tracking-[0.18em] text-[#6a716f]">
               Sobre la inmobiliaria
             </p>
             <h2 className="text-4xl font-black leading-tight tracking-tight text-zinc-950 md:text-5xl">
@@ -247,12 +247,12 @@ function AboutSection({
           </div>
           <div className="flex flex-col justify-center">
             {ownerTitle ? (
-              <p className="mb-4 text-xs font-bold uppercase tracking-[0.18em] text-zinc-500">
+              <p className="mb-4 text-xs font-bold uppercase tracking-[0.18em] text-[#6a716f]">
                 {ownerTitle}
               </p>
             ) : null}
             {ownerBio ? (
-              <p className="max-w-2xl text-[1.05rem] leading-8 text-zinc-700">
+              <p className="max-w-2xl text-[1.05rem] leading-8 text-[#3a3a3a]">
                 {ownerBio}
               </p>
             ) : null}
@@ -288,10 +288,10 @@ function HowItWorks({ slug }: { slug: string }) {
   ];
 
   return (
-    <section id="como-funciona" className="bg-white py-14 md:py-18">
+    <section id="como-funciona" className="bg-[#f7f5ef] py-14 md:py-18 border-b border-[#ded8cc]">
       <div className="mx-auto max-w-[1440px] px-5 lg:px-10">
         <div className="mb-8 max-w-2xl">
-          <p className="mb-3 text-xs font-bold uppercase tracking-[0.18em] text-zinc-500">
+          <p className="mb-3 text-xs font-bold uppercase tracking-[0.18em] text-[#6a716f]">
             Cómo funciona
           </p>
           <h2 className="text-4xl font-black tracking-tight text-zinc-950">
@@ -299,17 +299,17 @@ function HowItWorks({ slug }: { slug: string }) {
           </h2>
         </div>
 
-        <div className="grid gap-2 rounded-2xl border border-zinc-200 bg-zinc-50 p-2 md:grid-cols-3">
+        <div className="grid gap-2 rounded-2xl border border-[#ded8cc] bg-[#fffdf8] p-2 shadow-[0_10px_30px_rgba(23,23,23,0.04)] md:grid-cols-3">
           {steps.map((step) => {
             const Icon = step.icon;
             return (
-              <div key={step.title} className="flex gap-4 rounded-xl bg-white p-5">
-                <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-zinc-100 text-zinc-600">
+              <div key={step.title} className="flex gap-4 rounded-xl border border-[#ded8cc] bg-white p-5 shadow-[0_10px_30px_rgba(23,23,23,0.04)]">
+                <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-[#eef4f2] text-[#0f646a]">
                   <Icon className="h-4 w-4" />
                 </span>
                 <div>
                   <h3 className="mb-1 text-sm font-bold text-zinc-950">{step.title}</h3>
-                  <p className="text-xs leading-5 text-zinc-600">{step.text}</p>
+                  <p className="text-xs leading-5 text-[#3a3a3a]">{step.text}</p>
                 </div>
               </div>
             );
@@ -318,7 +318,7 @@ function HowItWorks({ slug }: { slug: string }) {
 
         <div className="mt-8 flex justify-center">
           <Link href={`/${slug}/propiedades`}>
-            <span className="inline-flex h-12 items-center justify-center gap-2 rounded-full bg-zinc-950 px-8 text-sm font-semibold text-white transition hover:bg-zinc-800">
+            <span className="inline-flex h-12 items-center justify-center gap-2 rounded-full bg-[#12383d] px-8 text-sm font-semibold text-white transition hover:bg-[#0f646a]">
               Ver propiedades
               <ArrowRight className="h-4 w-4" />
             </span>
@@ -357,7 +357,7 @@ function Closing({
   return (
     <>
       {/* CTA final */}
-      <section id="contacto" className="bg-zinc-950 px-5 py-16 text-white sm:px-8 lg:py-24">
+      <section id="contacto" className="bg-[#071c1b] px-5 py-16 text-white sm:px-8 lg:py-24">
         <div className="mx-auto max-w-3xl text-center">
           <p className="mb-5 inline-block rounded-full border border-white/20 bg-white/10 px-4 py-1.5 text-xs font-semibold uppercase tracking-[0.18em] text-white/60">
             {businessName}
@@ -391,7 +391,7 @@ function Closing({
       </section>
 
       {/* Footer de 3 columnas */}
-      <footer className="border-t border-zinc-800 bg-zinc-950 px-5 py-14 text-white sm:px-8 lg:px-10">
+      <footer className="border-t border-[#1e3434] bg-[#071c1b] px-5 py-14 text-white sm:px-8 lg:px-10">
         <div className="mx-auto max-w-[1440px]">
           <div className="grid gap-10 md:grid-cols-2 lg:grid-cols-[1.4fr_1fr_1fr]">
 
@@ -617,7 +617,7 @@ export default function Home({ forcedSlug }: HomeProps) {
   const visibleCount = properties.length;
 
   return (
-    <div className="min-h-screen bg-white">
+    <div className="min-h-screen bg-[#f7f5ef]">
       <Header slug={slug} businessName={businessName} brandImageUrl={brandImageUrl} />
       <Hero
         featured={heroProperty}
@@ -631,9 +631,9 @@ export default function Home({ forcedSlug }: HomeProps) {
       />
       <AboutSection businessName={businessName} ownerName={ownerName} ownerTitle={ownerTitle} ownerBio={ownerBio} />
       <FeaturedProperties properties={featuredCards} slug={slug} logoUrl={brandImageUrl} businessName={businessName} instagram={instagram} facebook={facebook} />
-      <section className="bg-white py-10">
+      <section className="bg-[#fffdf8] py-10">
         <div className="mx-auto flex max-w-[1440px] flex-col gap-4 px-5 sm:flex-row sm:items-center sm:justify-between lg:px-10">
-          <p className="text-sm text-zinc-600">
+          <p className="text-sm text-[#3a3a3a]">
             {visibleCount} propiedades publicadas entre venta, alquiler y
             operaciones recientes.
           </p>
@@ -646,7 +646,10 @@ export default function Home({ forcedSlug }: HomeProps) {
         </div>
       </section>
       <HowItWorks slug={slug} />
-      <PublicSavedSearchSection slug={slug} />
+      <PublicSavedSearchSection
+        slug={slug}
+        className="bg-[#f7f5ef] py-14 md:py-18"
+      />
       <Closing
         slug={slug}
         businessName={businessName}

@@ -38,7 +38,6 @@ function getOperationPriceLabel(operation: PropertyOperation): string {
 function buildAttrs(property: DemoProperty): Attr[] {
   const attrs: Attr[] = [];
 
-  // Slot 1: Superficie — areaM2 con fallback a coveredAreaM2
   const area = property.areaM2 ?? property.coveredAreaM2 ?? null;
   if (area) {
     attrs.push({
@@ -49,7 +48,6 @@ function buildAttrs(property: DemoProperty): Attr[] {
     });
   }
 
-  // Slot 2: Dormitorios con fallback a ambientes
   if (property.bedrooms) {
     attrs.push({
       key: "beds",
@@ -66,7 +64,6 @@ function buildAttrs(property: DemoProperty): Attr[] {
     });
   }
 
-  // Slot 3: Baños con fallback a cocheras
   if (property.bathrooms) {
     attrs.push({
       key: "baths",
@@ -93,7 +90,7 @@ function TechnicalAttrRow({ attrs }: { attrs: Attr[] }) {
     attrs.length === 3 ? "grid-cols-3" : attrs.length === 2 ? "grid-cols-2" : "grid-cols-1";
 
   return (
-    <div className="mt-5 border-t border-zinc-200 pt-4">
+    <div className="mt-5 border-t border-[#ece6dd] pt-4">
       <div className="overflow-x-auto pb-1 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
         <div className={`mx-auto grid ${colsClass} items-stretch`}>
           {attrs.map((attr, index) => (
@@ -102,17 +99,17 @@ function TechnicalAttrRow({ attrs }: { attrs: Attr[] }) {
               className="grid grid-cols-[auto_1fr] items-center gap-2 px-3 first:pl-0 last:pr-0"
             >
               {index > 0 ? (
-                <span className="-ml-2 mr-1 h-9 w-px shrink-0 bg-zinc-200" aria-hidden="true" />
+                <span className="-ml-2 mr-1 h-9 w-px shrink-0 bg-[#ded8cc]" aria-hidden="true" />
               ) : (
                 <span className="hidden" aria-hidden="true" />
               )}
               <div className="flex min-w-0 items-center justify-center gap-2">
-                <span className="shrink-0 text-zinc-500">{attr.icon}</span>
+                <span className="shrink-0 text-[#6a716f]">{attr.icon}</span>
                 <span className="min-w-0 leading-tight">
                   <span className="block text-[0.86rem] font-semibold text-zinc-800">
                     {attr.primary}
                   </span>
-                  <span className="block text-[0.72rem] font-medium text-zinc-500">
+                  <span className="block text-[0.72rem] font-medium text-[#6a716f]">
                     {attr.secondary}
                   </span>
                 </span>
@@ -143,10 +140,10 @@ export function PropertyCard({
   const hasIdentityStrip = Boolean(name);
 
   return (
-    <article className="group flex h-full flex-col overflow-hidden rounded-[8px] border border-zinc-200 bg-white shadow-[0_10px_30px_rgba(23,23,23,0.04)] transition hover:-translate-y-0.5 hover:border-zinc-300 hover:shadow-[0_14px_34px_rgba(23,23,23,0.08)]">
+    <article className="group flex h-full flex-col overflow-hidden rounded-[8px] border border-[#ded8cc] bg-white shadow-[0_10px_30px_rgba(23,23,23,0.04)] transition hover:-translate-y-0.5 hover:border-[#bcb5aa] hover:shadow-[0_14px_34px_rgba(23,23,23,0.08)]">
       {/* Imagen */}
       <Link href={`/${slug}/propiedades/${property.id}`}>
-        <div className="relative h-[210px] overflow-hidden bg-zinc-100">
+        <div className="relative h-[210px] overflow-hidden bg-[#ece7dc]">
           <img
             src={coverImage}
             alt={property.title}
@@ -157,7 +154,7 @@ export function PropertyCard({
 
           {/* Cinta diagonal de operación — esquina superior izquierda */}
           <div className="pointer-events-none absolute left-0 top-0 h-[100px] w-[100px] overflow-hidden">
-            <span className="absolute left-[-28px] top-[22px] block w-[140px] rotate-[-45deg] bg-zinc-950 py-2 text-center text-[9px] font-black uppercase tracking-[0.18em] text-white">
+            <span className="absolute left-[-28px] top-[22px] block w-[140px] rotate-[-45deg] bg-[#12383d] py-2 text-center text-[9px] font-black uppercase tracking-[0.18em] text-white">
               {getOperationLabel(property.operation)}
             </span>
           </div>
@@ -165,7 +162,7 @@ export function PropertyCard({
           {/* Badge de estado — solo si no disponible */}
           {property.status !== "available" ? (
             <div className="absolute right-3 top-3">
-              <span className="rounded-full bg-zinc-900/85 px-2.5 py-1 text-[10px] font-black uppercase tracking-[0.12em] text-white shadow-sm backdrop-blur-sm">
+              <span className="rounded-full bg-[#12383d]/90 px-2.5 py-1 text-[10px] font-black uppercase tracking-[0.12em] text-white shadow-sm backdrop-blur-sm">
                 {getStatusLabel(property.status)}
               </span>
             </div>
@@ -189,18 +186,18 @@ export function PropertyCard({
 
       {/* Cuerpo */}
       <div className="flex flex-1 flex-col px-5 pb-5 pt-4">
-        {/* Título — ancho completo, hasta dos líneas */}
+        {/* Título */}
         <Link href={`/${slug}/propiedades/${property.id}`}>
           <h3 className="line-clamp-2 text-[1.15rem] font-bold leading-tight text-zinc-950 transition group-hover:text-zinc-700">
             {property.title}
           </h3>
         </Link>
 
-        {/* Tipo de propiedad (izquierda) + Precio (derecha) */}
+        {/* Tipo de propiedad + Precio */}
         <div className="mt-2 flex items-start justify-between gap-3">
-          <p className="text-[0.8rem] font-medium text-zinc-500">{property.propertyType}</p>
+          <p className="text-[0.8rem] font-medium text-[#6a716f]">{property.propertyType}</p>
           <div className="shrink-0 text-right">
-            <p className="text-[10px] font-semibold uppercase leading-none tracking-wide text-zinc-400">
+            <p className="text-[10px] font-semibold uppercase leading-none tracking-wide text-[#6a716f]">
               {getOperationPriceLabel(property.operation)}
             </p>
             <p className="mt-0.5 text-lg font-black leading-tight text-zinc-950">
@@ -210,49 +207,49 @@ export function PropertyCard({
         </div>
 
         {/* Ubicación */}
-        <div className="mt-1 flex items-center gap-1 text-[0.8rem] font-medium text-zinc-500">
+        <div className="mt-1 flex items-center gap-1 text-[0.8rem] font-medium text-[#6a716f]">
           <MapPin className="h-3.5 w-3.5 shrink-0" />
           <span className="truncate">{property.location}</span>
         </div>
 
-        {/* Descripción — 2 líneas máx, min-h para alinear cards en grid */}
+        {/* Descripción */}
         <p
-          className="mt-4 min-h-[48px] flex-1 overflow-hidden text-[0.9rem] leading-6 text-zinc-600"
+          className="mt-4 min-h-[48px] flex-1 overflow-hidden text-[0.9rem] leading-6 text-[#3a3a3a]"
           style={{ display: "-webkit-box", WebkitLineClamp: 2, WebkitBoxOrient: "vertical" }}
         >
           {property.description}
         </p>
 
-        {/* Sección inferior empujada al fondo */}
+        {/* Sección inferior */}
         <div className="mt-auto">
           <TechnicalAttrRow attrs={attrs} />
 
           {/* Botones */}
           <div className="mt-5 flex flex-col gap-3 sm:flex-row">
             <Link href={`/${slug}/propiedades/${property.id}`} className="sm:flex-1">
-              <span className="inline-flex h-11 w-full items-center justify-center gap-2 rounded-[5px] bg-zinc-950 px-4 text-xs font-black uppercase tracking-[0.12em] text-white shadow-sm transition hover:bg-zinc-800">
+              <span className="inline-flex h-11 w-full items-center justify-center gap-2 rounded-[5px] bg-[#12383d] px-4 text-xs font-black uppercase tracking-[0.12em] text-white shadow-sm transition hover:bg-[#0f646a]">
                 Ver ficha
                 <ChevronRight className="h-4 w-4 shrink-0" />
               </span>
             </Link>
             {requestable ? (
               <Link href={`/${slug}/solicitar-visita/${property.id}`} className="sm:flex-1">
-                <span className="inline-flex h-11 w-full items-center justify-center gap-2 rounded-[5px] border border-zinc-300 bg-white px-3 text-xs font-black uppercase tracking-[0.12em] text-zinc-950 transition hover:border-zinc-400">
+                <span className="inline-flex h-11 w-full items-center justify-center gap-2 rounded-[5px] border border-[#cfc7b8] bg-[#fffdf8] px-3 text-xs font-black uppercase tracking-[0.12em] text-[#12383d] transition hover:border-[#0f646a] hover:bg-[#eef4f2] hover:text-[#0f646a]">
                   <CalendarDays className="h-4 w-4 shrink-0" />
                   Solicitar visita
                 </span>
               </Link>
             ) : (
-              <span className="inline-flex h-11 w-full items-center justify-center rounded-[5px] border border-zinc-200 px-3 text-xs font-bold uppercase tracking-[0.12em] text-zinc-400 sm:flex-1">
+              <span className="inline-flex h-11 w-full items-center justify-center rounded-[5px] border border-[#ded8cc] px-3 text-xs font-bold uppercase tracking-[0.12em] text-[#6a716f] sm:flex-1">
                 No disponible
               </span>
             )}
           </div>
 
-          {/* Franja de identidad — nombre e redes reales de la inmobiliaria */}
+          {/* Franja de identidad */}
           {hasIdentityStrip ? (
-            <div className="mt-4 flex items-center justify-between border-t border-zinc-100 pt-3">
-              <span className="truncate text-[11px] font-semibold text-zinc-600">{name}</span>
+            <div className="mt-4 flex items-center justify-between border-t border-[#f0ebe3] pt-3">
+              <span className="truncate text-[11px] font-semibold text-[#3a3a3a]">{name}</span>
               {igUrl || fbUrl ? (
                 <div className="ml-3 flex shrink-0 items-center gap-2.5">
                   {igUrl ? (
@@ -261,7 +258,7 @@ export function PropertyCard({
                       target="_blank"
                       rel="noreferrer"
                       aria-label="Instagram"
-                      className="text-zinc-400 transition hover:text-zinc-700"
+                      className="text-[#6a716f] transition hover:text-[#12383d]"
                       onClick={(e) => e.stopPropagation()}
                     >
                       <Instagram className="h-3.5 w-3.5" />
@@ -273,7 +270,7 @@ export function PropertyCard({
                       target="_blank"
                       rel="noreferrer"
                       aria-label="Facebook"
-                      className="text-zinc-400 transition hover:text-zinc-700"
+                      className="text-[#6a716f] transition hover:text-[#12383d]"
                       onClick={(e) => e.stopPropagation()}
                     >
                       <Facebook className="h-3.5 w-3.5" />

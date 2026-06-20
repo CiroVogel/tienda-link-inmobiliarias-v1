@@ -1,4 +1,4 @@
-﻿import { useMemo, useState } from "react";
+import { useMemo, useState } from "react";
 import { ArrowLeft, Building2 } from "lucide-react";
 import { Link, useParams } from "wouter";
 import SavedSearchSection from "@/components/public/SavedSearchSection";
@@ -49,15 +49,15 @@ export default function PropertyList() {
 
   if (!isDemoSlug && !isPublicProfileLoading && !publicProfile) {
     return (
-      <div className="flex min-h-screen items-center justify-center bg-white px-5">
+      <div className="flex min-h-screen items-center justify-center bg-[#f7f5ef] px-5">
         <div className="max-w-md text-center">
-          <p className="mb-3 text-xs font-bold uppercase tracking-[0.18em] text-zinc-400">
+          <p className="mb-3 text-xs font-bold uppercase tracking-[0.18em] text-[#6a716f]">
             Inmobiliaria no disponible
           </p>
           <h1 className="mb-4 text-4xl font-black text-zinc-950">
             Este listado no está visible públicamente.
           </h1>
-          <p className="text-sm leading-7 text-zinc-500">
+          <p className="text-sm leading-7 text-[#6a716f]">
             Puede estar archivado o el slug no coincide con una inmobiliaria activa.
           </p>
         </div>
@@ -85,17 +85,17 @@ export default function PropertyList() {
   function getFilterClasses(active: boolean) {
     return `rounded-full border px-3 py-1.5 text-xs font-bold uppercase tracking-[0.14em] transition-colors ${
       active
-        ? "border-zinc-950 bg-zinc-950 text-white"
-        : "border-zinc-200 bg-white text-zinc-500 hover:border-zinc-300 hover:text-zinc-950"
+        ? "border-[#12383d] bg-[#12383d] text-white"
+        : "border-[#ded8cc] bg-[#fffdf8] text-[#6a716f] hover:border-[#0f646a] hover:text-[#12383d]"
     }`;
   }
 
   return (
-    <div className="min-h-screen bg-zinc-50">
-      <header className="border-b border-zinc-200 bg-white">
+    <div className="min-h-screen bg-[#f7f5ef]">
+      <header className="border-b border-[#ded8cc] bg-white">
         <div className="mx-auto flex h-16 max-w-[1440px] items-center justify-between px-5 lg:px-10">
           <Link href={`/${safeSlug}`}>
-            <span className="inline-flex items-center gap-2 text-xs font-black uppercase tracking-[0.16em] text-zinc-500">
+            <span className="inline-flex items-center gap-2 text-xs font-black uppercase tracking-[0.16em] text-[#6a716f]">
               <ArrowLeft className="h-4 w-4" />
               Inicio
             </span>
@@ -118,7 +118,7 @@ export default function PropertyList() {
           </Link>
           <a
             href="/admin"
-            className="rounded-full border border-zinc-300 px-4 py-2 text-[11px] font-bold uppercase tracking-[0.12em] text-zinc-500 transition hover:border-zinc-400 hover:text-zinc-950"
+            className="rounded-full border border-[#ded8cc] px-4 py-2 text-[11px] font-bold uppercase tracking-[0.12em] text-[#6a716f] transition hover:border-[#0f646a] hover:text-[#12383d]"
           >
             Mi panel
           </a>
@@ -127,14 +127,14 @@ export default function PropertyList() {
 
       <main className="mx-auto max-w-[1440px] px-5 py-10 md:py-14 lg:px-10">
         <div className="mb-8 max-w-2xl">
-          <p className="mb-3 inline-flex items-center gap-2 text-xs font-bold uppercase tracking-[0.18em] text-zinc-500">
+          <p className="mb-3 inline-flex items-center gap-2 text-xs font-bold uppercase tracking-[0.18em] text-[#6a716f]">
             <Building2 className="h-4 w-4" />
             {businessName}
           </p>
           <h1 className="text-4xl font-black tracking-tight text-zinc-950 md:text-5xl">
             Listado de propiedades
           </h1>
-          <p className="mt-4 text-sm leading-7 text-zinc-600">
+          <p className="mt-4 text-sm leading-7 text-[#3a3a3a]">
             Opciones en venta y alquiler publicadas por {businessName}, con estado actualizado
             para consultar o coordinar una visita.
           </p>
@@ -177,7 +177,7 @@ export default function PropertyList() {
           ))}
         </div>
 
-        <p className="mb-6 text-sm text-zinc-600">
+        <p className="mb-6 text-sm text-[#3a3a3a]">
           Mostrando {filteredProperties.length} de {properties.length} propiedades.
         </p>
 
@@ -188,11 +188,11 @@ export default function PropertyList() {
             ))}
           </div>
         ) : (
-          <div className="border border-zinc-200 bg-white px-6 py-10 text-center">
-            <p className="text-xs font-bold uppercase tracking-[0.18em] text-zinc-400">
+          <div className="border border-[#ded8cc] bg-[#fffdf8] px-6 py-10 text-center">
+            <p className="text-xs font-bold uppercase tracking-[0.18em] text-[#6a716f]">
               Sin resultados
             </p>
-            <p className="mt-3 text-sm leading-7 text-zinc-500">
+            <p className="mt-3 text-sm leading-7 text-[#6a716f]">
               No encontramos propiedades para ese filtro. Puedes desactivarlo o volver a{" "}
               <button
                 type="button"
@@ -209,15 +209,14 @@ export default function PropertyList() {
           </div>
         )}
 
-        <div className="mt-14 border-t border-zinc-200 pt-14 md:mt-16 md:pt-16">
+        <div className="mt-14 border-t border-[#ded8cc] pt-14 md:mt-16 md:pt-16">
           <SavedSearchSection
             slug={safeSlug}
             eyebrow={"Tu búsqueda"}
-            className="bg-white py-0"
+            className="bg-transparent py-0"
           />
         </div>
       </main>
     </div>
   );
 }
-

@@ -11,7 +11,7 @@ import { trpc } from "@/lib/trpc";
 export default function SavedSearchSection({
   slug,
   eyebrow = "Tu búsqueda",
-  className = "bg-zinc-50 py-14 md:py-18",
+  className = "bg-[#f7f5ef] py-14 md:py-18",
 }: {
   slug: string;
   eyebrow?: string;
@@ -91,10 +91,10 @@ export default function SavedSearchSection({
   }
 
   const inputClass =
-    "h-11 rounded-lg border border-zinc-200 bg-white px-3 text-sm text-zinc-950 outline-none placeholder:text-zinc-400 focus:border-zinc-700";
+    "h-11 rounded-lg border border-[#ded8cc] bg-white px-3 text-sm text-[#3a3a3a] outline-none placeholder:text-[#6a716f] focus:border-[#0f646a]";
   const selectClass =
-    "h-11 rounded-lg border border-zinc-200 bg-white px-3 text-sm font-medium text-zinc-950 outline-none focus:border-zinc-700";
-  const labelClass = "grid gap-1.5 text-sm font-semibold text-zinc-600";
+    "h-11 rounded-lg border border-[#ded8cc] bg-white px-3 text-sm font-medium text-[#3a3a3a] outline-none focus:border-[#0f646a]";
+  const labelClass = "grid gap-1.5 text-sm font-semibold text-[#6a716f]";
 
   return (
     <section className={className}>
@@ -102,23 +102,23 @@ export default function SavedSearchSection({
         {!isOpen ? (
           /* Estado cerrado */
           <div className="mx-auto max-w-2xl">
-            <div className="rounded-2xl border border-zinc-200 bg-white p-8 shadow-[0_18px_42px_-38px_rgba(23,23,23,0.12)]">
-              <div className="mb-5 flex h-11 w-11 items-center justify-center rounded-full bg-zinc-100">
-                <BellRing className="h-5 w-5 text-zinc-600" />
+            <div className="rounded-2xl border border-[#ded8cc] bg-white p-8 shadow-[0_10px_30px_rgba(23,23,23,0.04)]">
+              <div className="mb-5 flex h-11 w-11 items-center justify-center rounded-full bg-[#eef4f2]">
+                <BellRing className="h-5 w-5 text-[#0f646a]" />
               </div>
-              <p className="mb-3 text-xs font-bold uppercase tracking-[0.18em] text-zinc-400">
+              <p className="mb-3 text-xs font-bold uppercase tracking-[0.18em] text-[#6a716f]">
                 {eyebrow}
               </p>
-              <h2 className="text-3xl font-black tracking-tight text-zinc-950 md:text-4xl">
+              <h2 className="text-3xl font-black tracking-tight text-[#182125] md:text-4xl">
                 {"¿No encontraste lo que buscás?"}
               </h2>
-              <p className="mt-4 max-w-md text-sm leading-7 text-zinc-500">
+              <p className="mt-4 max-w-md text-sm leading-7 text-[#6a716f]">
                 {"Dejanos tu búsqueda y te avisamos cuando tengamos una propiedad que se ajuste a lo que necesitás."}
               </p>
               <button
                 type="button"
                 onClick={() => setIsOpen(true)}
-                className="mt-6 inline-flex h-12 items-center justify-center gap-2 rounded-full bg-zinc-950 px-8 text-sm font-semibold text-white transition hover:bg-zinc-800"
+                className="mt-6 inline-flex h-12 items-center justify-center gap-2 rounded-full bg-[#12383d] px-8 text-sm font-semibold text-white transition hover:bg-[#0f646a]"
               >
                 {"Dejar mi búsqueda"}
                 <ArrowRight className="h-4 w-4" />
@@ -129,17 +129,17 @@ export default function SavedSearchSection({
           /* Estado abierto — panel único */
           <div
             ref={panelRef}
-            className="rounded-2xl border border-zinc-200 bg-white shadow-[0_18px_42px_-38px_rgba(23,23,23,0.12)]"
+            className="rounded-2xl border border-[#ded8cc] bg-white shadow-[0_10px_30px_rgba(23,23,23,0.04)]"
           >
             {/* Barra superior: eyebrow + botón Cerrar */}
-            <div className="flex items-center justify-between border-b border-zinc-100 px-6 py-4 sm:px-8">
-              <p className="text-xs font-bold uppercase tracking-[0.18em] text-zinc-400">
+            <div className="flex items-center justify-between border-b border-[#ece6dd] px-6 py-4 sm:px-8">
+              <p className="text-xs font-bold uppercase tracking-[0.18em] text-[#6a716f]">
                 {eyebrow}
               </p>
               <button
                 type="button"
                 onClick={() => setIsOpen(false)}
-                className="flex items-center gap-1.5 rounded-full border border-zinc-200 px-3 py-1.5 text-xs font-semibold text-zinc-500 transition hover:border-zinc-400 hover:text-zinc-950"
+                className="flex items-center gap-1.5 rounded-full border border-[#ded8cc] px-3 py-1.5 text-xs font-semibold text-[#6a716f] transition hover:border-[#0f646a] hover:text-[#12383d]"
               >
                 <X className="h-3.5 w-3.5" />
                 Cerrar
@@ -150,10 +150,10 @@ export default function SavedSearchSection({
             <div className="grid gap-8 p-6 sm:p-8 md:grid-cols-[1fr_1.7fr] md:gap-10">
               {/* Columna izquierda: intro */}
               <div>
-                <h2 className="text-2xl font-black tracking-tight text-zinc-950 md:text-3xl">
+                <h2 className="text-2xl font-black tracking-tight text-[#182125] md:text-3xl">
                   {"¿No encontraste lo que buscás?"}
                 </h2>
-                <p className="mt-3 text-sm leading-7 text-zinc-500">
+                <p className="mt-3 text-sm leading-7 text-[#6a716f]">
                   {"Dejanos tu búsqueda y te avisamos cuando tengamos una propiedad que se ajuste a lo que necesitás."}
                 </p>
               </div>
@@ -162,24 +162,24 @@ export default function SavedSearchSection({
               <div>
                 {isSubmitted ? (
                   <div className="space-y-4">
-                    <p className="text-xs font-bold uppercase tracking-[0.14em] text-zinc-400">
+                    <p className="text-xs font-bold uppercase tracking-[0.14em] text-[#6a716f]">
                       {"Búsqueda guardada"}
                     </p>
-                    <p className="text-sm leading-7 text-zinc-600">
+                    <p className="text-sm leading-7 text-[#3a3a3a]">
                       {"La inmobiliaria podrá contactarte cuando tenga una propiedad que coincida con lo que necesitás."}
                     </p>
                     <div className="flex flex-wrap items-center gap-3 pt-1">
                       <button
                         type="button"
                         onClick={() => setIsSubmitted(false)}
-                        className="inline-flex items-center rounded-lg border border-zinc-200 px-4 py-2.5 text-sm font-semibold text-zinc-700 transition hover:border-zinc-300 hover:text-zinc-950"
+                        className="inline-flex items-center rounded-lg border border-[#ded8cc] px-4 py-2.5 text-sm font-semibold text-[#12383d] transition hover:border-[#0f646a]"
                       >
                         {"Cargar otra búsqueda"}
                       </button>
                       <button
                         type="button"
                         onClick={() => setIsOpen(false)}
-                        className="flex items-center gap-1.5 rounded-full border border-zinc-200 px-3 py-1.5 text-xs font-semibold text-zinc-500 transition hover:border-zinc-400 hover:text-zinc-950"
+                        className="flex items-center gap-1.5 rounded-full border border-[#ded8cc] px-3 py-1.5 text-xs font-semibold text-[#6a716f] transition hover:border-[#0f646a] hover:text-[#12383d]"
                       >
                         <X className="h-3.5 w-3.5" />
                         Cerrar
@@ -308,7 +308,7 @@ export default function SavedSearchSection({
                           setForm((current) => ({ ...current, comments: event.target.value }))
                         }
                         rows={4}
-                        className="resize-none rounded-lg border border-zinc-200 bg-white px-3 py-3 text-sm text-zinc-950 outline-none focus:border-zinc-700"
+                        className="resize-none rounded-lg border border-[#ded8cc] bg-white px-3 py-3 text-sm text-[#3a3a3a] outline-none focus:border-[#0f646a]"
                       />
                     </label>
 
@@ -316,7 +316,7 @@ export default function SavedSearchSection({
                       <button
                         type="submit"
                         disabled={createSavedSearch.isPending}
-                        className="inline-flex h-12 items-center justify-center gap-2 rounded-full bg-zinc-950 px-8 text-sm font-semibold text-white transition hover:bg-zinc-800 disabled:cursor-not-allowed disabled:opacity-40"
+                        className="inline-flex h-12 items-center justify-center gap-2 rounded-full bg-[#12383d] px-8 text-sm font-semibold text-white transition hover:bg-[#0f646a] disabled:cursor-not-allowed disabled:opacity-40"
                       >
                         {"Enviar búsqueda"}
                         <ArrowRight className="h-4 w-4" />
