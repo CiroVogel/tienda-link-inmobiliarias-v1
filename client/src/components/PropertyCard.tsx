@@ -23,7 +23,7 @@ function buildAttrs(property: DemoProperty): Attr[] {
   if (area) {
     attrs.push({
       key: "area",
-      icon: <Ruler className="h-4 w-4 text-zinc-400" />,
+      icon: <Ruler className="h-4 w-4 text-zinc-500" />,
       primary: `${area} m²`,
       secondary: property.areaM2 ? "superficie" : "sup. cubierta",
     });
@@ -33,14 +33,14 @@ function buildAttrs(property: DemoProperty): Attr[] {
   if (property.bedrooms) {
     attrs.push({
       key: "beds",
-      icon: <BedDouble className="h-4 w-4 text-zinc-400" />,
+      icon: <BedDouble className="h-4 w-4 text-zinc-500" />,
       primary: String(property.bedrooms),
       secondary: property.bedrooms === 1 ? "dormitorio" : "dormitorios",
     });
   } else if (property.rooms) {
     attrs.push({
       key: "rooms",
-      icon: <BedDouble className="h-4 w-4 text-zinc-400" />,
+      icon: <BedDouble className="h-4 w-4 text-zinc-500" />,
       primary: String(property.rooms),
       secondary: property.rooms === 1 ? "ambiente" : "ambientes",
     });
@@ -50,7 +50,7 @@ function buildAttrs(property: DemoProperty): Attr[] {
   if (property.bathrooms) {
     attrs.push({
       key: "baths",
-      icon: <Bath className="h-4 w-4 text-zinc-400" />,
+      icon: <Bath className="h-4 w-4 text-zinc-500" />,
       primary: String(property.bathrooms),
       secondary: property.bathrooms === 1 ? "baño" : "baños",
     });
@@ -60,7 +60,7 @@ function buildAttrs(property: DemoProperty): Attr[] {
   if (attrs.length < 3 && property.garages) {
     attrs.push({
       key: "garages",
-      icon: <Car className="h-4 w-4 text-zinc-400" />,
+      icon: <Car className="h-4 w-4 text-zinc-500" />,
       primary: String(property.garages),
       secondary: property.garages === 1 ? "cochera" : "cocheras",
     });
@@ -102,7 +102,7 @@ export function PropertyCard({ property, slug }: PropertyCardProps) {
       {/* Cuerpo */}
       <div className="flex flex-1 flex-col px-5 pb-5 pt-4">
         {/* Ubicación */}
-        <p className="mb-1.5 flex items-center gap-1.5 text-xs font-semibold uppercase tracking-[0.14em] text-zinc-400">
+        <p className="mb-1.5 flex items-center gap-1.5 text-xs font-semibold uppercase tracking-[0.14em] text-zinc-600">
           <MapPin className="h-3.5 w-3.5 shrink-0" />
           {property.location}
         </p>
@@ -116,14 +116,14 @@ export function PropertyCard({ property, slug }: PropertyCardProps) {
 
         {/* Tipo + precio en fila */}
         <div className="mt-2 flex items-baseline justify-between gap-2">
-          <p className="text-xs font-medium text-zinc-400">{property.propertyType}</p>
+          <p className="text-xs font-semibold text-zinc-500">{property.propertyType}</p>
           <p className="shrink-0 text-lg font-black text-zinc-950">{property.price}</p>
         </div>
 
         {/* Descripción — flex-1 para igualar altura entre cards */}
         {property.description ? (
           <p
-            className="mt-3 min-h-[48px] flex-1 overflow-hidden text-[0.875rem] leading-[1.65] text-zinc-600"
+            className="mt-3 min-h-[48px] flex-1 overflow-hidden text-[0.875rem] leading-[1.65] text-zinc-700"
             style={{
               display: "-webkit-box",
               WebkitLineClamp: 2,
@@ -142,7 +142,7 @@ export function PropertyCard({ property, slug }: PropertyCardProps) {
             {property.features.slice(0, 3).map((feature) => (
               <span
                 key={feature}
-                className="rounded-[4px] border border-zinc-200 bg-zinc-50 px-2 py-0.5 text-[11px] font-semibold text-zinc-600"
+                className="rounded-[4px] border border-zinc-300 bg-zinc-100 px-2 py-0.5 text-[11px] font-semibold text-zinc-700"
               >
                 {feature}
               </span>
@@ -159,7 +159,7 @@ export function PropertyCard({ property, slug }: PropertyCardProps) {
                   <div key={attr.key} className="flex flex-col items-center gap-1 px-2 first:pl-0 last:pr-0">
                     {attr.icon}
                     <span className="text-sm font-bold leading-none text-zinc-950">{attr.primary}</span>
-                    <span className="text-[11px] leading-none text-zinc-500">{attr.secondary}</span>
+                    <span className="text-[11px] leading-none text-zinc-600">{attr.secondary}</span>
                   </div>
                 ))}
               </div>
