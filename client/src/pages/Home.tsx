@@ -212,9 +212,11 @@ function ValueBlock() {
 function FeaturedProperties({
   properties,
   slug,
+  logoUrl,
 }: {
   properties: DemoProperty[];
   slug: string;
+  logoUrl?: string | null;
 }) {
   return (
     <section id="propiedades" className="bg-zinc-50 py-14 md:py-18">
@@ -239,7 +241,7 @@ function FeaturedProperties({
 
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
           {properties.map((property) => (
-            <PropertyCard key={property.id} property={property} slug={slug} />
+            <PropertyCard key={property.id} property={property} slug={slug} logoUrl={logoUrl} />
           ))}
         </div>
       </div>
@@ -550,7 +552,7 @@ export default function Home({ forcedSlug }: HomeProps) {
       />
       <ValueBlock />
       <AboutSection ownerName={ownerName} ownerTitle={ownerTitle} ownerBio={ownerBio} />
-      <FeaturedProperties properties={featuredCards} slug={slug} />
+      <FeaturedProperties properties={featuredCards} slug={slug} logoUrl={brandImageUrl} />
       <section className="bg-white py-10">
         <div className="mx-auto flex max-w-6xl flex-col gap-4 px-5 sm:flex-row sm:items-center sm:justify-between">
           <p className="text-sm text-zinc-600">
