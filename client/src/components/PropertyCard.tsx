@@ -1,4 +1,4 @@
-import { Bath, BedDouble, MapPin, Ruler, Tag } from "lucide-react";
+import { Bath, BedDouble, Car, MapPin, Ruler, Tag } from "lucide-react";
 import { Link } from "wouter";
 import {
   DemoProperty,
@@ -13,25 +13,68 @@ type PropertyCardProps = {
   slug: string;
 };
 
+type Attr = { key: string; icon: React.ReactNode; primary: string; secondary: string };
+
+function buildAttrs(property: DemoProperty): Attr[] {
+  const attrs: Attr[] = [];
+
+  // Superficie: priorizar areaM2, fallback coveredAreaM2
+  const area = property.areaM2 ?? property.coveredAreaM2 ?? null;
+  if (area) {
+    attrs.push({
+      key: "area",
+      icon: <Ruler className="h-4 w-4 text-zinc-400" />,
+      primary: `${area} m²`,
+      secondary: property.areaM2 ? "superficie" : "sup. cubierta",
+    });
+  }
+
+  // Dormitorios o ambientes (solo residencial/mixto)
+  if (property.bedrooms) {
+    attrs.push({
+      key: "beds",
+      icon: <BedDouble className="h-4 w-4 text-zinc-400" />,
+      primary: String(property.bedrooms),
+      secondary: property.bedrooms === 1 ? "dormitorio" : "dormitorios",
+    });
+  } else if (property.rooms) {
+    attrs.push({
+      key: "rooms",
+      icon: <BedDouble className="h-4 w-4 text-zinc-400" />,
+      primary: String(property.rooms),
+      secondary: property.rooms === 1 ? "ambiente" : "ambientes",
+    });
+  }
+
+  // Baños
+  if (property.bathrooms) {
+    attrs.push({
+      key: "baths",
+      icon: <Bath className="h-4 w-4 text-zinc-400" />,
+      primary: String(property.bathrooms),
+      secondary: property.bathrooms === 1 ? "baño" : "baños",
+    });
+  }
+
+  // Cochera — rellena slot si hay espacio (lotes, dúplex, casas)
+  if (attrs.length < 3 && property.garages) {
+    attrs.push({
+      key: "garages",
+      icon: <Car className="h-4 w-4 text-zinc-400" />,
+      primary: String(property.garages),
+      secondary: property.garages === 1 ? "cochera" : "cocheras",
+    });
+  }
+
+  return attrs.slice(0, 3);
+}
+
 export function PropertyCard({ property, slug }: PropertyCardProps) {
   const requestable = isPropertyRequestable(property);
   const coverImage = getPropertyCoverImage(property);
-
-  const area = property.areaM2 ?? property.coveredAreaM2 ?? null;
-  const bed = property.bedrooms || property.rooms || null;
-  const bedLabel =
-    property.bedrooms
-      ? property.bedrooms === 1
-        ? "dormitorio"
-        : "dormitorios"
-      : property.rooms === 1
-        ? "ambiente"
-        : "ambientes";
-  const bath = property.bathrooms || null;
-
-  const attrCount = [area, bed, bath].filter(Boolean).length;
+  const attrs = buildAttrs(property);
   const attrGridCols =
-    attrCount >= 3 ? "grid-cols-3" : attrCount === 2 ? "grid-cols-2" : "grid-cols-1";
+    attrs.length >= 3 ? "grid-cols-3" : attrs.length === 2 ? "grid-cols-2" : "grid-cols-1";
 
   return (
     <article className="group flex h-full flex-col overflow-hidden rounded-[8px] border border-zinc-200 bg-white shadow-[0_10px_30px_rgba(23,23,23,0.04)] transition hover:-translate-y-0.5 hover:border-zinc-300 hover:shadow-[0_14px_34px_rgba(23,23,23,0.08)]">
@@ -71,13 +114,13 @@ export function PropertyCard({ property, slug }: PropertyCardProps) {
           </h3>
         </Link>
 
-        {/* Tipo + precio en la misma fila */}
+        {/* Tipo + precio en fila */}
         <div className="mt-2 flex items-baseline justify-between gap-2">
           <p className="text-xs font-medium text-zinc-400">{property.propertyType}</p>
           <p className="shrink-0 text-lg font-black text-zinc-950">{property.price}</p>
         </div>
 
-        {/* Descripción — igual que Construcción: flex-1 + clamp 2 líneas */}
+        {/* Descripción — flex-1 para igualar altura entre cards */}
         {property.description ? (
           <p
             className="mt-3 min-h-[48px] flex-1 overflow-hidden text-[0.875rem] leading-[1.65] text-zinc-600"
@@ -93,7 +136,7 @@ export function PropertyCard({ property, slug }: PropertyCardProps) {
           <div className="flex-1" />
         )}
 
-        {/* Chips de características — máximo 3, solo si existen */}
+        {/* Chips de características — máximo 3 */}
         {property.features.length > 0 ? (
           <div className="mt-3 flex flex-wrap gap-1.5">
             {property.features.slice(0, 3).map((feature) => (
@@ -109,51 +152,36 @@ export function PropertyCard({ property, slug }: PropertyCardProps) {
 
         {/* Sección inferior: atributos + botones */}
         <div className="mt-auto">
-          {attrCount > 0 ? (
+          {attrs.length > 0 ? (
             <div className="mt-4 border-t border-zinc-100 pt-3">
               <div className={`grid ${attrGridCols} divide-x divide-zinc-200 text-center`}>
-                {area ? (
-                  <div className="flex flex-col items-center gap-1 px-2 first:pl-0 last:pr-0">
-                    <Ruler className="h-4 w-4 text-zinc-400" />
-                    <span className="text-sm font-bold leading-none text-zinc-950">{area} m²</span>
-                    <span className="text-[11px] leading-none text-zinc-500">superficie</span>
+                {attrs.map((attr) => (
+                  <div key={attr.key} className="flex flex-col items-center gap-1 px-2 first:pl-0 last:pr-0">
+                    {attr.icon}
+                    <span className="text-sm font-bold leading-none text-zinc-950">{attr.primary}</span>
+                    <span className="text-[11px] leading-none text-zinc-500">{attr.secondary}</span>
                   </div>
-                ) : null}
-                {bed ? (
-                  <div className="flex flex-col items-center gap-1 px-2 first:pl-0 last:pr-0">
-                    <BedDouble className="h-4 w-4 text-zinc-400" />
-                    <span className="text-sm font-bold leading-none text-zinc-950">{bed}</span>
-                    <span className="text-[11px] leading-none text-zinc-500">{bedLabel}</span>
-                  </div>
-                ) : null}
-                {bath ? (
-                  <div className="flex flex-col items-center gap-1 px-2 first:pl-0 last:pr-0">
-                    <Bath className="h-4 w-4 text-zinc-400" />
-                    <span className="text-sm font-bold leading-none text-zinc-950">{bath}</span>
-                    <span className="text-[11px] leading-none text-zinc-500">
-                      {bath === 1 ? "baño" : "baños"}
-                    </span>
-                  </div>
-                ) : null}
+                ))}
               </div>
             </div>
           ) : null}
 
-          <div className="mt-4 flex flex-col gap-2.5 sm:flex-row">
-            <Link href={`/${slug}/propiedades/${property.id}`} className="sm:flex-1">
+          {/* Botones — siempre en fila, whitespace-nowrap en "Solicitar visita" */}
+          <div className="mt-4 flex gap-2">
+            <Link href={`/${slug}/propiedades/${property.id}`} className="min-w-0 flex-1">
               <span className="inline-flex h-10 w-full items-center justify-center gap-2 rounded-[5px] bg-zinc-950 px-4 text-xs font-black uppercase tracking-[0.12em] text-white shadow-sm transition hover:bg-zinc-800">
                 Ver ficha
-                <Tag className="h-3.5 w-3.5" />
+                <Tag className="h-3.5 w-3.5 shrink-0" />
               </span>
             </Link>
             {requestable ? (
-              <Link href={`/${slug}/solicitar-visita/${property.id}`} className="sm:flex-1">
-                <span className="inline-flex h-10 w-full items-center justify-center rounded-[5px] border border-zinc-300 bg-white px-4 text-xs font-black uppercase tracking-[0.12em] text-zinc-950 transition hover:border-zinc-400">
+              <Link href={`/${slug}/solicitar-visita/${property.id}`} className="shrink-0">
+                <span className="inline-flex h-10 items-center justify-center whitespace-nowrap rounded-[5px] border border-zinc-300 bg-white px-3 text-xs font-black uppercase tracking-[0.12em] text-zinc-950 transition hover:border-zinc-400">
                   Solicitar visita
                 </span>
               </Link>
             ) : (
-              <span className="inline-flex h-10 flex-1 items-center justify-center rounded-[5px] border border-zinc-200 text-xs font-bold uppercase tracking-[0.12em] text-zinc-400">
+              <span className="inline-flex h-10 shrink-0 items-center justify-center whitespace-nowrap rounded-[5px] border border-zinc-200 px-3 text-xs font-bold uppercase tracking-[0.12em] text-zinc-400">
                 No disponible
               </span>
             )}
