@@ -334,7 +334,7 @@ export default function AdminProfile() {
 
           <section className="bg-white p-6 rounded-2xl border border-slate-200">
             <h2 className="text-sm font-semibold text-slate-900 uppercase tracking-wide mb-5">
-              Información de la inmobiliaria
+              Portada principal
             </h2>
 
             <div className="space-y-4">
@@ -383,7 +383,7 @@ export default function AdminProfile() {
 
               <div>
                 <Label className="text-sm font-medium text-slate-700 mb-2 block">
-                  Frase principal (tagline)
+                  Frase destacada de la portada
                 </Label>
                 <Input
                   value={getValue("tagline")}
@@ -395,7 +395,7 @@ export default function AdminProfile() {
 
               <div>
                 <Label className="text-sm font-medium text-slate-700 mb-2 block">
-                  Descripción de la inmobiliaria
+                  Texto breve de la portada
                 </Label>
                 <textarea
                   value={getValue("description")}
@@ -404,20 +404,23 @@ export default function AdminProfile() {
                   className="w-full rounded-xl border border-slate-200 bg-white px-3 py-2.5 text-sm placeholder:text-slate-400 focus:outline-none focus:border-[#1A2744] focus:ring-2 focus:ring-[#1A2744]/10 resize-none"
                   rows={3}
                 />
+                <p className="text-xs text-slate-500 mt-1 leading-relaxed">
+                  Se muestra debajo de la frase principal en la imagen de portada.
+                </p>
               </div>
             </div>
           </section>
 
           <section className="bg-white p-6 rounded-2xl border border-slate-200">
             <h2 className="text-sm font-semibold text-slate-900 uppercase tracking-wide mb-5">
-              Presentación institucional
+              Sobre la inmobiliaria
             </h2>
 
             <div className="space-y-4">
               <div className="grid sm:grid-cols-2 gap-4">
                 <div>
                   <Label className="text-sm font-medium text-slate-700 mb-2 block">
-                    Responsable o equipo
+                    Firma o equipo (opcional)
                   </Label>
                   <Input
                     value={getValue("ownerName")}
@@ -425,11 +428,14 @@ export default function AdminProfile() {
                     placeholder="Ej: Equipo comercial"
                     className="border-slate-200 focus-visible:border-[#1A2744] focus-visible:ring-[#1A2744]/15"
                   />
+                  <p className="text-xs text-slate-500 mt-1 leading-relaxed">
+                    Se muestra al final de la presentación.
+                  </p>
                 </div>
 
                 <div>
                   <Label className="text-sm font-medium text-slate-700 mb-2 block">
-                    Rol o enfoque
+                    Enfoque o especialidad (opcional)
                   </Label>
                   <Input
                     value={getValue("ownerTitle")}
@@ -437,12 +443,15 @@ export default function AdminProfile() {
                     placeholder="Ej: Tasaciones, ventas y alquileres"
                     className="border-slate-200 focus-visible:border-[#1A2744] focus-visible:ring-[#1A2744]/15"
                   />
+                  <p className="text-xs text-slate-500 mt-1 leading-relaxed">
+                    Se muestra encima del texto de presentación.
+                  </p>
                 </div>
               </div>
 
               <div>
                 <Label className="text-sm font-medium text-slate-700 mb-2 block">
-                  Presentación
+                  Texto de presentación
                 </Label>
                 <textarea
                   value={getValue("ownerBio")}
@@ -451,6 +460,9 @@ export default function AdminProfile() {
                   className="w-full rounded-xl border border-slate-200 bg-white px-3 py-2.5 text-sm placeholder:text-slate-400 focus:outline-none focus:border-[#1A2744] focus:ring-2 focus:ring-[#1A2744]/10 resize-none"
                   rows={4}
                 />
+                <p className="text-xs text-slate-500 mt-1 leading-relaxed">
+                  Se muestra en la sección "Sobre la inmobiliaria", debajo de la portada.
+                </p>
               </div>
             </div>
           </section>
