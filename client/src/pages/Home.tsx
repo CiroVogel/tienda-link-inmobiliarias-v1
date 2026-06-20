@@ -133,13 +133,13 @@ function Hero({
           </h1>
 
           {tagline ? (
-            <p className="mt-5 max-w-2xl text-2xl font-medium leading-tight text-white/90 sm:text-3xl">
+            <p className="mt-5 max-w-xl text-lg font-medium leading-snug text-white/75 sm:text-xl">
               {tagline}
             </p>
           ) : null}
 
           {description ? (
-            <p className="mt-5 max-w-xl text-base leading-8 text-white/84 sm:text-lg">
+            <p className="mt-4 max-w-md text-sm leading-7 text-white/60">
               {description}
             </p>
           ) : null}
@@ -192,22 +192,13 @@ function FeaturedProperties({
   return (
     <section id="propiedades" className="bg-[#f7f5ef] py-14 md:py-18">
       <div className="mx-auto max-w-[1440px] px-5 lg:px-10">
-        <div className="mb-8 flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
-          <div>
-            <p className="mb-3 text-xs font-bold uppercase tracking-[0.18em] text-[#6a716f]">
-              Destacadas
-            </p>
-            <h2 className="text-4xl font-black tracking-tight text-zinc-950">
-              Propiedades disponibles y recientes
-            </h2>
-          </div>
-
-          <Link href={`/${slug}/propiedades`}>
-            <span className="inline-flex items-center gap-2 text-xs font-black uppercase tracking-[0.16em] text-zinc-950">
-              Ver listado completo
-              <ArrowRight className="h-4 w-4" />
-            </span>
-          </Link>
+        <div className="mb-8">
+          <p className="mb-3 text-xs font-bold uppercase tracking-[0.18em] text-[#6a716f]">
+            Destacadas
+          </p>
+          <h2 className="text-4xl font-black tracking-tight text-zinc-950">
+            Propiedades
+          </h2>
         </div>
 
         <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
@@ -288,7 +279,7 @@ function HowItWorks({ slug }: { slug: string }) {
   ];
 
   return (
-    <section id="como-funciona" className="bg-[#f7f5ef] py-14 md:py-18 border-b border-[#ded8cc]">
+    <section id="como-funciona" className="bg-[#f7f5ef] pt-14 pb-8 md:pt-16 md:pb-10 border-b border-[#ded8cc]">
       <div className="mx-auto max-w-[1440px] px-5 lg:px-10">
         <div className="mb-8 max-w-2xl">
           <p className="mb-3 text-xs font-bold uppercase tracking-[0.18em] text-[#6a716f]">
@@ -614,8 +605,6 @@ export default function Home({ forcedSlug }: HomeProps) {
   const featuredCards =
     featuredProperties.length > 0 ? featuredProperties : properties.slice(0, 3);
   const heroProperty = featuredProperties[0] ?? properties[0];
-  const visibleCount = properties.length;
-
   return (
     <div className="min-h-screen bg-[#f7f5ef]">
       <Header slug={slug} businessName={businessName} brandImageUrl={brandImageUrl} />
@@ -631,12 +620,8 @@ export default function Home({ forcedSlug }: HomeProps) {
       />
       <AboutSection businessName={businessName} ownerName={ownerName} ownerTitle={ownerTitle} ownerBio={ownerBio} />
       <FeaturedProperties properties={featuredCards} slug={slug} logoUrl={brandImageUrl} businessName={businessName} instagram={instagram} facebook={facebook} />
-      <section className="bg-[#fffdf8] py-10">
-        <div className="mx-auto flex max-w-[1440px] flex-col gap-4 px-5 sm:flex-row sm:items-center sm:justify-between lg:px-10">
-          <p className="text-sm text-[#3a3a3a]">
-            {visibleCount} propiedades publicadas entre venta, alquiler y
-            operaciones recientes.
-          </p>
+      <section className="bg-[#fffdf8] py-5">
+        <div className="mx-auto flex max-w-[1440px] justify-end px-5 lg:px-10">
           <Link href={`/${slug}/propiedades`}>
             <span className="inline-flex items-center gap-2 text-xs font-black uppercase tracking-[0.16em] text-zinc-950">
               Ir al listado
@@ -648,7 +633,7 @@ export default function Home({ forcedSlug }: HomeProps) {
       <HowItWorks slug={slug} />
       <PublicSavedSearchSection
         slug={slug}
-        className="bg-[#f7f5ef] py-14 md:py-18"
+        className="bg-[#f7f5ef] pt-8 pb-14 md:pt-10 md:pb-18"
       />
       <Closing
         slug={slug}
