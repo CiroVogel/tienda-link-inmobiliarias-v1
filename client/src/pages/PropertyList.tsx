@@ -67,6 +67,8 @@ export default function PropertyList() {
 
   const brandImageUrl =
     publicProfile?.logoUrl?.trim() || publicProfile?.ownerImageUrl?.trim() || null;
+  const instagram = publicProfile?.instagram?.trim() || "";
+  const facebook = publicProfile?.facebook?.trim() || "";
   const filteredProperties = useMemo(
     () =>
       properties.filter((property) => {
@@ -182,7 +184,7 @@ export default function PropertyList() {
         {filteredProperties.length > 0 ? (
           <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
             {filteredProperties.map((property) => (
-              <PropertyCard key={property.id} property={property} slug={safeSlug} logoUrl={brandImageUrl} />
+              <PropertyCard key={property.id} property={property} slug={safeSlug} logoUrl={brandImageUrl} businessName={businessName} instagram={instagram} facebook={facebook} />
             ))}
           </div>
         ) : (

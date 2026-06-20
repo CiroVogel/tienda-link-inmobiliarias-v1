@@ -213,10 +213,16 @@ function FeaturedProperties({
   properties,
   slug,
   logoUrl,
+  businessName,
+  instagram,
+  facebook,
 }: {
   properties: DemoProperty[];
   slug: string;
   logoUrl?: string | null;
+  businessName?: string | null;
+  instagram?: string | null;
+  facebook?: string | null;
 }) {
   return (
     <section id="propiedades" className="bg-zinc-50 py-14 md:py-18">
@@ -241,7 +247,7 @@ function FeaturedProperties({
 
         <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
           {properties.map((property) => (
-            <PropertyCard key={property.id} property={property} slug={slug} logoUrl={logoUrl} />
+            <PropertyCard key={property.id} property={property} slug={slug} logoUrl={logoUrl} businessName={businessName} instagram={instagram} facebook={facebook} />
           ))}
         </div>
       </div>
@@ -525,6 +531,7 @@ export default function Home({ forcedSlug }: HomeProps) {
   const instagram = publicProfile
     ? publicProfile.instagram?.trim() || ""
     : realEstateProfile.instagram;
+  const facebook = publicProfile?.facebook?.trim() || "";
   const ownerName = publicProfile ? publicProfile.ownerName?.trim() || "" : "";
   const ownerTitle = publicProfile ? publicProfile.ownerTitle?.trim() || "" : "";
   const ownerBio = publicProfile ? publicProfile.ownerBio?.trim() || "" : "";
@@ -552,7 +559,7 @@ export default function Home({ forcedSlug }: HomeProps) {
       />
       <ValueBlock />
       <AboutSection ownerName={ownerName} ownerTitle={ownerTitle} ownerBio={ownerBio} />
-      <FeaturedProperties properties={featuredCards} slug={slug} logoUrl={brandImageUrl} />
+      <FeaturedProperties properties={featuredCards} slug={slug} logoUrl={brandImageUrl} businessName={businessName} instagram={instagram} facebook={facebook} />
       <section className="bg-white py-10">
         <div className="mx-auto flex max-w-6xl flex-col gap-4 px-5 sm:flex-row sm:items-center sm:justify-between">
           <p className="text-sm text-zinc-600">

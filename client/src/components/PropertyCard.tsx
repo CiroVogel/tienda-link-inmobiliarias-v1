@@ -1,12 +1,12 @@
-import { Fragment } from "react";
 import type { ReactNode } from "react";
 import {
   Bath,
   BedDouble,
   CalendarDays,
   Car,
-  CheckCircle2,
   ChevronRight,
+  Facebook,
+  Instagram,
   MapPin,
   Ruler,
 } from "lucide-react";
@@ -24,6 +24,9 @@ type PropertyCardProps = {
   property: DemoProperty;
   slug: string;
   logoUrl?: string | null;
+  businessName?: string | null;
+  instagram?: string | null;
+  facebook?: string | null;
 };
 
 type Attr = { key: string; icon: ReactNode; primary: string; secondary: string };
@@ -35,7 +38,7 @@ function getOperationPriceLabel(operation: PropertyOperation): string {
 function buildAttrs(property: DemoProperty): Attr[] {
   const attrs: Attr[] = [];
 
-  // Slot 1: Superficie
+  // Slot 1: Superficie — areaM2 con fallback a coveredAreaM2
   const area = property.areaM2 ?? property.coveredAreaM2 ?? null;
   if (area) {
     attrs.push({
@@ -63,7 +66,7 @@ function buildAttrs(property: DemoProperty): Attr[] {
     });
   }
 
-  // Slot 3: Baños (independiente de cocheras)
+  // Slot 3: Baños con fallback a cocheras
   if (property.bathrooms) {
     attrs.push({
       key: "baths",
@@ -71,10 +74,7 @@ function buildAttrs(property: DemoProperty): Attr[] {
       primary: String(property.bathrooms),
       secondary: property.bathrooms === 1 ? "Baño" : "Baños",
     });
-  }
-
-  // Slot 4: Cocheras (slot independiente)
-  if (property.garages) {
+  } else if (property.garages) {
     attrs.push({
       key: "garages",
       icon: <Car className="h-5 w-5" />,
@@ -86,25 +86,11 @@ function buildAttrs(property: DemoProperty): Attr[] {
   return attrs;
 }
 
-function buildStrip(property: DemoProperty): string[] {
-  const source =
-    property.detailedFeatures && property.detailedFeatures.length > 0
-      ? property.detailedFeatures
-      : property.features;
-  return Array.from(new Set(source)).slice(0, 2);
-}
-
 function TechnicalAttrRow({ attrs }: { attrs: Attr[] }) {
   if (!attrs.length) return null;
 
   const colsClass =
-    attrs.length === 4
-      ? "grid-cols-4"
-      : attrs.length === 3
-        ? "grid-cols-3"
-        : attrs.length === 2
-          ? "grid-cols-2"
-          : "grid-cols-1";
+    attrs.length === 3 ? "grid-cols-3" : attrs.length === 2 ? "grid-cols-2" : "grid-cols-1";
 
   return (
     <div className="mt-5 border-t border-zinc-200 pt-4">
@@ -139,11 +125,22 @@ function TechnicalAttrRow({ attrs }: { attrs: Attr[] }) {
   );
 }
 
-export function PropertyCard({ property, slug, logoUrl }: PropertyCardProps) {
+export function PropertyCard({
+  property,
+  slug,
+  logoUrl,
+  businessName,
+  instagram,
+  facebook,
+}: PropertyCardProps) {
   const requestable = isPropertyRequestable(property);
   const coverImage = getPropertyCoverImage(property);
   const attrs = buildAttrs(property);
-  const strip = buildStrip(property);
+
+  const name = businessName?.trim() || null;
+  const igUrl = instagram?.trim() || null;
+  const fbUrl = facebook?.trim() || null;
+  const hasIdentityStrip = Boolean(name);
 
   return (
     <article className="group flex h-full flex-col overflow-hidden rounded-[8px] border border-zinc-200 bg-white shadow-[0_10px_30px_rgba(23,23,23,0.04)] transition hover:-translate-y-0.5 hover:border-zinc-300 hover:shadow-[0_14px_34px_rgba(23,23,23,0.08)]">
@@ -165,7 +162,7 @@ export function PropertyCard({ property, slug, logoUrl }: PropertyCardProps) {
             </span>
           </div>
 
-          {/* Badge de estado — solo si no disponible, esquina superior derecha */}
+          {/* Badge de estado — solo si no disponible */}
           {property.status !== "available" ? (
             <div className="absolute right-3 top-3">
               <span className="rounded-full bg-zinc-900/85 px-2.5 py-1 text-[10px] font-black uppercase tracking-[0.12em] text-white shadow-sm backdrop-blur-sm">
@@ -174,7 +171,7 @@ export function PropertyCard({ property, slug, logoUrl }: PropertyCardProps) {
             </div>
           ) : null}
 
-          {/* Logo de inmobiliaria — solo si existe, esquina inferior izquierda */}
+          {/* Logo de inmobiliaria — solo si existe */}
           {logoUrl ? (
             <div className="absolute bottom-3 left-3">
               <div className="rounded-[4px] bg-white px-3 py-2 shadow-[0_2px_8px_rgba(0,0,0,0.18)]">
@@ -192,30 +189,30 @@ export function PropertyCard({ property, slug, logoUrl }: PropertyCardProps) {
 
       {/* Cuerpo */}
       <div className="flex flex-1 flex-col px-5 pb-5 pt-4">
-        {/* Cabecera: título + tipo + ubicación izquierda / precio derecha */}
-        <div className="flex items-start gap-3">
-          <div className="min-w-0 flex-1">
-            <Link href={`/${slug}/propiedades/${property.id}`}>
-              <h3 className="line-clamp-2 text-[1.15rem] font-bold leading-tight text-zinc-950 transition group-hover:text-zinc-700">
-                {property.title}
-              </h3>
-            </Link>
-            <p className="mt-1 text-[0.8rem] font-medium text-zinc-500">
-              {property.propertyType}
-            </p>
-            <div className="mt-1 flex items-center gap-1 text-[0.8rem] font-medium text-zinc-500">
-              <MapPin className="h-3.5 w-3.5 shrink-0" />
-              <span className="truncate">{property.location}</span>
-            </div>
-          </div>
-          <div className="w-[118px] shrink-0 text-right">
+        {/* Título — ancho completo, hasta dos líneas */}
+        <Link href={`/${slug}/propiedades/${property.id}`}>
+          <h3 className="line-clamp-2 text-[1.15rem] font-bold leading-tight text-zinc-950 transition group-hover:text-zinc-700">
+            {property.title}
+          </h3>
+        </Link>
+
+        {/* Tipo de propiedad (izquierda) + Precio (derecha) */}
+        <div className="mt-2 flex items-start justify-between gap-3">
+          <p className="text-[0.8rem] font-medium text-zinc-500">{property.propertyType}</p>
+          <div className="shrink-0 text-right">
             <p className="text-[10px] font-semibold uppercase leading-none tracking-wide text-zinc-400">
               {getOperationPriceLabel(property.operation)}
             </p>
-            <p className="mt-1 text-xl font-black leading-tight text-zinc-950">
+            <p className="mt-0.5 text-lg font-black leading-tight text-zinc-950">
               {property.price}
             </p>
           </div>
+        </div>
+
+        {/* Ubicación */}
+        <div className="mt-1 flex items-center gap-1 text-[0.8rem] font-medium text-zinc-500">
+          <MapPin className="h-3.5 w-3.5 shrink-0" />
+          <span className="truncate">{property.location}</span>
         </div>
 
         {/* Descripción — 2 líneas máx, min-h para alinear cards en grid */}
@@ -252,20 +249,38 @@ export function PropertyCard({ property, slug, logoUrl }: PropertyCardProps) {
             )}
           </div>
 
-          {/* Franja inferior de diferenciales — detailedFeatures primero, fallback features */}
-          {strip.length > 0 ? (
-            <div className="mt-4 flex items-center justify-center border-t border-zinc-100 pt-3">
-              {strip.map((item, index) => (
-                <Fragment key={item}>
-                  {index > 0 ? (
-                    <span className="mx-3 h-3.5 w-px shrink-0 bg-zinc-300" aria-hidden="true" />
+          {/* Franja de identidad — nombre e redes reales de la inmobiliaria */}
+          {hasIdentityStrip ? (
+            <div className="mt-4 flex items-center justify-between border-t border-zinc-100 pt-3">
+              <span className="truncate text-[11px] font-semibold text-zinc-600">{name}</span>
+              {igUrl || fbUrl ? (
+                <div className="ml-3 flex shrink-0 items-center gap-2.5">
+                  {igUrl ? (
+                    <a
+                      href={igUrl}
+                      target="_blank"
+                      rel="noreferrer"
+                      aria-label="Instagram"
+                      className="text-zinc-400 transition hover:text-zinc-700"
+                      onClick={(e) => e.stopPropagation()}
+                    >
+                      <Instagram className="h-3.5 w-3.5" />
+                    </a>
                   ) : null}
-                  <span className="inline-flex items-center gap-1.5 text-[11px] font-semibold text-zinc-600">
-                    <CheckCircle2 className="h-3.5 w-3.5 shrink-0 text-zinc-400" />
-                    {item}
-                  </span>
-                </Fragment>
-              ))}
+                  {fbUrl ? (
+                    <a
+                      href={fbUrl}
+                      target="_blank"
+                      rel="noreferrer"
+                      aria-label="Facebook"
+                      className="text-zinc-400 transition hover:text-zinc-700"
+                      onClick={(e) => e.stopPropagation()}
+                    >
+                      <Facebook className="h-3.5 w-3.5" />
+                    </a>
+                  ) : null}
+                </div>
+              ) : null}
             </div>
           ) : null}
         </div>
