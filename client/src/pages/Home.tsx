@@ -212,12 +212,10 @@ function FeaturedProperties({
 }
 
 function AboutSection({
-  businessName,
   ownerName,
   ownerTitle,
   ownerBio,
 }: {
-  businessName: string;
   ownerName: string;
   ownerTitle: string;
   ownerBio: string;
@@ -225,34 +223,34 @@ function AboutSection({
   if (!ownerName && !ownerTitle && !ownerBio) return null;
 
   return (
-    <section className="border-b border-[#ece6dd] bg-[#fffdf8] py-14">
+    <section className="border-b border-[#ded8cc] bg-[#fffdf8] py-12 sm:py-14">
       <div className="mx-auto max-w-[1440px] px-5 lg:px-10">
-        <div className="grid gap-10 md:grid-cols-[1fr_1.6fr] md:gap-20">
+        <div className="grid gap-8 md:grid-cols-[0.44fr_1fr] md:gap-12">
           <div>
-            <p className="mb-5 text-xs font-bold uppercase tracking-[0.18em] text-[#6a716f]">
+            <p className="text-xs font-bold uppercase tracking-[0.18em] text-[#12383d]">
               Sobre la inmobiliaria
             </p>
-            <h2 className="text-4xl font-black leading-tight tracking-tight text-zinc-950 md:text-5xl">
-              {businessName}
+            <h2 className="mt-2 text-3xl font-bold leading-tight tracking-tight text-[#182125] md:text-[2.2rem]">
+              Quiénes somos
             </h2>
-          </div>
-          <div className="flex flex-col justify-center">
             {ownerTitle ? (
-              <p className="mb-4 text-xs font-bold uppercase tracking-[0.18em] text-[#6a716f]">
+              <p className="mt-3 text-sm font-medium text-[#6a716f]">
                 {ownerTitle}
               </p>
             ) : null}
+          </div>
+          <article className="border-l-2 border-[#ded8cc] pl-5 sm:pl-7">
             {ownerBio ? (
-              <p className="max-w-2xl text-[1.05rem] leading-8 text-[#3a3a3a]">
+              <p className="break-words text-[1.05rem] leading-8 text-[#3a3a3a]">
                 {ownerBio}
               </p>
             ) : null}
             {ownerName ? (
-              <p className={`text-sm font-semibold text-zinc-950${ownerBio ? " mt-6" : ""}`}>
+              <p className={`text-sm font-semibold text-[#6a716f]${ownerBio ? " mt-6" : ""}`}>
                 {ownerName}
               </p>
             ) : null}
-          </div>
+          </article>
         </div>
       </div>
     </section>
@@ -618,7 +616,7 @@ export default function Home({ forcedSlug }: HomeProps) {
         whatsapp={whatsapp}
         heroImageUrl={publicProfile?.heroImageUrl}
       />
-      <AboutSection businessName={businessName} ownerName={ownerName} ownerTitle={ownerTitle} ownerBio={ownerBio} />
+      <AboutSection ownerName={ownerName} ownerTitle={ownerTitle} ownerBio={ownerBio} />
       <FeaturedProperties properties={featuredCards} slug={slug} logoUrl={brandImageUrl} businessName={businessName} instagram={instagram} facebook={facebook} />
       <section className="bg-[#fffdf8] py-5">
         <div className="mx-auto flex max-w-[1440px] justify-end px-5 lg:px-10">
