@@ -1,7 +1,6 @@
 ﻿import {
   ArrowRight,
   Building2,
-  CheckCircle2,
   HomeIcon,
   Instagram,
   Mail,
@@ -177,37 +176,6 @@ function Hero({
   );
 }
 
-function ValueBlock() {
-  const values = [
-    "Precio, zona, operación y estado visibles desde el primer vistazo.",
-    "Fotos, medidas y características reunidas para comparar con calma.",
-    "Solicitud de visita directa para coordinar una fecha posible.",
-  ];
-
-  return (
-    <section className="border-y border-zinc-200 bg-white py-12">
-      <div className="mx-auto grid max-w-[1440px] gap-8 px-5 md:grid-cols-[0.8fr_1.2fr] lg:px-10">
-        <div>
-          <p className="mb-3 text-xs font-bold uppercase tracking-[0.18em] text-zinc-500">
-            Buscar con claridad
-          </p>
-          <h2 className="text-3xl font-black leading-tight tracking-tight text-zinc-950 md:text-4xl">
-            Información ordenada para elegir la próxima visita.
-          </h2>
-        </div>
-
-        <div className="grid gap-3 sm:grid-cols-3">
-          {values.map((value) => (
-            <div key={value} className="border border-zinc-200 bg-zinc-50 p-5">
-              <CheckCircle2 className="mb-4 h-5 w-5 text-zinc-950" />
-              <p className="text-sm leading-6 text-zinc-700">{value}</p>
-            </div>
-          ))}
-        </div>
-      </div>
-    </section>
-  );
-}
 
 function FeaturedProperties({
   properties,
@@ -256,10 +224,12 @@ function FeaturedProperties({
 }
 
 function AboutSection({
+  businessName,
   ownerName,
   ownerTitle,
   ownerBio,
 }: {
+  businessName: string;
   ownerName: string;
   ownerTitle: string;
   ownerBio: string;
@@ -267,26 +237,31 @@ function AboutSection({
   if (!ownerName && !ownerTitle && !ownerBio) return null;
 
   return (
-    <section className="bg-white py-12 border-b border-zinc-100">
+    <section className="border-b border-zinc-100 bg-white py-14">
       <div className="mx-auto max-w-[1440px] px-5 lg:px-10">
-        <p className="mb-5 text-xs font-bold uppercase tracking-[0.18em] text-zinc-500">
-          Sobre la inmobiliaria
-        </p>
-        <div className="rounded-2xl border border-zinc-200 bg-zinc-50 p-8 md:p-10">
-          <div className="max-w-3xl">
-            {ownerName ? (
-              <h2 className="text-2xl font-black tracking-tight text-zinc-950">
-                {ownerName}
-              </h2>
-            ) : null}
+        <div className="grid gap-10 md:grid-cols-[1fr_1.6fr] md:gap-20">
+          <div>
+            <p className="mb-5 text-xs font-bold uppercase tracking-[0.18em] text-zinc-500">
+              Sobre la inmobiliaria
+            </p>
+            <h2 className="text-4xl font-black leading-tight tracking-tight text-zinc-950 md:text-5xl">
+              {businessName}
+            </h2>
+          </div>
+          <div className="flex flex-col justify-center">
             {ownerTitle ? (
-              <p className={`text-sm font-medium uppercase tracking-[0.14em] text-zinc-500${ownerName ? " mt-2" : ""}`}>
+              <p className="mb-4 text-xs font-bold uppercase tracking-[0.18em] text-zinc-500">
                 {ownerTitle}
               </p>
             ) : null}
             {ownerBio ? (
-              <p className={`text-base leading-8 text-zinc-700${ownerName || ownerTitle ? " mt-5" : ""}`}>
+              <p className="max-w-2xl text-[1.05rem] leading-8 text-zinc-700">
                 {ownerBio}
+              </p>
+            ) : null}
+            {ownerName ? (
+              <p className={`text-sm font-semibold text-zinc-950${ownerBio ? " mt-6" : ""}`}>
+                {ownerName}
               </p>
             ) : null}
           </div>
@@ -557,8 +532,7 @@ export default function Home({ forcedSlug }: HomeProps) {
         whatsapp={whatsapp}
         heroImageUrl={publicProfile?.heroImageUrl}
       />
-      <ValueBlock />
-      <AboutSection ownerName={ownerName} ownerTitle={ownerTitle} ownerBio={ownerBio} />
+      <AboutSection businessName={businessName} ownerName={ownerName} ownerTitle={ownerTitle} ownerBio={ownerBio} />
       <FeaturedProperties properties={featuredCards} slug={slug} logoUrl={brandImageUrl} businessName={businessName} instagram={instagram} facebook={facebook} />
       <section className="bg-white py-10">
         <div className="mx-auto flex max-w-[1440px] flex-col gap-4 px-5 sm:flex-row sm:items-center sm:justify-between lg:px-10">
