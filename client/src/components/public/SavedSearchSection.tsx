@@ -118,7 +118,7 @@ export default function SavedSearchSection({
               <button
                 type="button"
                 onClick={() => setIsOpen(true)}
-                className="mt-6 inline-flex items-center gap-2 bg-zinc-950 px-6 py-4 text-xs font-black uppercase tracking-[0.16em] text-white"
+                className="mt-6 inline-flex h-12 items-center justify-center gap-2 rounded-full bg-zinc-950 px-8 text-sm font-semibold text-white transition hover:bg-zinc-800"
               >
                 {"Dejar mi búsqueda"}
                 <ArrowRight className="h-4 w-4" />
@@ -316,7 +316,7 @@ export default function SavedSearchSection({
                       <button
                         type="submit"
                         disabled={createSavedSearch.isPending}
-                        className="inline-flex items-center gap-2 bg-zinc-950 px-6 py-4 text-xs font-black uppercase tracking-[0.16em] text-white disabled:cursor-not-allowed disabled:opacity-40"
+                        className="inline-flex h-12 items-center justify-center gap-2 rounded-full bg-zinc-950 px-8 text-sm font-semibold text-white transition hover:bg-zinc-800 disabled:cursor-not-allowed disabled:opacity-40"
                       >
                         {"Enviar búsqueda"}
                         <ArrowRight className="h-4 w-4" />
