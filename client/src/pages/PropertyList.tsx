@@ -1,7 +1,8 @@
 import { useMemo, useState } from "react";
-import { ArrowLeft, Building2 } from "lucide-react";
+import { Building2 } from "lucide-react";
 import { Link, useParams } from "wouter";
 import SavedSearchSection from "@/components/public/SavedSearchSection";
+import { PublicHeader } from "@/components/public/PublicHeader";
 import { PropertyCard } from "@/components/PropertyCard";
 import { usePublicProperties } from "@/lib/propertyData";
 import {
@@ -92,38 +93,13 @@ export default function PropertyList() {
 
   return (
     <div className="min-h-screen bg-[#f7f5ef]">
-      <header className="border-b border-[#ded8cc] bg-white">
-        <div className="mx-auto flex h-16 max-w-[1440px] items-center justify-between px-5 lg:px-10">
-          <Link href={`/${safeSlug}`}>
-            <span className="inline-flex items-center gap-2 text-xs font-black uppercase tracking-[0.16em] text-[#6a716f]">
-              <ArrowLeft className="h-4 w-4" />
-              Inicio
-            </span>
-          </Link>
-          <Link href={`/${safeSlug}`}>
-            <span className="flex max-w-[58vw] items-center gap-3">
-              {brandImageUrl ? (
-                <span className="flex h-7 w-7 shrink-0 items-center justify-center overflow-hidden rounded-sm sm:h-8 sm:w-8">
-                  <img
-                    src={brandImageUrl}
-                    alt={businessName}
-                    className="h-full w-full scale-[1.18] object-contain"
-                  />
-                </span>
-              ) : null}
-              <span className="truncate text-[11px] font-black uppercase tracking-[0.12em] text-zinc-950 sm:text-sm sm:tracking-[0.18em]">
-                {businessName}
-              </span>
-            </span>
-          </Link>
-          <a
-            href="/admin"
-            className="rounded-full border border-[#ded8cc] px-4 py-2 text-[11px] font-bold uppercase tracking-[0.12em] text-[#6a716f] transition hover:border-[#0f646a] hover:text-[#12383d]"
-          >
-            Mi panel
-          </a>
-        </div>
-      </header>
+      <PublicHeader
+        slug={safeSlug}
+        businessName={businessName}
+        brandImageUrl={brandImageUrl}
+        backHref={`/${safeSlug}`}
+        backLabel="Inicio"
+      />
 
       <main className="mx-auto max-w-[1440px] px-5 py-10 md:py-14 lg:px-10">
         <div className="mb-8 max-w-2xl">

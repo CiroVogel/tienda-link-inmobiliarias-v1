@@ -1,6 +1,5 @@
 import { useState } from "react";
 import {
-  ArrowLeft,
   Bath,
   BedDouble,
   ChevronLeft,
@@ -27,6 +26,7 @@ import {
 } from "@/lib/realEstateDemo";
 import { usePageMeta } from "@/lib/seo";
 import { trpc } from "@/lib/trpc";
+import { PublicHeader } from "@/components/public/PublicHeader";
 import {
   Dialog,
   DialogClose,
@@ -184,38 +184,13 @@ export default function PropertyDetail() {
 
   return (
     <div className="min-h-screen bg-[#f7f5ef]">
-      <header className="border-b border-[#ded8cc] bg-white">
-        <div className="mx-auto flex h-16 max-w-6xl items-center justify-between px-5">
-          <Link href={`/${safeSlug}/propiedades`}>
-            <span className="inline-flex items-center gap-2 text-xs font-black uppercase tracking-[0.16em] text-[#6a716f]">
-              <ArrowLeft className="h-4 w-4" />
-              Listado
-            </span>
-          </Link>
-          <Link href={`/${safeSlug}`}>
-            <span className="flex max-w-[58vw] items-center gap-3">
-              {brandImageUrl ? (
-                <span className="flex h-7 w-7 shrink-0 items-center justify-center overflow-hidden rounded-sm sm:h-8 sm:w-8">
-                  <img
-                    src={brandImageUrl}
-                    alt={businessName}
-                    className="h-full w-full scale-[1.18] object-contain"
-                  />
-                </span>
-              ) : null}
-              <span className="truncate text-[11px] font-black uppercase tracking-[0.12em] text-zinc-950 sm:text-sm sm:tracking-[0.18em]">
-                {businessName}
-              </span>
-            </span>
-          </Link>
-          <a
-            href="/admin"
-            className="rounded-full border border-[#ded8cc] px-4 py-2 text-[11px] font-bold uppercase tracking-[0.12em] text-[#6a716f] transition hover:border-[#0f646a] hover:text-[#12383d]"
-          >
-            Mi panel
-          </a>
-        </div>
-      </header>
+      <PublicHeader
+        slug={safeSlug}
+        businessName={businessName}
+        brandImageUrl={brandImageUrl}
+        backHref={`/${safeSlug}/propiedades`}
+        backLabel="Listado"
+      />
 
       <main className="mx-auto max-w-6xl px-5 py-8 md:py-10">
         <section className="grid gap-6 lg:grid-cols-[0.95fr_1.05fr]">

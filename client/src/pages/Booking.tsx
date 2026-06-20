@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { ArrowLeft, CheckCircle2, Mail, MessageCircle, Phone, User } from "lucide-react";
+import { CheckCircle2, Mail, MessageCircle, Phone, User } from "lucide-react";
 import { Link, useParams } from "wouter";
 import { toast } from "sonner";
 import { trpc } from "@/lib/trpc";
@@ -11,6 +11,7 @@ import {
   realEstateProfile,
 } from "@/lib/realEstateDemo";
 import { usePageMeta } from "@/lib/seo";
+import { PublicHeader } from "@/components/public/PublicHeader";
 
 function whatsappHref(whatsapp: string, propertyTitle: string) {
   return `https://wa.me/${whatsapp.replace(/\D/g, "")}?text=${encodeURIComponent(
@@ -41,6 +42,10 @@ export default function Booking() {
   const businessName = publicProfile
     ? publicProfile.businessName?.trim() || "Inmobiliaria"
     : realEstateProfile.name;
+  const brandImageUrl =
+    publicProfile?.logoUrl?.trim() ||
+    publicProfile?.ownerImageUrl?.trim() ||
+    null;
   const profileWhatsapp = publicProfile
     ? publicProfile.whatsapp?.trim() || ""
     : realEstateProfile.whatsapp;
@@ -111,25 +116,13 @@ export default function Booking() {
 
   return (
     <div className="min-h-screen bg-[#f7f5ef]">
-      <header className="border-b border-[#ded8cc] bg-white">
-        <div className="mx-auto flex h-16 max-w-4xl items-center justify-between px-5">
-          <Link href={`/${safeSlug}/propiedades/${property.id}`}>
-            <span className="inline-flex items-center gap-2 text-xs font-black uppercase tracking-[0.16em] text-[#6a716f]">
-              <ArrowLeft className="h-4 w-4" />
-              Ficha
-            </span>
-          </Link>
-          <span className="text-sm font-black uppercase tracking-[0.18em] text-zinc-950">
-            Solicitar visita
-          </span>
-          <a
-            href="/admin"
-            className="rounded-full border border-[#ded8cc] px-4 py-2 text-[11px] font-bold uppercase tracking-[0.12em] text-[#6a716f] transition hover:border-[#0f646a] hover:text-[#12383d]"
-          >
-            Mi panel
-          </a>
-        </div>
-      </header>
+      <PublicHeader
+        slug={safeSlug}
+        businessName={businessName}
+        brandImageUrl={brandImageUrl}
+        backHref={`/${safeSlug}/propiedades/${property.id}`}
+        backLabel="Ficha"
+      />
 
       <main className="mx-auto grid max-w-4xl gap-6 px-5 py-6 md:grid-cols-[0.9fr_1.1fr] md:py-8">
         <aside className="self-start bg-white">
