@@ -220,7 +220,7 @@ function FeaturedProperties({
 }) {
   return (
     <section id="propiedades" className="bg-zinc-50 py-14 md:py-18">
-      <div className="mx-auto max-w-6xl px-5">
+      <div className="mx-auto max-w-[1440px] px-5 lg:px-10">
         <div className="mb-8 flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
           <div>
             <p className="mb-3 text-xs font-bold uppercase tracking-[0.18em] text-zinc-500">
@@ -239,7 +239,7 @@ function FeaturedProperties({
           </Link>
         </div>
 
-        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+        <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
           {properties.map((property) => (
             <PropertyCard key={property.id} property={property} slug={slug} logoUrl={logoUrl} />
           ))}

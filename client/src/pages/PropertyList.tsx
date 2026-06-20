@@ -123,7 +123,7 @@ export default function PropertyList() {
         </div>
       </header>
 
-      <main className="mx-auto max-w-6xl px-5 py-10 md:py-14">
+      <main className="mx-auto max-w-[1440px] px-5 py-10 md:py-14 lg:px-10">
         <div className="mb-8 max-w-2xl">
           <p className="mb-3 inline-flex items-center gap-2 text-xs font-bold uppercase tracking-[0.18em] text-zinc-500">
             <Building2 className="h-4 w-4" />
@@ -180,7 +180,7 @@ export default function PropertyList() {
         </p>
 
         {filteredProperties.length > 0 ? (
-          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+          <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
             {filteredProperties.map((property) => (
               <PropertyCard key={property.id} property={property} slug={safeSlug} logoUrl={brandImageUrl} />
             ))}
