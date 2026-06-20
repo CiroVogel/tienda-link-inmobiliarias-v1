@@ -93,7 +93,7 @@ export default function PropertyList() {
   return (
     <div className="min-h-screen bg-zinc-50">
       <header className="border-b border-zinc-200 bg-white">
-        <div className="mx-auto flex h-16 max-w-6xl items-center justify-between px-5">
+        <div className="mx-auto flex h-16 max-w-[1440px] items-center justify-between px-5 lg:px-10">
           <Link href={`/${safeSlug}`}>
             <span className="inline-flex items-center gap-2 text-xs font-black uppercase tracking-[0.16em] text-zinc-500">
               <ArrowLeft className="h-4 w-4" />

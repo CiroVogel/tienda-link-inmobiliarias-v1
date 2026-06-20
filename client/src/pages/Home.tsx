@@ -49,7 +49,7 @@ function Header({
 }) {
   return (
     <header className="sticky top-0 z-50 border-b border-white/10 bg-black/95 text-white backdrop-blur">
-      <div className="mx-auto flex h-16 max-w-6xl items-center justify-between gap-4 px-5">
+      <div className="mx-auto flex h-16 max-w-[1440px] items-center justify-between gap-4 px-5 lg:px-10">
         <Link href={`/${slug}`}>
           <span className="flex items-center gap-3">
             {brandImageUrl ? (
@@ -126,7 +126,7 @@ function Hero({
       <div className="absolute inset-0 bg-gradient-to-r from-black/68 via-black/48 to-black/18" />
       <div className="absolute inset-0 bg-black/8" />
 
-      <div className="relative mx-auto flex min-h-[500px] max-w-6xl items-center px-5 py-12 sm:min-h-[560px] lg:min-h-[610px]">
+      <div className="relative mx-auto flex min-h-[500px] max-w-[1440px] items-center px-5 py-12 sm:min-h-[560px] lg:min-h-[610px] lg:px-10">
         <div className="max-w-2xl">
           <p className="text-xs font-bold uppercase tracking-[0.24em] text-white/82">
             {cityLabel ? `Inmobiliaria en ${cityLabel}` : "Inmobiliaria"}
@@ -186,7 +186,7 @@ function ValueBlock() {
 
   return (
     <section className="border-y border-zinc-200 bg-white py-12">
-      <div className="mx-auto grid max-w-6xl gap-8 px-5 md:grid-cols-[0.8fr_1.2fr]">
+      <div className="mx-auto grid max-w-[1440px] gap-8 px-5 md:grid-cols-[0.8fr_1.2fr] lg:px-10">
         <div>
           <p className="mb-3 text-xs font-bold uppercase tracking-[0.18em] text-zinc-500">
             Buscar con claridad
@@ -268,7 +268,7 @@ function AboutSection({
 
   return (
     <section className="bg-white py-12 border-b border-zinc-100">
-      <div className="mx-auto max-w-6xl px-5">
+      <div className="mx-auto max-w-[1440px] px-5 lg:px-10">
         <p className="mb-5 text-xs font-bold uppercase tracking-[0.18em] text-zinc-500">
           Sobre la inmobiliaria
         </p>
@@ -314,7 +314,7 @@ function HowItWorks({ slug }: { slug: string }) {
 
   return (
     <section id="como-funciona" className="bg-white py-14 md:py-18">
-      <div className="mx-auto max-w-6xl px-5">
+      <div className="mx-auto max-w-[1440px] px-5 lg:px-10">
         <div className="mb-8 max-w-2xl">
           <p className="mb-3 text-xs font-bold uppercase tracking-[0.18em] text-zinc-500">
             Cómo funciona
@@ -366,7 +366,7 @@ function Contact({
 }) {
   return (
     <section id="contacto" className="bg-zinc-950 py-14 text-white md:py-18">
-      <div className="mx-auto grid max-w-6xl gap-10 px-5 md:grid-cols-[1fr_0.85fr]">
+      <div className="mx-auto grid max-w-[1440px] gap-10 px-5 md:grid-cols-[1fr_0.85fr] lg:px-10">
         <div>
           <p className="mb-4 text-xs font-bold uppercase tracking-[0.18em] text-white/55">
             Contacto
@@ -447,7 +447,7 @@ function Footer({
 
   return (
     <footer className="border-t border-white/10 bg-zinc-950 py-8">
-      <div className="mx-auto flex max-w-6xl flex-col gap-4 px-5 text-sm text-white/64 md:flex-row md:items-center md:justify-between">
+      <div className="mx-auto flex max-w-[1440px] flex-col gap-4 px-5 text-sm text-white/64 md:flex-row md:items-center md:justify-between lg:px-10">
         <p className="font-bold text-white">{businessName}</p>
         <div className="flex flex-wrap items-center gap-5">
           <Link href={`/${slug}/propiedades`} className="transition hover:text-white">
@@ -561,7 +561,7 @@ export default function Home({ forcedSlug }: HomeProps) {
       <AboutSection ownerName={ownerName} ownerTitle={ownerTitle} ownerBio={ownerBio} />
       <FeaturedProperties properties={featuredCards} slug={slug} logoUrl={brandImageUrl} businessName={businessName} instagram={instagram} facebook={facebook} />
       <section className="bg-white py-10">
-        <div className="mx-auto flex max-w-6xl flex-col gap-4 px-5 sm:flex-row sm:items-center sm:justify-between">
+        <div className="mx-auto flex max-w-[1440px] flex-col gap-4 px-5 sm:flex-row sm:items-center sm:justify-between lg:px-10">
           <p className="text-sm text-zinc-600">
             {visibleCount} propiedades publicadas entre venta, alquiler y
             operaciones recientes.
