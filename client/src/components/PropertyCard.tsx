@@ -35,6 +35,7 @@ export function PropertyCard({ property, slug }: PropertyCardProps) {
 
   return (
     <article className="group flex h-full flex-col overflow-hidden rounded-[8px] border border-zinc-200 bg-white shadow-[0_10px_30px_rgba(23,23,23,0.04)] transition hover:-translate-y-0.5 hover:border-zinc-300 hover:shadow-[0_14px_34px_rgba(23,23,23,0.08)]">
+      {/* Imagen con badges */}
       <Link href={`/${slug}/propiedades/${property.id}`}>
         <div className="relative h-[210px] overflow-hidden bg-zinc-100">
           <img
@@ -55,69 +56,108 @@ export function PropertyCard({ property, slug }: PropertyCardProps) {
         </div>
       </Link>
 
+      {/* Cuerpo */}
       <div className="flex flex-1 flex-col px-5 pb-5 pt-4">
+        {/* Ubicación */}
         <p className="mb-1.5 flex items-center gap-1.5 text-xs font-semibold uppercase tracking-[0.14em] text-zinc-400">
           <MapPin className="h-3.5 w-3.5 shrink-0" />
           {property.location}
         </p>
 
+        {/* Título */}
         <Link href={`/${slug}/propiedades/${property.id}`}>
           <h3 className="font-bold text-[1.15rem] leading-tight tracking-tight text-zinc-950 transition group-hover:text-zinc-700">
             {property.title}
           </h3>
         </Link>
 
-        <p className="mt-1 text-xs font-medium text-zinc-400">{property.propertyType}</p>
-        <p className="mt-3 text-xl font-black text-zinc-950">{property.price}</p>
+        {/* Tipo + precio en la misma fila */}
+        <div className="mt-2 flex items-baseline justify-between gap-2">
+          <p className="text-xs font-medium text-zinc-400">{property.propertyType}</p>
+          <p className="shrink-0 text-lg font-black text-zinc-950">{property.price}</p>
+        </div>
 
-        {attrCount > 0 ? (
-          <div className="mt-4 border-t border-zinc-100 pt-4">
-            <div className={`grid ${attrGridCols} divide-x divide-zinc-200 text-center`}>
-              {area ? (
-                <div className="flex flex-col items-center gap-1 px-2 first:pl-0 last:pr-0">
-                  <Ruler className="h-4 w-4 text-zinc-400" />
-                  <span className="text-sm font-bold leading-none text-zinc-950">{area} m²</span>
-                  <span className="text-[11px] leading-none text-zinc-500">superficie</span>
-                </div>
-              ) : null}
-              {bed ? (
-                <div className="flex flex-col items-center gap-1 px-2 first:pl-0 last:pr-0">
-                  <BedDouble className="h-4 w-4 text-zinc-400" />
-                  <span className="text-sm font-bold leading-none text-zinc-950">{bed}</span>
-                  <span className="text-[11px] leading-none text-zinc-500">{bedLabel}</span>
-                </div>
-              ) : null}
-              {bath ? (
-                <div className="flex flex-col items-center gap-1 px-2 first:pl-0 last:pr-0">
-                  <Bath className="h-4 w-4 text-zinc-400" />
-                  <span className="text-sm font-bold leading-none text-zinc-950">{bath}</span>
-                  <span className="text-[11px] leading-none text-zinc-500">
-                    {bath === 1 ? "baño" : "baños"}
-                  </span>
-                </div>
-              ) : null}
-            </div>
+        {/* Descripción — igual que Construcción: flex-1 + clamp 2 líneas */}
+        {property.description ? (
+          <p
+            className="mt-3 min-h-[48px] flex-1 overflow-hidden text-[0.875rem] leading-[1.65] text-zinc-600"
+            style={{
+              display: "-webkit-box",
+              WebkitLineClamp: 2,
+              WebkitBoxOrient: "vertical",
+            }}
+          >
+            {property.description}
+          </p>
+        ) : (
+          <div className="flex-1" />
+        )}
+
+        {/* Chips de características — máximo 3, solo si existen */}
+        {property.features.length > 0 ? (
+          <div className="mt-3 flex flex-wrap gap-1.5">
+            {property.features.slice(0, 3).map((feature) => (
+              <span
+                key={feature}
+                className="rounded-[4px] border border-zinc-200 bg-zinc-50 px-2 py-0.5 text-[11px] font-semibold text-zinc-600"
+              >
+                {feature}
+              </span>
+            ))}
           </div>
         ) : null}
 
-        <div className="mt-auto flex flex-col gap-3 pt-5 sm:flex-row">
-          <Link href={`/${slug}/propiedades/${property.id}`} className="sm:flex-1">
-            <span className="inline-flex h-10 w-full items-center justify-center gap-2 rounded-[5px] bg-zinc-950 px-4 text-xs font-black uppercase tracking-[0.12em] text-white shadow-sm transition hover:bg-zinc-800">
-              Ver ficha
-              <Tag className="h-3.5 w-3.5" />
-            </span>
-          </Link>
-          {requestable ? (
-            <Link href={`/${slug}/solicitar-visita/${property.id}`} className="sm:flex-1">
-              <span className="inline-flex h-10 w-full items-center justify-center rounded-[5px] border border-zinc-300 bg-white px-4 text-xs font-black uppercase tracking-[0.12em] text-zinc-950 transition hover:border-zinc-400">
-                Solicitar visita
+        {/* Sección inferior: atributos + botones */}
+        <div className="mt-auto">
+          {attrCount > 0 ? (
+            <div className="mt-4 border-t border-zinc-100 pt-3">
+              <div className={`grid ${attrGridCols} divide-x divide-zinc-200 text-center`}>
+                {area ? (
+                  <div className="flex flex-col items-center gap-1 px-2 first:pl-0 last:pr-0">
+                    <Ruler className="h-4 w-4 text-zinc-400" />
+                    <span className="text-sm font-bold leading-none text-zinc-950">{area} m²</span>
+                    <span className="text-[11px] leading-none text-zinc-500">superficie</span>
+                  </div>
+                ) : null}
+                {bed ? (
+                  <div className="flex flex-col items-center gap-1 px-2 first:pl-0 last:pr-0">
+                    <BedDouble className="h-4 w-4 text-zinc-400" />
+                    <span className="text-sm font-bold leading-none text-zinc-950">{bed}</span>
+                    <span className="text-[11px] leading-none text-zinc-500">{bedLabel}</span>
+                  </div>
+                ) : null}
+                {bath ? (
+                  <div className="flex flex-col items-center gap-1 px-2 first:pl-0 last:pr-0">
+                    <Bath className="h-4 w-4 text-zinc-400" />
+                    <span className="text-sm font-bold leading-none text-zinc-950">{bath}</span>
+                    <span className="text-[11px] leading-none text-zinc-500">
+                      {bath === 1 ? "baño" : "baños"}
+                    </span>
+                  </div>
+                ) : null}
+              </div>
+            </div>
+          ) : null}
+
+          <div className="mt-4 flex flex-col gap-2.5 sm:flex-row">
+            <Link href={`/${slug}/propiedades/${property.id}`} className="sm:flex-1">
+              <span className="inline-flex h-10 w-full items-center justify-center gap-2 rounded-[5px] bg-zinc-950 px-4 text-xs font-black uppercase tracking-[0.12em] text-white shadow-sm transition hover:bg-zinc-800">
+                Ver ficha
+                <Tag className="h-3.5 w-3.5" />
               </span>
             </Link>
-          ) : (
-            <span className="inline-flex h-10 flex-1 items-center justify-center rounded-[5px] border border-zinc-200 text-xs font-bold uppercase tracking-[0.12em] text-zinc-400">
-              No disponible
-            </span>
-          )}
+            {requestable ? (
+              <Link href={`/${slug}/solicitar-visita/${property.id}`} className="sm:flex-1">
+                <span className="inline-flex h-10 w-full items-center justify-center rounded-[5px] border border-zinc-300 bg-white px-4 text-xs font-black uppercase tracking-[0.12em] text-zinc-950 transition hover:border-zinc-400">
+                  Solicitar visita
+                </span>
+              </Link>
+            ) : (
+              <span className="inline-flex h-10 flex-1 items-center justify-center rounded-[5px] border border-zinc-200 text-xs font-bold uppercase tracking-[0.12em] text-zinc-400">
+                No disponible
+              </span>
+            )}
+          </div>
         </div>
       </div>
     </article>
