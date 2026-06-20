@@ -264,9 +264,24 @@ export default function PropertyDetail() {
 
             <p className="mt-4 text-3xl font-black text-zinc-950">{property.price}</p>
 
-            <div className="mt-5 grid grid-cols-2 gap-px bg-[#ded8cc]">
-              {summaryFacts.map(({ label, value, Icon }) => (
-                <div key={label} className="bg-[#fffdf8] p-3">
+            <div
+              className={
+                summaryFacts.length === 1
+                  ? "mt-5 grid grid-cols-1 gap-px bg-[#ded8cc]"
+                  : summaryFacts.length === 3
+                  ? "mt-5 grid grid-cols-2 sm:grid-cols-3 gap-px bg-[#ded8cc]"
+                  : "mt-5 grid grid-cols-2 gap-px bg-[#ded8cc]"
+              }
+            >
+              {summaryFacts.map(({ label, value, Icon }, index) => (
+                <div
+                  key={label}
+                  className={
+                    summaryFacts.length === 3 && index === 2
+                      ? "col-span-2 sm:col-span-1 bg-[#fffdf8] p-3"
+                      : "bg-[#fffdf8] p-3"
+                  }
+                >
                   <Icon className="mb-2 h-5 w-5 text-[#6a716f]" />
                   <p className="text-xs font-bold uppercase tracking-[0.14em] text-[#6a716f]">
                     {label}
@@ -284,8 +299,15 @@ export default function PropertyDetail() {
 
                 {detailItems.length > 0 ? (
                   <div className="grid gap-px bg-[#ded8cc] sm:grid-cols-2">
-                    {detailItems.map((item) => (
-                      <div key={item.label} className="bg-[#fffdf8] p-3">
+                    {detailItems.map((item, index) => (
+                      <div
+                        key={item.label}
+                        className={
+                          detailItems.length % 2 !== 0 && index === detailItems.length - 1
+                            ? "sm:col-span-2 bg-[#fffdf8] p-3"
+                            : "bg-[#fffdf8] p-3"
+                        }
+                      >
                         <p className="text-xs font-bold uppercase tracking-[0.14em] text-[#6a716f]">
                           {item.label}
                         </p>
