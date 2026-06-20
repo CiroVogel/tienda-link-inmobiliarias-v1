@@ -1,5 +1,5 @@
 ﻿import { useState } from "react";
-import { ArrowRight } from "lucide-react";
+import { ArrowRight, BellRing } from "lucide-react";
 import { toast } from "sonner";
 import {
   savedSearchBedroomOptions,
@@ -84,20 +84,23 @@ export default function SavedSearchSection({
 
   return (
     <section className={className}>
-      <div className="mx-auto max-w-6xl px-5">
-        <div className="grid gap-8 md:grid-cols-[0.9fr_1.1fr] md:items-start">
-          <div>
-            <p className="mb-3 text-xs font-bold uppercase tracking-[0.18em] text-zinc-400">
-              {eyebrow}
-            </p>
-            <h2 className="text-4xl font-black tracking-tight text-zinc-950">
-              {"¿No encontraste lo que buscás?"}
-            </h2>
-            <p className="mt-4 max-w-xl text-sm leading-7 text-zinc-500">
-              {"Dejanos tu búsqueda y te avisamos cuando tengamos una propiedad que se ajuste a lo que necesitás."}
-            </p>
-
-            {!isOpen ? (
+      <div className="mx-auto max-w-[1440px] px-5 lg:px-10">
+        {!isOpen ? (
+          /* Estado cerrado — card contenida */
+          <div className="mx-auto max-w-2xl">
+            <div className="rounded-2xl border border-zinc-200 bg-white p-8 shadow-[0_18px_42px_-38px_rgba(23,23,23,0.12)]">
+              <div className="mb-5 flex h-11 w-11 items-center justify-center rounded-full bg-zinc-100">
+                <BellRing className="h-5 w-5 text-zinc-600" />
+              </div>
+              <p className="mb-3 text-xs font-bold uppercase tracking-[0.18em] text-zinc-400">
+                {eyebrow}
+              </p>
+              <h2 className="text-3xl font-black tracking-tight text-zinc-950 md:text-4xl">
+                {"¿No encontraste lo que buscás?"}
+              </h2>
+              <p className="mt-4 max-w-md text-sm leading-7 text-zinc-500">
+                {"Dejanos tu búsqueda y te avisamos cuando tengamos una propiedad que se ajuste a lo que necesitás."}
+              </p>
               <button
                 type="button"
                 onClick={() => setIsOpen(true)}
@@ -106,11 +109,24 @@ export default function SavedSearchSection({
                 {"Dejar mi búsqueda"}
                 <ArrowRight className="h-4 w-4" />
               </button>
-            ) : null}
+            </div>
           </div>
+        ) : (
+          /* Estado abierto — grid 2 columnas */
+          <div className="grid gap-8 md:grid-cols-[0.9fr_1.1fr] md:items-start">
+            <div>
+              <p className="mb-3 text-xs font-bold uppercase tracking-[0.18em] text-zinc-400">
+                {eyebrow}
+              </p>
+              <h2 className="text-4xl font-black tracking-tight text-zinc-950">
+                {"¿No encontraste lo que buscás?"}
+              </h2>
+              <p className="mt-4 max-w-xl text-sm leading-7 text-zinc-500">
+                {"Dejanos tu búsqueda y te avisamos cuando tengamos una propiedad que se ajuste a lo que necesitás."}
+              </p>
+            </div>
 
-          {isOpen ? (
-            <div className="border border-zinc-200 bg-white p-6">
+            <div className="rounded-2xl border border-zinc-200 bg-white p-6 shadow-sm">
               {isSubmitted ? (
                 <div className="space-y-3">
                   <p className="text-xs font-bold uppercase tracking-[0.18em] text-zinc-400">
@@ -266,8 +282,8 @@ export default function SavedSearchSection({
                 </form>
               )}
             </div>
-          ) : null}
-        </div>
+          </div>
+        )}
       </div>
     </section>
   );
