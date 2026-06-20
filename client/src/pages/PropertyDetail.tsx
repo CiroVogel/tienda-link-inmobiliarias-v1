@@ -3,7 +3,6 @@ import {
   ArrowLeft,
   Bath,
   BedDouble,
-  Building2,
   HomeIcon,
   Mail,
   MapPin,
@@ -53,6 +52,10 @@ function hasDetailValue(item: { label: string; value: string | null }): item is 
   value: string;
 } {
   return Boolean(item.value);
+}
+
+function getOperationPriceLabel(operation: string): string {
+  return operation === "sale" ? "Precio de venta" : "Precio de alquiler";
 }
 
 function buildPropertyDetailItems(property: DemoProperty) {
@@ -153,7 +156,6 @@ export default function PropertyDetail() {
 
   const requestable = isPropertyRequestable(property);
   const summaryFacts = [
-    { label: "Tipo", value: property.propertyType, Icon: Building2 },
     { label: "Superficie", value: formatAreaDetail(property.areaM2), Icon: Ruler },
     { label: "Dormitorios", value: formatNumberDetail(property.bedrooms), Icon: BedDouble },
     { label: "Baños", value: formatNumberDetail(property.bathrooms), Icon: Bath },
@@ -205,14 +207,14 @@ export default function PropertyDetail() {
         </div>
       </header>
 
-      <main className="mx-auto max-w-6xl px-5 py-6 md:py-8">
+      <main className="mx-auto max-w-6xl px-5 py-8 md:py-10">
         <section className="grid gap-6 lg:grid-cols-[0.95fr_1.05fr]">
           <div>
             <div className="overflow-hidden bg-[#ece7dc]">
               <img
                 src={galleryImages[selectedImage] ?? galleryImages[0]}
                 alt={property.title}
-                className="aspect-[16/10] w-full object-cover"
+                className="aspect-[4/3] w-full object-cover"
               />
             </div>
 
@@ -238,12 +240,13 @@ export default function PropertyDetail() {
           </div>
 
           <aside>
+            {/* Operación y disponibilidad */}
             <div className="mb-4 flex flex-wrap gap-2">
-              <span className="rounded-md bg-[#12383d] px-3 py-2 text-xs font-black uppercase tracking-[0.14em] text-white">
+              <span className="rounded-[5px] bg-[#12383d] px-3 py-2 text-xs font-black uppercase tracking-[0.14em] text-white">
                 {getOperationLabel(property.operation)}
               </span>
               <span
-                className={`px-3 py-2 text-xs font-black uppercase tracking-[0.14em] ${
+                className={`rounded-[5px] px-3 py-2 text-xs font-black uppercase tracking-[0.14em] ${
                   property.status === "available"
                     ? "bg-emerald-100 text-emerald-800"
                     : "bg-[#ece6dd] text-[#6a716f]"
@@ -253,65 +256,73 @@ export default function PropertyDetail() {
               </span>
             </div>
 
-            <h1 className="text-4xl font-black leading-tight tracking-tight text-zinc-950 md:text-4xl">
+            {/* Título */}
+            <h1 className="text-[2rem] font-bold leading-tight tracking-tight text-zinc-950 sm:text-[2.6rem]">
               {property.title}
             </h1>
 
-            <p className="mt-3 flex items-center gap-2 text-sm font-bold uppercase tracking-[0.14em] text-[#6a716f]">
-              <MapPin className="h-4 w-4 text-[#6a716f]" />
+            {/* Tipo de propiedad */}
+            {property.propertyType ? (
+              <p className="mt-2 text-[0.8rem] font-medium text-[#6a716f]">
+                {property.propertyType}
+              </p>
+            ) : null}
+
+            {/* Ubicación */}
+            <p className="mt-2 flex items-center gap-2 text-sm font-medium text-[#6a716f]">
+              <MapPin className="h-4 w-4 shrink-0 text-[#6a716f]" />
               {property.address}, {property.location}
             </p>
 
-            <p className="mt-4 text-3xl font-black text-zinc-950">{property.price}</p>
-
-            <div
-              className={
-                summaryFacts.length === 1
-                  ? "mt-5 grid grid-cols-1 gap-px bg-[#ded8cc]"
-                  : summaryFacts.length === 3
-                  ? "mt-5 grid grid-cols-2 sm:grid-cols-3 gap-px bg-[#ded8cc]"
-                  : "mt-5 grid grid-cols-2 gap-px bg-[#ded8cc]"
-              }
-            >
-              {summaryFacts.map(({ label, value, Icon }, index) => (
-                <div
-                  key={label}
-                  className={
-                    summaryFacts.length === 3 && index === 2
-                      ? "col-span-2 sm:col-span-1 bg-[#fffdf8] p-3"
-                      : "bg-[#fffdf8] p-3"
-                  }
-                >
-                  <Icon className="mb-2 h-5 w-5 text-[#6a716f]" />
-                  <p className="text-xs font-bold uppercase tracking-[0.14em] text-[#6a716f]">
-                    {label}
-                  </p>
-                  <p className="mt-1 font-bold text-zinc-950">{value}</p>
-                </div>
-              ))}
+            {/* Precio */}
+            <div className="mt-5">
+              <p className="text-[10px] font-semibold uppercase leading-none tracking-wide text-[#6a716f]">
+                {getOperationPriceLabel(property.operation)}
+              </p>
+              <p className="mt-1 text-[1.9rem] font-black leading-tight text-zinc-950">
+                {property.price}
+              </p>
             </div>
 
+            {/* Datos rápidos */}
+            {summaryFacts.length > 0 ? (
+              <div className="mt-5 border-t border-[#ece6dd] pt-4">
+                <div className="grid grid-cols-2 gap-x-5 gap-y-4 sm:grid-cols-3">
+                  {summaryFacts.map(({ label, value, Icon }) => (
+                    <div key={label} className="flex items-start gap-2">
+                      <Icon className="mt-0.5 h-5 w-5 shrink-0 text-[#6a716f]" />
+                      <span className="min-w-0 leading-tight">
+                        <span className="block text-[0.86rem] font-semibold text-zinc-800">
+                          {value}
+                        </span>
+                        <span className="block text-[0.72rem] font-medium text-[#6a716f]">
+                          {label}
+                        </span>
+                      </span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            ) : null}
+
+            {/* Detalles técnicos */}
             {hasDetailedBlock ? (
               <div className="mt-5 border-t border-[#ded8cc] pt-5">
-                <h2 className="mb-3 text-sm font-black uppercase tracking-[0.16em] text-zinc-950">
+                <p className="mb-3 text-xs font-bold uppercase tracking-[0.18em] text-[#6a716f]">
                   Detalles de la propiedad
-                </h2>
+                </p>
 
                 {detailItems.length > 0 ? (
-                  <div className="grid gap-px bg-[#ded8cc] sm:grid-cols-2">
+                  <div>
                     {detailItems.map((item, index) => (
                       <div
                         key={item.label}
-                        className={
-                          detailItems.length % 2 !== 0 && index === detailItems.length - 1
-                            ? "sm:col-span-2 bg-[#fffdf8] p-3"
-                            : "bg-[#fffdf8] p-3"
-                        }
+                        className={`flex items-baseline justify-between gap-4 py-2.5 ${
+                          index < detailItems.length - 1 ? "border-b border-[#ece6dd]" : ""
+                        }`}
                       >
-                        <p className="text-xs font-bold uppercase tracking-[0.14em] text-[#6a716f]">
-                          {item.label}
-                        </p>
-                        <p className="mt-1 font-bold text-zinc-950">{item.value}</p>
+                        <span className="text-sm text-[#6a716f]">{item.label}</span>
+                        <span className="text-sm font-semibold text-zinc-950">{item.value}</span>
                       </div>
                     ))}
                   </div>
@@ -321,14 +332,14 @@ export default function PropertyDetail() {
                   <div className="mt-4 grid gap-4">
                     {selectedDetailedFeatureGroups.map((group) => (
                       <div key={group.title}>
-                        <p className="mb-2 text-xs font-black uppercase tracking-[0.14em] text-[#6a716f]">
+                        <p className="mb-2 text-xs font-bold uppercase tracking-[0.18em] text-[#6a716f]">
                           {group.title}
                         </p>
                         <div className="flex flex-wrap gap-2">
                           {group.options.map((feature) => (
                             <span
                               key={feature}
-                              className="border border-[#ded8cc] bg-[#fffdf8] px-3 py-2 text-sm text-[#3a3a3a]"
+                              className="rounded-full border border-[#ded8cc] bg-[#fffdf8] px-3 py-1.5 text-sm text-[#3a3a3a]"
                             >
                               {feature}
                             </span>
@@ -341,16 +352,17 @@ export default function PropertyDetail() {
               </div>
             ) : null}
 
+            {/* Características libres */}
             {hasFreeFeatures ? (
-              <div className="mt-5">
-                <h2 className="mb-3 text-sm font-black uppercase tracking-[0.16em] text-zinc-950">
+              <div className="mt-5 border-t border-[#ded8cc] pt-5">
+                <p className="mb-3 text-xs font-bold uppercase tracking-[0.18em] text-[#6a716f]">
                   Características
-                </h2>
+                </p>
                 <div className="flex flex-wrap gap-2">
                   {property.features.map((feature) => (
                     <span
                       key={feature}
-                      className="border border-[#ded8cc] bg-[#fffdf8] px-3 py-2 text-sm text-[#3a3a3a]"
+                      className="rounded-full border border-[#ded8cc] bg-[#fffdf8] px-3 py-1.5 text-sm text-[#3a3a3a]"
                     >
                       {feature}
                     </span>
@@ -359,49 +371,54 @@ export default function PropertyDetail() {
               </div>
             ) : null}
 
+            {/* Descripción */}
             <div className="mt-5 border-t border-[#ded8cc] pt-5">
-              <h2 className="mb-3 text-sm font-black uppercase tracking-[0.16em] text-zinc-950">
+              <p className="mb-3 text-xs font-bold uppercase tracking-[0.18em] text-[#6a716f]">
                 Descripción
-              </h2>
-              <p className="text-sm leading-7 text-[#3a3a3a]">{property.description}</p>
+              </p>
+              <div className="border-l-2 border-[#ded8cc] pl-5">
+                <p className="text-[0.95rem] leading-7 text-[#3a3a3a]">{property.description}</p>
+              </div>
             </div>
 
+            {/* Contacto */}
             <div className="mt-5 border-t border-[#ded8cc] pt-5">
-              <h2 className="mb-3 text-sm font-black uppercase tracking-[0.16em] text-zinc-950">
+              <p className="mb-3 text-xs font-bold uppercase tracking-[0.18em] text-[#6a716f]">
                 Consulta directa con {businessName}
-              </h2>
-              <div className="grid gap-3 text-sm text-[#3a3a3a]">
+              </p>
+              <div>
                 {phone || profileWhatsapp ? (
-                  <p className="flex items-center gap-2">
+                  <div className="flex items-center gap-3 border-b border-[#ece6dd] py-3">
                     <Phone className="h-4 w-4 shrink-0 text-[#6a716f]" />
-                    <span>{phone || profileWhatsapp}</span>
-                  </p>
+                    <span className="text-sm text-[#3a3a3a]">{phone || profileWhatsapp}</span>
+                  </div>
                 ) : null}
                 {email ? (
-                  <p className="flex items-center gap-2">
+                  <div className="flex items-center gap-3 border-b border-[#ece6dd] py-3">
                     <Mail className="h-4 w-4 shrink-0 text-[#6a716f]" />
-                    <span>{email}</span>
-                  </p>
+                    <span className="text-sm text-[#3a3a3a]">{email}</span>
+                  </div>
                 ) : null}
                 {address ? (
-                  <p className="flex items-center gap-2">
+                  <div className="flex items-center gap-3 border-b border-[#ece6dd] py-3">
                     <MapPin className="h-4 w-4 shrink-0 text-[#6a716f]" />
-                    <span>{address}</span>
-                  </p>
+                    <span className="text-sm text-[#3a3a3a]">{address}</span>
+                  </div>
                 ) : null}
               </div>
             </div>
 
+            {/* Botones */}
             <div className="mt-6 flex flex-col gap-3 sm:flex-row">
               {requestable ? (
                 <Link href={`/${safeSlug}/solicitar-visita/${property.id}`}>
-                  <span className="inline-flex items-center justify-center gap-2 rounded-full bg-[#12383d] px-6 py-3 text-xs font-black uppercase tracking-[0.16em] text-white shadow-sm transition hover:bg-[#0f646a]">
+                  <span className="inline-flex items-center justify-center gap-2 rounded-[5px] bg-[#12383d] px-6 py-3 text-xs font-black uppercase tracking-[0.16em] text-white shadow-sm transition hover:bg-[#0f646a]">
                     Solicitar visita
                     <HomeIcon className="h-4 w-4" />
                   </span>
                 </Link>
               ) : (
-                <span className="inline-flex items-center justify-center bg-[#ece6dd] px-6 py-4 text-xs font-black uppercase tracking-[0.16em] text-[#6a716f]">
+                <span className="inline-flex items-center justify-center rounded-[5px] border border-[#ded8cc] px-6 py-3 text-xs font-black uppercase tracking-[0.16em] text-[#6a716f]">
                   No disponible para visita
                 </span>
               )}
@@ -411,7 +428,7 @@ export default function PropertyDetail() {
                   href={buildWhatsappHref(profileWhatsapp, property.title)}
                   target="_blank"
                   rel="noreferrer"
-                  className="inline-flex items-center justify-center gap-2 rounded-full border border-[#cfc7b8] px-6 py-3 text-xs font-black uppercase tracking-[0.16em] text-[#12383d] transition hover:border-[#0f646a]"
+                  className="inline-flex items-center justify-center gap-2 rounded-[5px] border border-[#cfc7b8] bg-[#fffdf8] px-6 py-3 text-xs font-black uppercase tracking-[0.16em] text-[#12383d] transition hover:border-[#0f646a] hover:bg-[#eef4f2]"
                 >
                   WhatsApp
                   <MessageCircle className="h-4 w-4" />
