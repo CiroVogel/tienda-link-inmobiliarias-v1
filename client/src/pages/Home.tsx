@@ -1,12 +1,6 @@
 ﻿import {
   ArrowRight,
-  Building2,
-  HomeIcon,
-  Instagram,
-  Mail,
-  MapPin,
   MessageCircle,
-  Phone,
 } from "lucide-react";
 import { Link, useParams } from "wouter";
 import { PropertyCard } from "@/components/PropertyCard";
@@ -324,124 +318,216 @@ function HowItWorks({ slug }: { slug: string }) {
   );
 }
 
-function Contact({
+function Closing({
   slug,
   businessName,
-  address,
+  description,
+  whatsapp,
   phone,
   email,
-  whatsapp,
+  instagram,
+  facebook,
+  address,
 }: {
   slug: string;
   businessName: string;
-  address: string;
+  description: string;
+  whatsapp: string;
   phone: string;
   email: string;
-  whatsapp: string;
+  instagram: string;
+  facebook: string;
+  address: string;
 }) {
-  return (
-    <section id="contacto" className="bg-zinc-950 py-14 text-white md:py-18">
-      <div className="mx-auto grid max-w-[1440px] gap-10 px-5 md:grid-cols-[1fr_0.85fr] lg:px-10">
-        <div>
-          <p className="mb-4 text-xs font-bold uppercase tracking-[0.18em] text-white/55">
-            Contacto
-          </p>
-          <h2 className="text-4xl font-black tracking-tight">
-            Coordinemos una visita a la propiedad que te interesa.
-          </h2>
-          <p className="mt-5 max-w-xl text-sm leading-7 text-white/72">
-            Envíanos tus datos y tu disponibilidad. Si tenés una consulta
-            puntual, también podés escribirnos por WhatsApp.
-          </p>
+  const waHref = whatsapp
+    ? whatsappHref(whatsapp, `Hola, quiero consultar por propiedades de ${businessName}.`)
+    : null;
 
-          <div className="mt-7 flex flex-col gap-3 sm:flex-row">
-            <Link href={`/${slug}/propiedades`}>
-              <span className="inline-flex items-center justify-center gap-2 rounded-full bg-white px-6 py-3 text-xs font-black uppercase tracking-[0.16em] text-zinc-950 shadow-sm transition hover:bg-zinc-100">
-                Ver propiedades
-                <HomeIcon className="h-4 w-4" />
-              </span>
+  return (
+    <>
+      {/* CTA final */}
+      <section id="contacto" className="bg-zinc-950 px-5 py-16 text-white sm:px-8 lg:py-24">
+        <div className="mx-auto max-w-3xl text-center">
+          <p className="mb-5 inline-block rounded-full border border-white/20 bg-white/10 px-4 py-1.5 text-xs font-semibold uppercase tracking-[0.18em] text-white/60">
+            {businessName}
+          </p>
+          <h2 className="text-[2rem] font-black leading-[1.1] tracking-tight text-white sm:text-[2.5rem]">
+            ¿Buscás comprar, vender o alquilar una propiedad?
+          </h2>
+          <p className="mx-auto mt-5 max-w-xl text-base leading-7 text-white/60">
+            Consultanos para conocer propiedades disponibles, coordinar una visita o recibir atención directa.
+          </p>
+          <div className="mt-8 flex flex-col items-center gap-3 sm:flex-row sm:justify-center">
+            <Link
+              href={`/${slug}/propiedades`}
+              className="inline-flex h-12 items-center justify-center rounded-full bg-white px-8 text-sm font-semibold text-zinc-950 transition hover:bg-white/90"
+            >
+              Ver propiedades
             </Link>
-            {whatsapp ? (
+            {waHref ? (
               <a
-                href={whatsappHref(
-                  whatsapp,
-                  "Hola, quiero hacer una consulta sobre una propiedad.",
-                )}
+                href={waHref}
                 target="_blank"
                 rel="noreferrer"
-                className="inline-flex items-center justify-center gap-2 rounded-full border border-white/25 px-6 py-3 text-xs font-black uppercase tracking-[0.16em] text-white/80 transition hover:bg-white/10 hover:text-white"
+                className="inline-flex h-12 items-center justify-center gap-2 rounded-full border-2 border-white/30 px-8 text-sm font-semibold text-white transition hover:border-white hover:bg-white/10"
               >
-                WhatsApp
                 <MessageCircle className="h-4 w-4" />
+                Consultar por WhatsApp
               </a>
             ) : null}
           </div>
         </div>
+      </section>
 
-        <div className="border border-white/12 bg-white/[0.03] p-6">
-          <div className="grid gap-4 text-sm">
-            <p className="flex items-start gap-3 text-white/82">
-              <Building2 className="mt-0.5 h-4 w-4 shrink-0 text-white/55" />
-              <span>{businessName}</span>
+      {/* Footer de 3 columnas */}
+      <footer className="border-t border-zinc-800 bg-zinc-950 px-5 py-14 text-white sm:px-8 lg:px-10">
+        <div className="mx-auto max-w-[1440px]">
+          <div className="grid gap-10 md:grid-cols-2 lg:grid-cols-[1.4fr_1fr_1fr]">
+
+            {/* Col 1 — Marca */}
+            <div>
+              <Link href={`/${slug}`}>
+                <span className="text-lg font-black tracking-tight text-white">
+                  {businessName}
+                </span>
+              </Link>
+              {description ? (
+                <p className="mt-3 max-w-[220px] text-sm leading-6 text-white/55">
+                  {description}
+                </p>
+              ) : null}
+            </div>
+
+            {/* Col 2 — Explorar */}
+            <nav aria-label="Navegación del pie">
+              <p className="mb-4 text-xs font-semibold uppercase tracking-[0.18em] text-white/40">
+                Explorar
+              </p>
+              <ul className="space-y-3">
+                <li>
+                  <Link href={`/${slug}`} className="text-sm font-semibold text-white/60 transition hover:text-white">
+                    Inicio
+                  </Link>
+                </li>
+                <li>
+                  <Link href={`/${slug}/propiedades`} className="text-sm font-semibold text-white/60 transition hover:text-white">
+                    Propiedades
+                  </Link>
+                </li>
+                <li>
+                  <a href="#como-funciona" className="text-sm font-semibold text-white/60 transition hover:text-white">
+                    Cómo funciona
+                  </a>
+                </li>
+                <li>
+                  <a href="#contacto" className="text-sm font-semibold text-white/60 transition hover:text-white">
+                    Contacto
+                  </a>
+                </li>
+              </ul>
+            </nav>
+
+            {/* Col 3 — Contacto */}
+            <div>
+              <p className="mb-4 text-xs font-semibold uppercase tracking-[0.18em] text-white/40">
+                Contacto
+              </p>
+              <ul className="space-y-4">
+                {whatsapp ? (
+                  <li>
+                    <p className="mb-0.5 text-xs font-semibold uppercase tracking-[0.12em] text-white/30">
+                      WhatsApp
+                    </p>
+                    <a
+                      href={whatsappHref(whatsapp, `Hola, quiero consultar por propiedades de ${businessName}.`)}
+                      target="_blank"
+                      rel="noreferrer"
+                      className="text-sm font-semibold text-white/60 transition hover:text-white"
+                    >
+                      {whatsapp}
+                    </a>
+                  </li>
+                ) : null}
+                {phone ? (
+                  <li>
+                    <p className="mb-0.5 text-xs font-semibold uppercase tracking-[0.12em] text-white/30">
+                      Teléfono
+                    </p>
+                    <a
+                      href={`tel:${phone}`}
+                      className="text-sm font-semibold text-white/60 transition hover:text-white"
+                    >
+                      {phone}
+                    </a>
+                  </li>
+                ) : null}
+                {email ? (
+                  <li>
+                    <p className="mb-0.5 text-xs font-semibold uppercase tracking-[0.12em] text-white/30">
+                      Email
+                    </p>
+                    <a
+                      href={`mailto:${email}`}
+                      className="text-sm font-semibold text-white/60 transition hover:text-white"
+                    >
+                      {email}
+                    </a>
+                  </li>
+                ) : null}
+                {instagram ? (
+                  <li>
+                    <p className="mb-0.5 text-xs font-semibold uppercase tracking-[0.12em] text-white/30">
+                      Instagram
+                    </p>
+                    <a
+                      href={instagram}
+                      target="_blank"
+                      rel="noreferrer"
+                      className="text-sm font-semibold text-white/60 transition hover:text-white"
+                    >
+                      Instagram
+                    </a>
+                  </li>
+                ) : null}
+                {facebook ? (
+                  <li>
+                    <p className="mb-0.5 text-xs font-semibold uppercase tracking-[0.12em] text-white/30">
+                      Facebook
+                    </p>
+                    <a
+                      href={facebook}
+                      target="_blank"
+                      rel="noreferrer"
+                      className="text-sm font-semibold text-white/60 transition hover:text-white"
+                    >
+                      Facebook
+                    </a>
+                  </li>
+                ) : null}
+                {address ? (
+                  <li>
+                    <p className="mb-0.5 text-xs font-semibold uppercase tracking-[0.12em] text-white/30">
+                      Dirección
+                    </p>
+                    <p className="text-sm font-semibold text-white/60">
+                      {address}
+                    </p>
+                  </li>
+                ) : null}
+              </ul>
+            </div>
+
+          </div>
+
+          {/* Barra inferior */}
+          <div className="mt-12 flex flex-wrap items-center justify-between gap-4 border-t border-white/10 pt-6">
+            <p className="text-xs font-semibold text-white/30">
+              © {new Date().getFullYear()} {businessName}. Todos los derechos reservados.
             </p>
-            {phone ? (
-              <p className="flex items-start gap-3 text-white/78">
-                <Phone className="mt-0.5 h-4 w-4 shrink-0 text-white/55" />
-                <span>{phone}</span>
-              </p>
-            ) : null}
-            {email ? (
-              <p className="flex items-start gap-3 text-white/78">
-                <Mail className="mt-0.5 h-4 w-4 shrink-0 text-white/55" />
-                <span>{email}</span>
-              </p>
-            ) : null}
-            {address ? (
-              <p className="flex items-start gap-3 text-white/78">
-                <MapPin className="mt-0.5 h-4 w-4 shrink-0 text-white/55" />
-                <span>{address}</span>
-              </p>
-            ) : null}
           </div>
         </div>
-      </div>
-    </section>
-  );
-}
-
-function Footer({
-  slug,
-  businessName,
-  instagram,
-}: {
-  slug: string;
-  businessName: string;
-  instagram: string;
-}) {
-  const instagramUrl = instagram.trim();
-
-  return (
-    <footer className="border-t border-white/10 bg-zinc-950 py-8">
-      <div className="mx-auto flex max-w-[1440px] flex-col gap-4 px-5 text-sm text-white/64 md:flex-row md:items-center md:justify-between lg:px-10">
-        <p className="font-bold text-white">{businessName}</p>
-        <div className="flex flex-wrap items-center gap-5">
-          <Link href={`/${slug}/propiedades`} className="transition hover:text-white">
-            Propiedades
-          </Link>
-          {instagramUrl ? (
-            <a
-              href={instagramUrl}
-              target="_blank"
-              rel="noreferrer"
-              className="inline-flex items-center gap-2 transition hover:text-white"
-            >
-              <Instagram className="h-4 w-4" />
-              Instagram
-            </a>
-          ) : null}
-        </div>
-      </div>
-    </footer>
+      </footer>
+    </>
   );
 }
 
@@ -550,15 +636,17 @@ export default function Home({ forcedSlug }: HomeProps) {
       </section>
       <HowItWorks slug={slug} />
       <PublicSavedSearchSection slug={slug} />
-      <Contact
+      <Closing
         slug={slug}
         businessName={businessName}
-        address={address}
+        description={description}
+        whatsapp={whatsapp}
         phone={phone}
         email={email}
-        whatsapp={whatsapp}
+        instagram={instagram}
+        facebook={facebook}
+        address={address}
       />
-      <Footer slug={slug} businessName={businessName} instagram={instagram} />
     </div>
   );
 }
