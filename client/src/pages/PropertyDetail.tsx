@@ -3,12 +3,16 @@ import {
   ArrowLeft,
   Bath,
   BedDouble,
+  ChevronLeft,
+  ChevronRight,
   HomeIcon,
+  Images,
   Mail,
   MapPin,
   MessageCircle,
   Phone,
   Ruler,
+  X,
 } from "lucide-react";
 import { Link, useParams } from "wouter";
 import { usePublicProperty } from "@/lib/propertyData";
@@ -23,6 +27,11 @@ import {
 } from "@/lib/realEstateDemo";
 import { usePageMeta } from "@/lib/seo";
 import { trpc } from "@/lib/trpc";
+import {
+  Dialog,
+  DialogClose,
+  DialogContent,
+} from "@/components/ui/dialog";
 
 function buildWhatsappHref(whatsapp: string, propertyTitle: string) {
   return `https://wa.me/${whatsapp.replace(/\D/g, "")}?text=${encodeURIComponent(
@@ -100,6 +109,7 @@ export default function PropertyDetail() {
     { enabled: Boolean(safeSlug) },
   );
   const [selectedImage, setSelectedImage] = useState(0);
+  const [modalOpen, setModalOpen] = useState(false);
   const galleryImages = getPropertyGalleryImages(property);
   const businessName = publicProfile
     ? publicProfile.businessName?.trim() || "Inmobiliaria"
@@ -210,15 +220,42 @@ export default function PropertyDetail() {
       <main className="mx-auto max-w-6xl px-5 py-8 md:py-10">
         <section className="grid gap-6 lg:grid-cols-[0.95fr_1.05fr]">
           <div>
-            <div className="overflow-hidden bg-[#ece7dc]">
-              <img
-                src={galleryImages[selectedImage] ?? galleryImages[0]}
-                alt={property.title}
-                className="aspect-[4/3] w-full object-cover"
-              />
+            {/* Imagen principal + lightbox trigger */}
+            <div className="relative overflow-hidden bg-[#ece7dc]">
+              <button
+                type="button"
+                className="group block w-full cursor-zoom-in"
+                aria-label="Ampliar imagen"
+                onClick={() => setModalOpen(true)}
+              >
+                <img
+                  src={galleryImages[selectedImage] ?? galleryImages[0]}
+                  alt={property.title}
+                  className="aspect-[4/3] w-full object-cover"
+                />
+                {galleryImages.length > 1 ? (
+                  <span className="absolute bottom-3 left-3 flex items-center gap-1.5 rounded-[5px] bg-[#12383d]/85 px-3 py-2 text-[11px] font-black uppercase tracking-[0.12em] text-white backdrop-blur-sm transition group-hover:bg-[#12383d]">
+                    <Images className="h-3.5 w-3.5" />
+                    Ver fotos · {galleryImages.length}
+                  </span>
+                ) : null}
+              </button>
             </div>
 
-            <div className="mt-3 grid grid-cols-3 gap-3">
+            {/* Thumbnails — ocultos si hay 1 sola imagen */}
+            <div
+              className={
+                galleryImages.length <= 1
+                  ? "hidden"
+                  : galleryImages.length === 2
+                  ? "mt-3 grid grid-cols-2 gap-3"
+                  : galleryImages.length === 3
+                  ? "mt-3 grid grid-cols-3 gap-3"
+                  : galleryImages.length === 4
+                  ? "mt-3 grid grid-cols-2 gap-3 sm:grid-cols-4"
+                  : "mt-3 grid grid-cols-2 gap-3 sm:grid-cols-3"
+              }
+            >
               {galleryImages.map((image, index) => (
                 <button
                   key={image}
@@ -237,6 +274,70 @@ export default function PropertyDetail() {
                 </button>
               ))}
             </div>
+
+            {/* Lightbox */}
+            <Dialog open={modalOpen} onOpenChange={setModalOpen}>
+              <DialogContent
+                showCloseButton={false}
+                className="max-w-[95vw] overflow-hidden rounded-lg border-0 bg-[#111111] p-0 sm:max-w-[85vw]"
+              >
+                <div className="relative flex flex-col items-center">
+                  {/* Botón cerrar */}
+                  <DialogClose className="absolute right-3 top-3 z-10 flex h-10 w-10 items-center justify-center rounded-full bg-white/10 text-white transition hover:bg-white/20">
+                    <X className="h-5 w-5" />
+                    <span className="sr-only">Cerrar</span>
+                  </DialogClose>
+
+                  {/* Imagen ampliada */}
+                  <img
+                    src={galleryImages[selectedImage]}
+                    alt={`${property.title} foto ${selectedImage + 1}`}
+                    className="mx-auto max-h-[85vh] w-auto max-w-full object-contain"
+                  />
+
+                  {/* Flechas + contador */}
+                  <div className="flex w-full items-center justify-between px-3 py-3">
+                    {galleryImages.length > 1 ? (
+                      <button
+                        type="button"
+                        aria-label="Foto anterior"
+                        onClick={() =>
+                          setSelectedImage((i) =>
+                            i === 0 ? galleryImages.length - 1 : i - 1,
+                          )
+                        }
+                        className="flex h-10 w-10 items-center justify-center rounded-full bg-white/10 text-white transition hover:bg-white/20"
+                      >
+                        <ChevronLeft className="h-5 w-5" />
+                      </button>
+                    ) : (
+                      <span />
+                    )}
+
+                    <span className="text-xs font-semibold text-white/70">
+                      {selectedImage + 1} / {galleryImages.length}
+                    </span>
+
+                    {galleryImages.length > 1 ? (
+                      <button
+                        type="button"
+                        aria-label="Foto siguiente"
+                        onClick={() =>
+                          setSelectedImage((i) =>
+                            i === galleryImages.length - 1 ? 0 : i + 1,
+                          )
+                        }
+                        className="flex h-10 w-10 items-center justify-center rounded-full bg-white/10 text-white transition hover:bg-white/20"
+                      >
+                        <ChevronRight className="h-5 w-5" />
+                      </button>
+                    ) : (
+                      <span />
+                    )}
+                  </div>
+                </div>
+              </DialogContent>
+            </Dialog>
           </div>
 
           <aside>
@@ -257,7 +358,7 @@ export default function PropertyDetail() {
             </div>
 
             {/* Título */}
-            <h1 className="text-[2rem] font-bold leading-tight tracking-tight text-zinc-950 sm:text-[2.6rem]">
+            <h1 className="text-[2rem] font-bold leading-tight tracking-tight text-zinc-950 sm:text-[2.2rem]">
               {property.title}
             </h1>
 
