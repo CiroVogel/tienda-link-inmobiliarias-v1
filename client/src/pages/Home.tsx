@@ -1,6 +1,9 @@
 ﻿import {
   ArrowRight,
+  CalendarDays,
+  FileText,
   MessageCircle,
+  Search,
 } from "lucide-react";
 import { Link, useParams } from "wouter";
 import { PropertyCard } from "@/components/PropertyCard";
@@ -267,18 +270,21 @@ function AboutSection({
 
 function HowItWorks({ slug }: { slug: string }) {
   const steps = [
-    [
-      "Explora propiedades",
-      "Recorre opciones en venta y alquiler según zona, precio y tipo de propiedad.",
-    ],
-    [
-      "Revisa la ficha",
-      "Mira fotos, ubicación, medidas, ambientes y detalles principales antes de consultar.",
-    ],
-    [
-      "Solicita visita",
-      "Deja tus datos y tu disponibilidad para que podamos coordinar contigo.",
-    ],
+    {
+      icon: Search,
+      title: "Explorá propiedades",
+      text: "Recorré opciones en venta y alquiler según zona, precio y tipo de propiedad.",
+    },
+    {
+      icon: FileText,
+      title: "Revisá la ficha",
+      text: "Mirá fotos, ubicación, medidas, ambientes y detalles principales antes de consultar.",
+    },
+    {
+      icon: CalendarDays,
+      title: "Solicitá visita",
+      text: "Dejá tus datos y tu disponibilidad para que podamos coordinar con vos.",
+    },
   ];
 
   return (
@@ -293,21 +299,26 @@ function HowItWorks({ slug }: { slug: string }) {
           </h2>
         </div>
 
-        <div className="grid gap-px bg-zinc-200 md:grid-cols-3">
-          {steps.map(([title, text], index) => (
-            <div key={title} className="bg-white p-7">
-              <span className="mb-8 inline-flex h-10 w-10 items-center justify-center bg-zinc-950 text-sm font-black text-white">
-                {index + 1}
-              </span>
-              <h3 className="mb-3 text-xl font-black text-zinc-950">{title}</h3>
-              <p className="text-sm leading-6 text-zinc-700">{text}</p>
-            </div>
-          ))}
+        <div className="grid gap-2 rounded-2xl border border-zinc-200 bg-zinc-50 p-2 md:grid-cols-3">
+          {steps.map((step) => {
+            const Icon = step.icon;
+            return (
+              <div key={step.title} className="flex gap-4 rounded-xl bg-white p-5">
+                <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-zinc-100 text-zinc-600">
+                  <Icon className="h-4 w-4" />
+                </span>
+                <div>
+                  <h3 className="mb-1 text-sm font-bold text-zinc-950">{step.title}</h3>
+                  <p className="text-xs leading-5 text-zinc-600">{step.text}</p>
+                </div>
+              </div>
+            );
+          })}
         </div>
 
-        <div className="mt-8">
+        <div className="mt-8 flex justify-center">
           <Link href={`/${slug}/propiedades`}>
-            <span className="inline-flex items-center gap-2 rounded-full bg-zinc-950 px-6 py-3 text-xs font-black uppercase tracking-[0.16em] text-white shadow-sm transition hover:bg-zinc-800">
+            <span className="inline-flex h-12 items-center justify-center gap-2 rounded-full bg-zinc-950 px-8 text-sm font-semibold text-white transition hover:bg-zinc-800">
               Ver propiedades
               <ArrowRight className="h-4 w-4" />
             </span>
