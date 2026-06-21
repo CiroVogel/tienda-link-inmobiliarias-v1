@@ -552,7 +552,7 @@ export default function AdminServices() {
               return (
                 <article
                   key={property.id}
-                  className="grid gap-4 rounded-xl border border-[#ded8cc] bg-white p-5 lg:grid-cols-[minmax(0,1fr)_auto]"
+                  className="rounded-xl border border-[#ded8cc] bg-white p-5"
                 >
                   <div className="min-w-0">
                     <div className="mb-2 flex flex-wrap items-center gap-2">
@@ -575,39 +575,35 @@ export default function AdminServices() {
                       {property.location} | {property.propertyType}
                     </p>
 
-                    <div className="mt-3 flex flex-wrap gap-4 text-xs text-slate-500">
-                      <span className="font-semibold text-[#172124]">{property.price}</span>
+                    <p className="mt-2 text-sm font-semibold text-[#172124]">{property.price}</p>
+                    <div className="mt-1 flex flex-wrap items-center gap-x-3 gap-y-1 text-sm text-[#465153]">
                       <span>{property.address}</span>
                       <span>{property.images.length} foto{property.images.length !== 1 ? "s" : ""}</span>
                     </div>
                   </div>
 
-                  <div className="flex flex-wrap items-center gap-2 lg:justify-end">
-                    <Button
-                      variant="outline"
-                      size="sm"
+                  <div className="mt-4 border-t border-[#ded8cc] pt-4 flex flex-wrap items-center gap-2">
+                    <button
+                      type="button"
                       onClick={() => openEdit(property)}
-                      className="gap-2"
+                      className="inline-flex items-center gap-2 h-9 rounded-[7px] whitespace-nowrap px-3 text-sm font-medium bg-[#12383d] text-white hover:bg-[#0f646a] transition-colors"
                     >
                       <Pencil className="h-4 w-4" />
                       Editar
-                    </Button>
+                    </button>
 
-                    <Button variant="outline" size="sm" asChild className="gap-2">
-                      <Link href={`/admin/gallery?propertyId=${property.id}`}>
-                        <span>
-                          <Images className="h-4 w-4" />
-                          Fotos
-                        </span>
-                      </Link>
-                    </Button>
+                    <Link href={`/admin/gallery?propertyId=${property.id}`}>
+                      <span className="inline-flex items-center gap-2 h-9 rounded-[7px] whitespace-nowrap px-3 text-sm font-medium border border-[#ded8cc] bg-white text-[#172124] hover:border-[#12383d] hover:bg-[#eef4f2] hover:text-[#12383d] transition-colors cursor-pointer">
+                        <Images className="h-4 w-4" />
+                        Fotos
+                      </span>
+                    </Link>
 
-                    <Button
-                      variant="outline"
-                      size="sm"
+                    <button
+                      type="button"
                       onClick={() => void handleDownloadPdf(property)}
                       disabled={isGeneratingPdf}
-                      className="gap-2"
+                      className="inline-flex items-center gap-2 h-9 rounded-[7px] whitespace-nowrap px-3 text-sm font-medium border border-[#ded8cc] bg-white text-[#172124] hover:border-[#12383d] hover:bg-[#eef4f2] hover:text-[#12383d] transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                     >
                       {isGeneratingPdf ? (
                         <Loader2 className="h-4 w-4 animate-spin" />
@@ -615,14 +611,13 @@ export default function AdminServices() {
                         <Download className="h-4 w-4" />
                       )}
                       PDF
-                    </Button>
+                    </button>
 
-                    <Button
-                      variant="outline"
-                      size="sm"
+                    <button
+                      type="button"
                       onClick={() => void quickToggleFeatured(property)}
                       disabled={isQuickUpdating}
-                      className="gap-2"
+                      className="inline-flex items-center gap-2 h-9 rounded-[7px] whitespace-nowrap px-3 text-sm font-medium border border-[#ded8cc] bg-white text-[#172124] hover:border-[#12383d] hover:bg-[#eef4f2] hover:text-[#12383d] transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                     >
                       {isQuickUpdating ? (
                         <Loader2 className="h-4 w-4 animate-spin" />
@@ -630,15 +625,14 @@ export default function AdminServices() {
                         <Star className={`h-4 w-4 ${property.featured ? "fill-current" : ""}`} />
                       )}
                       {property.featured ? "Quitar destacada" : "Destacar"}
-                    </Button>
+                    </button>
 
-                    <Button
-                      variant="outline"
-                      size="sm"
+                    <button
+                      type="button"
                       onClick={() => void quickToggleVisibility(property)}
                       disabled={isQuickUpdating}
-                      className="gap-2"
                       title={property.status === "hidden" ? "Mostrar" : "Ocultar"}
+                      className="inline-flex items-center gap-2 h-9 rounded-[7px] whitespace-nowrap px-3 text-sm font-medium border border-[#ded8cc] bg-white text-[#172124] hover:border-[#12383d] hover:bg-[#eef4f2] hover:text-[#12383d] transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                     >
                       {isQuickUpdating ? (
                         <Loader2 className="h-4 w-4 animate-spin" />
@@ -648,7 +642,7 @@ export default function AdminServices() {
                         <EyeOff className="h-4 w-4" />
                       )}
                       {property.status === "hidden" ? "Mostrar" : "Ocultar"}
-                    </Button>
+                    </button>
                   </div>
                 </article>
               );
