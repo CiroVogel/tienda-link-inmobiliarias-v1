@@ -44,7 +44,7 @@ function Header({
   brandImageUrl?: string | null;
 }) {
   return (
-    <header className="sticky top-0 z-50 border-b border-white/10 bg-black/95 text-white backdrop-blur">
+    <header className="fixed inset-x-0 top-0 z-50 border-b border-[#d7c8b6]/35 bg-[#fff8ef]/74 shadow-[0_12px_34px_-30px_rgba(35,26,18,0.38)] backdrop-blur-md">
       <div className="mx-auto flex h-16 max-w-[1440px] items-center justify-between gap-4 px-5 lg:px-10">
         <Link href={`/${slug}`}>
           <span className="flex items-center gap-3">
@@ -57,30 +57,68 @@ function Header({
                 />
               </span>
             ) : null}
-            <span className="block whitespace-nowrap text-[11px] font-black uppercase tracking-[0.1em] text-white sm:text-sm sm:tracking-[0.18em]">
+            <span className="max-w-[180px] truncate text-xs font-black uppercase tracking-[0.12em] text-[#182125] sm:max-w-none sm:text-sm sm:tracking-[0.18em]">
               {businessName}
             </span>
           </span>
         </Link>
 
-        <nav className="hidden items-center gap-7 text-xs font-bold uppercase tracking-[0.16em] text-white/80 md:flex">
-          <Link href={`/${slug}/propiedades`}>Propiedades</Link>
-          <a href="#como-funciona">Cómo funciona</a>
-          <a href="#contacto">Contacto</a>
+        <nav className="hidden items-center gap-7 md:flex">
+          <Link
+            href={`/${slug}/propiedades`}
+            className="relative text-sm font-medium text-[#382d24]/75 transition hover:text-[#12383d] after:absolute after:-bottom-1 after:left-0 after:h-0.5 after:w-0 after:bg-[#12383d] after:transition-all hover:after:w-full"
+          >
+            Propiedades
+          </Link>
+          <a
+            href="#como-funciona"
+            className="relative text-sm font-medium text-[#382d24]/75 transition hover:text-[#12383d] after:absolute after:-bottom-1 after:left-0 after:h-0.5 after:w-0 after:bg-[#12383d] after:transition-all hover:after:w-full"
+          >
+            Cómo funciona
+          </a>
+          <a
+            href="#contacto"
+            className="relative text-sm font-medium text-[#382d24]/75 transition hover:text-[#12383d] after:absolute after:-bottom-1 after:left-0 after:h-0.5 after:w-0 after:bg-[#12383d] after:transition-all hover:after:w-full"
+          >
+            Contacto
+          </a>
         </nav>
 
         <div className="flex items-center gap-3">
           <a
             href="/admin"
-            className="hidden items-center rounded-full border border-white/25 px-4 py-2 text-[11px] font-bold uppercase tracking-[0.12em] text-white/70 transition hover:border-white/50 hover:text-white sm:inline-flex"
+            className="hidden items-center rounded-[6px] border border-[#cfc7b8] bg-[#fffdf8]/70 px-4 py-2 text-[11px] font-bold uppercase tracking-[0.12em] text-[#12383d] transition hover:border-[#0f646a] hover:bg-[#eef4f2] hover:text-[#0f646a] sm:inline-flex"
           >
             Mi panel
           </a>
           <Link href={`/${slug}/propiedades`}>
-            <span className="hidden rounded-full bg-[#81856a] px-5 py-2.5 text-xs font-black uppercase tracking-[0.16em] text-white shadow-sm transition hover:opacity-90 sm:inline-flex">
+            <span className="hidden rounded-[6px] bg-[#12383d] px-4 py-2 text-[11px] font-black uppercase tracking-[0.12em] text-white transition hover:bg-[#0f646a] sm:inline-flex">
               Ver propiedades
             </span>
           </Link>
+        </div>
+      </div>
+
+      <div className="border-t border-[#d7c8b6]/30 bg-[#fff8ef]/72 px-5 py-2 backdrop-blur-md md:hidden">
+        <div className="flex gap-5 overflow-x-auto whitespace-nowrap">
+          <Link
+            href={`/${slug}/propiedades`}
+            className="text-sm font-medium text-[#382d24]/75 transition hover:text-[#12383d]"
+          >
+            Propiedades
+          </Link>
+          <a
+            href="#como-funciona"
+            className="text-sm font-medium text-[#382d24]/75 transition hover:text-[#12383d]"
+          >
+            Cómo funciona
+          </a>
+          <a
+            href="#contacto"
+            className="text-sm font-medium text-[#382d24]/75 transition hover:text-[#12383d]"
+          >
+            Contacto
+          </a>
         </div>
       </div>
     </header>
@@ -122,18 +160,18 @@ function Hero({
       <div className="absolute inset-0 bg-gradient-to-r from-black/68 via-black/48 to-black/18" />
       <div className="absolute inset-0 bg-black/8" />
 
-      <div className="relative mx-auto flex min-h-[500px] max-w-[1440px] items-center px-5 py-12 sm:min-h-[560px] lg:min-h-[610px] lg:px-10">
+      <div className="relative mx-auto flex min-h-[500px] max-w-[1440px] items-start px-5 pb-16 pt-32 sm:min-h-[560px] sm:pt-36 lg:min-h-[610px] lg:pb-20 lg:pt-40 lg:px-10">
         <div className="max-w-2xl">
           <p className="text-xs font-bold uppercase tracking-[0.24em] text-white/82">
             {cityLabel ? `Inmobiliaria en ${cityLabel}` : "Inmobiliaria"}
           </p>
 
-          <h1 className="mt-6 max-w-xl text-5xl font-black leading-[0.9] tracking-tight text-white sm:text-6xl lg:text-[5.5rem]">
+          <h1 className="mt-6 max-w-xl text-[2.8rem] font-black leading-[0.9] tracking-tight text-white sm:text-[3.2rem] lg:text-[3.8rem]">
             {businessName}
           </h1>
 
           {tagline ? (
-            <p className="mt-5 max-w-xl text-lg font-medium leading-snug text-white/75 sm:text-xl">
+            <p className="mt-5 max-w-xl text-sm font-medium leading-snug text-white/75 sm:text-base">
               {tagline}
             </p>
           ) : null}
