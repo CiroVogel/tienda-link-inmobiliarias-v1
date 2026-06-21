@@ -12,6 +12,7 @@ import {
 } from "@/lib/realEstateDemo";
 import { usePageMeta } from "@/lib/seo";
 import { PublicHeader } from "@/components/public/PublicHeader";
+import { PublicFooter } from "@/components/public/PublicFooter";
 
 function whatsappHref(whatsapp: string, propertyTitle: string) {
   return `https://wa.me/${whatsapp.replace(/\D/g, "")}?text=${encodeURIComponent(
@@ -49,6 +50,12 @@ export default function Booking() {
   const profileWhatsapp = publicProfile
     ? publicProfile.whatsapp?.trim() || ""
     : realEstateProfile.whatsapp;
+  const description = publicProfile?.description?.trim() || realEstateProfile.description;
+  const phone = publicProfile?.phone?.trim() || realEstateProfile.phone;
+  const email = publicProfile?.email?.trim() || realEstateProfile.email;
+  const address = publicProfile?.address?.trim() || realEstateProfile.address;
+  const instagram = publicProfile?.instagram?.trim() || realEstateProfile.instagram;
+  const facebook = publicProfile?.facebook?.trim() || "";
 
   usePageMeta(
     `Solicitar visita | ${businessName}`,
@@ -284,6 +291,17 @@ export default function Booking() {
           )}
         </section>
       </main>
+      <PublicFooter
+        slug={safeSlug}
+        businessName={businessName}
+        description={description}
+        whatsapp={profileWhatsapp}
+        phone={phone}
+        email={email}
+        instagram={instagram}
+        facebook={facebook}
+        address={address}
+      />
     </div>
   );
 }

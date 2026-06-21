@@ -3,6 +3,7 @@ import { Building2 } from "lucide-react";
 import { Link, useParams } from "wouter";
 import SavedSearchSection from "@/components/public/SavedSearchSection";
 import { PublicHeader } from "@/components/public/PublicHeader";
+import { PublicFooter } from "@/components/public/PublicFooter";
 import { PropertyCard } from "@/components/PropertyCard";
 import { usePublicProperties } from "@/lib/propertyData";
 import {
@@ -70,6 +71,11 @@ export default function PropertyList() {
     publicProfile?.logoUrl?.trim() || publicProfile?.ownerImageUrl?.trim() || null;
   const instagram = publicProfile?.instagram?.trim() || "";
   const facebook = publicProfile?.facebook?.trim() || "";
+  const description = publicProfile?.description?.trim() || realEstateProfile.description;
+  const whatsapp = publicProfile?.whatsapp?.trim() || realEstateProfile.whatsapp;
+  const phone = publicProfile?.phone?.trim() || realEstateProfile.phone;
+  const email = publicProfile?.email?.trim() || realEstateProfile.email;
+  const address = publicProfile?.address?.trim() || realEstateProfile.address;
   const filteredProperties = useMemo(
     () =>
       properties.filter((property) => {
@@ -193,6 +199,17 @@ export default function PropertyList() {
           />
         </div>
       </main>
+      <PublicFooter
+        slug={safeSlug}
+        businessName={businessName}
+        description={description}
+        whatsapp={whatsapp}
+        phone={phone}
+        email={email}
+        instagram={instagram}
+        facebook={facebook}
+        address={address}
+      />
     </div>
   );
 }

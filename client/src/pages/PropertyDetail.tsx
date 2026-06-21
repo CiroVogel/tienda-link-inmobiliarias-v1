@@ -27,6 +27,7 @@ import {
 import { usePageMeta } from "@/lib/seo";
 import { trpc } from "@/lib/trpc";
 import { PublicHeader } from "@/components/public/PublicHeader";
+import { PublicFooter } from "@/components/public/PublicFooter";
 import {
   Dialog,
   DialogClose,
@@ -130,6 +131,13 @@ export default function PropertyDetail() {
   const address = publicProfile
     ? publicProfile.address?.trim() || ""
     : realEstateProfile.address;
+  const description = publicProfile
+    ? publicProfile.description?.trim() || ""
+    : realEstateProfile.description;
+  const instagram = publicProfile
+    ? publicProfile.instagram?.trim() || ""
+    : realEstateProfile.instagram;
+  const facebook = publicProfile?.facebook?.trim() || "";
 
   usePageMeta(
     property ? `${property.title} | ${businessName}` : `Propiedad | ${businessName}`,
@@ -514,6 +522,17 @@ export default function PropertyDetail() {
           </aside>
         </section>
       </main>
+      <PublicFooter
+        slug={safeSlug}
+        businessName={businessName}
+        description={description}
+        whatsapp={profileWhatsapp}
+        phone={phone}
+        email={email}
+        instagram={instagram}
+        facebook={facebook}
+        address={address}
+      />
     </div>
   );
 }
