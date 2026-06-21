@@ -209,12 +209,12 @@ export default function AdminGallery() {
     return (
       <AdminLayout>
         <div className="mx-auto max-w-4xl p-6">
-          <div className="rounded-xl border-2 border-dashed border-zinc-200 bg-white px-6 py-16 text-center">
-            <Images className="mx-auto mb-3 h-10 w-10 text-zinc-300" />
-            <h1 className="text-2xl font-black tracking-tight text-zinc-950">
+          <div className="rounded-xl border-2 border-dashed border-[#ded8cc] bg-white px-6 py-16 text-center">
+            <Images className="mx-auto mb-3 h-10 w-10 text-[#c8c0b4]" />
+            <h1 className="text-2xl font-black tracking-tight text-[#172124]">
               Fotos de propiedades
             </h1>
-            <p className="mt-3 text-sm text-zinc-700">
+            <p className="mt-3 text-sm text-[#465153]">
               Creá una propiedad primero y después cargá sus imágenes desde este panel.
             </p>
           </div>
@@ -246,7 +246,7 @@ export default function AdminGallery() {
             <select
               value={selectedPropertyId}
               onChange={(event) => setSelectedPropertyId(event.target.value)}
-              className="h-11 w-full rounded-md border border-input bg-background px-3 text-sm"
+              className="h-11 w-full rounded-md border border-[#ded8cc] bg-white px-3 text-sm"
             >
               {properties.map((property) => (
                 <option key={property.id} value={property.id}>
@@ -260,30 +260,30 @@ export default function AdminGallery() {
         {selectedProperty ? (
           <>
             <div className="mb-8 grid gap-6 lg:grid-cols-[320px_1fr]">
-              <div className="overflow-hidden rounded-xl border border-zinc-200 bg-white">
+              <div className="overflow-hidden rounded-xl border border-[#ded8cc] bg-white">
                 <img
                   src={selectedProperty.images[0]?.url ?? propertyImageFallback}
                   alt={selectedProperty.title}
                   className="aspect-[4/3] w-full object-cover"
                 />
                 <div className="space-y-2 p-5">
-                  <h2 className="text-lg font-black text-zinc-950">{selectedProperty.title}</h2>
-                  <p className="text-sm text-zinc-700">
+                  <h2 className="text-lg font-black text-[#172124]">{selectedProperty.title}</h2>
+                  <p className="text-sm text-[#465153]">
                     {selectedProperty.location} | {selectedProperty.propertyType}
                   </p>
-                  <p className="text-sm font-semibold text-zinc-950">{selectedProperty.price}</p>
+                  <p className="text-sm font-semibold text-[#172124]">{selectedProperty.price}</p>
                   <p className="text-xs uppercase tracking-[0.14em] text-zinc-600">
                     {currentImages.length} foto{currentImages.length !== 1 ? "s" : ""}
                   </p>
                 </div>
               </div>
 
-              <div className="rounded-xl border border-zinc-200 bg-white p-6">
+              <div className="rounded-xl border border-[#ded8cc] bg-white p-6">
                 <p className="mb-4 text-xs font-black uppercase tracking-[0.16em] text-zinc-600">
                   Subir imágenes
                 </p>
                 <div
-                  className="cursor-pointer rounded-xl border-2 border-dashed border-slate-200 p-10 text-center transition-colors hover:border-[#12383d]/40"
+                  className="cursor-pointer rounded-xl border-2 border-dashed border-[#ded8cc] p-10 text-center transition-colors hover:border-[#12383d]/40"
                   onClick={() => fileInputRef.current?.click()}
                   onDragOver={(event) => event.preventDefault()}
                   onDrop={(event) => {
@@ -294,12 +294,12 @@ export default function AdminGallery() {
                   }}
                 >
                   {uploading ? (
-                    <div className="flex flex-col items-center gap-2 text-zinc-700">
+                    <div className="flex flex-col items-center gap-2 text-[#465153]">
                       <Loader2 className="h-8 w-8 animate-spin" />
                       <span className="text-sm">Subiendo fotos...</span>
                     </div>
                   ) : (
-                    <div className="flex flex-col items-center gap-2 text-zinc-700">
+                    <div className="flex flex-col items-center gap-2 text-[#465153]">
                       <Upload className="h-8 w-8" />
                       <p className="text-sm font-medium">
                         Hacé clic o arrastrá imágenes para esta propiedad
@@ -324,10 +324,10 @@ export default function AdminGallery() {
             </div>
 
             {currentImages.length === 0 ? (
-              <div className="rounded-xl border-2 border-dashed border-zinc-200 bg-white px-6 py-16 text-center">
-                <ImagePlus className="mx-auto mb-3 h-10 w-10 text-zinc-300" />
-                <p className="font-semibold text-zinc-700">Todavía no hay fotos cargadas.</p>
-                <p className="mt-1 text-sm text-zinc-700">
+              <div className="rounded-xl border-2 border-dashed border-[#ded8cc] bg-white px-6 py-16 text-center">
+                <ImagePlus className="mx-auto mb-3 h-10 w-10 text-[#c8c0b4]" />
+                <p className="font-semibold text-[#465153]">Todavía no hay fotos cargadas.</p>
+                <p className="mt-1 text-sm text-[#465153]">
                   La web usará un fallback visual hasta que subas imágenes reales.
                 </p>
               </div>
@@ -336,9 +336,9 @@ export default function AdminGallery() {
                 {currentImages.map((image, index) => (
                   <article
                     key={image.id}
-                    className="overflow-hidden rounded-xl border border-zinc-200 bg-white"
+                    className="overflow-hidden rounded-xl border border-[#ded8cc] bg-white"
                   >
-                    <div className="relative bg-zinc-100">
+                    <div className="relative bg-[#f0ede6]">
                       <img
                         src={image.url}
                         alt={image.caption ?? `${selectedProperty.title} foto ${index + 1}`}
@@ -351,7 +351,7 @@ export default function AdminGallery() {
                             Principal
                           </span>
                         ) : null}
-                        <span className="bg-white/90 px-3 py-1 text-[11px] font-black uppercase tracking-[0.14em] text-zinc-700">
+                        <span className="bg-white/90 px-3 py-1 text-[11px] font-black uppercase tracking-[0.14em] text-[#465153]">
                           {index + 1}
                         </span>
                       </div>
