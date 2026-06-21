@@ -65,7 +65,7 @@ export default function AdminLayout({ children }: { children: ReactNode }) {
 
   const navItems = useMemo<NavItemConfig[]>(
     () => [
-      { href: "/admin/profile", label: "Perfil de la inmobiliaria", icon: Settings },
+      { href: "/admin/profile", label: "Perfil", icon: Settings },
       { href: "/admin/services", label: "Propiedades", icon: Briefcase },
       { href: "/admin/gallery", label: "Galería", icon: Images },
       { href: "/admin", label: "Consultas", icon: CalendarCheck, exact: true },
@@ -260,7 +260,7 @@ export default function AdminLayout({ children }: { children: ReactNode }) {
       {/* Row de trabajo: sidebar + main */}
       <div className="flex min-h-0 flex-1 overflow-hidden">
         {/* Sidebar desktop flotante */}
-        <aside className="hidden h-full shrink-0 p-3 md:flex md:w-[260px] lg:w-[268px] lg:p-4">
+        <aside className="hidden h-full shrink-0 p-3 md:flex md:w-[280px] lg:w-[288px] lg:p-4">
           <div className="flex h-full min-h-0 w-full flex-col overflow-hidden rounded-[12px] border border-[#ded8cc] bg-white p-1.5 lg:p-2 shadow-[0_16px_42px_rgba(25,31,28,0.06)]">
             <SidebarContent />
           </div>
