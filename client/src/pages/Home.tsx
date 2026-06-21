@@ -160,13 +160,13 @@ function Hero({
       <div className="absolute inset-0 bg-gradient-to-r from-black/68 via-black/48 to-black/18" />
       <div className="absolute inset-0 bg-black/8" />
 
-      <div className="relative mx-auto flex min-h-[500px] max-w-[1440px] items-start px-5 pb-16 pt-32 sm:min-h-[560px] sm:pt-36 lg:min-h-[610px] lg:pb-20 lg:pt-40 lg:px-10">
-        <div className="max-w-2xl">
+      <div className="relative mx-auto flex min-h-[500px] max-w-[1440px] items-start px-5 pb-16 pt-32 sm:min-h-[560px] sm:pt-36 lg:min-h-[610px] lg:items-stretch lg:pb-20 lg:pt-40 lg:px-10">
+        <div className="max-w-2xl lg:flex lg:flex-col">
           <p className="text-xs font-bold uppercase tracking-[0.24em] text-white/82">
             {cityLabel ? `Inmobiliaria en ${cityLabel}` : "Inmobiliaria"}
           </p>
 
-          <h1 className="mt-6 max-w-xl text-[2.8rem] font-black leading-[0.9] tracking-tight text-white sm:text-[3.2rem] lg:text-[3.8rem]">
+          <h1 className="mt-6 max-w-xl text-[3rem] font-black leading-[0.9] tracking-tight text-white sm:text-[3.6rem] lg:text-[4.5rem]">
             {businessName}
           </h1>
 
@@ -182,7 +182,7 @@ function Hero({
             </p>
           ) : null}
 
-          <div className="mt-8 flex flex-col gap-3 sm:flex-row">
+          <div className="mt-8 flex flex-col gap-3 sm:flex-row lg:mt-auto">
             <Link href={`/${slug}/propiedades`}>
               <span className="inline-flex items-center justify-center gap-2 rounded-full bg-[#81856a] px-7 py-4 text-xs font-black uppercase tracking-[0.16em] text-white shadow-sm transition hover:opacity-90">
                 Ver propiedades
