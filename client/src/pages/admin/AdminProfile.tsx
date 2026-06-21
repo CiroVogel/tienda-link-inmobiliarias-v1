@@ -301,8 +301,8 @@ export default function AdminProfile() {
         </div>
 
         <div className="space-y-6">
-          <section className="bg-white p-6 rounded-2xl border border-slate-200">
-            <h2 className="text-sm font-semibold text-slate-900 uppercase tracking-wide mb-5">
+          <section className="bg-white p-6 rounded-2xl border border-[#ded8cc]">
+            <h2 className="text-xs font-bold uppercase tracking-widest text-black/60 mb-5">
               Imágenes
             </h2>
 
@@ -332,8 +332,8 @@ export default function AdminProfile() {
             </div>
           </section>
 
-          <section className="bg-white p-6 rounded-2xl border border-slate-200">
-            <h2 className="text-sm font-semibold text-slate-900 uppercase tracking-wide mb-5">
+          <section className="bg-white p-6 rounded-2xl border border-[#ded8cc]">
+            <h2 className="text-xs font-bold uppercase tracking-widest text-black/60 mb-5">
               Portada principal
             </h2>
 
@@ -411,8 +411,8 @@ export default function AdminProfile() {
             </div>
           </section>
 
-          <section className="bg-white p-6 rounded-2xl border border-slate-200">
-            <h2 className="text-sm font-semibold text-slate-900 uppercase tracking-wide mb-5">
+          <section className="bg-white p-6 rounded-2xl border border-[#ded8cc]">
+            <h2 className="text-xs font-bold uppercase tracking-widest text-black/60 mb-5">
               Sobre la inmobiliaria
             </h2>
 
@@ -467,8 +467,8 @@ export default function AdminProfile() {
             </div>
           </section>
 
-          <section className="bg-white p-6 rounded-2xl border border-slate-200">
-            <h2 className="text-sm font-semibold text-slate-900 uppercase tracking-wide mb-5">
+          <section className="bg-white p-6 rounded-2xl border border-[#ded8cc]">
+            <h2 className="text-xs font-bold uppercase tracking-widest text-black/60 mb-5">
               Contacto
             </h2>
 
@@ -558,8 +558,8 @@ export default function AdminProfile() {
             </div>
           </section>
 
-          <section className="bg-white p-6 rounded-2xl border border-slate-200">
-            <h2 className="text-sm font-semibold text-slate-900 uppercase tracking-wide mb-5">
+          <section className="bg-white p-6 rounded-2xl border border-[#ded8cc]">
+            <h2 className="text-xs font-bold uppercase tracking-widest text-black/60 mb-5">
               Seguridad
             </h2>
 
@@ -573,7 +573,7 @@ export default function AdminProfile() {
                   disabled
                   className="bg-slate-50 border-slate-200"
                 />
-                <p className="text-xs text-slate-400 mt-1">
+                <p className="text-xs text-slate-500 mt-1">
                   Este email es el que se usa para entrar a la administración.
                 </p>
               </div>
