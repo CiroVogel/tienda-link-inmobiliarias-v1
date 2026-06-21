@@ -283,7 +283,7 @@ export default function AdminGallery() {
                   Subir imágenes
                 </p>
                 <div
-                  className="cursor-pointer rounded-xl border-2 border-dashed border-slate-200 p-10 text-center transition-colors hover:border-[#1A2744]/40"
+                  className="cursor-pointer rounded-xl border-2 border-dashed border-slate-200 p-10 text-center transition-colors hover:border-[#12383d]/40"
                   onClick={() => fileInputRef.current?.click()}
                   onDragOver={(event) => event.preventDefault()}
                   onDrop={(event) => {

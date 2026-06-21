@@ -151,7 +151,7 @@ export default function AdminAvailability() {
                       size="sm"
                       onClick={() => saveDay(day.id)}
                       disabled={saving === day.id}
-                      className="gap-1.5 text-xs h-8 bg-[#1A2744] text-white hover:bg-[#142039]"
+                      className="gap-1.5 text-xs h-8 bg-[#12383d] text-white hover:bg-[#0f646a]"
                     >
                       {saving === day.id ? (
                         <Loader2 className="w-3.5 h-3.5 animate-spin" />

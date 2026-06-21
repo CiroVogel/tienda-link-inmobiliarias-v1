@@ -137,7 +137,7 @@ export default function AdminInterestedDetail() {
 
         {isLoading ? (
           <div className="flex justify-center py-20">
-            <div className="h-8 w-8 animate-spin rounded-full border-2 border-slate-200 border-t-[#1A2744]" />
+            <div className="h-8 w-8 animate-spin rounded-full border-2 border-slate-200 border-t-[#12383d]" />
           </div>
         ) : !interested ? (
           <div className="rounded-xl border border-zinc-200 bg-white px-6 py-16 text-center">
@@ -238,7 +238,7 @@ export default function AdminInterestedDetail() {
                     )}
                     target="_blank"
                     rel="noreferrer"
-                    className="inline-flex h-10 items-center justify-center gap-2 rounded-md bg-[#1A2744] px-4 text-sm font-medium text-white hover:bg-[#142039]"
+                    className="inline-flex h-10 items-center justify-center gap-2 rounded-md bg-[#12383d] px-4 text-sm font-medium text-white hover:bg-[#0f646a]"
                   >
                     <MessageCircle className="h-4 w-4" />
                     WhatsApp
@@ -340,7 +340,7 @@ export default function AdminInterestedDetail() {
                     <Button
                       onClick={handleAddNote}
                       disabled={addNote.isPending}
-                      className="gap-2 bg-[#1A2744] text-white hover:bg-[#142039]"
+                      className="gap-2 bg-[#12383d] text-white hover:bg-[#0f646a]"
                     >
                       <Save className="h-4 w-4" />
                       Guardar nota

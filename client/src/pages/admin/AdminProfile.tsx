@@ -84,7 +84,7 @@ function ImageUploader({
       </Label>
 
       <div
-        className="relative rounded-2xl border-2 border-dashed border-slate-200 bg-slate-50 hover:border-[#1A2744]/40 transition-colors cursor-pointer overflow-hidden"
+        className="relative rounded-2xl border-2 border-dashed border-slate-200 bg-slate-50 hover:border-[#12383d]/40 transition-colors cursor-pointer overflow-hidden"
         style={{ height: tall ? "180px" : "120px" }}
         onClick={() => inputRef.current?.click()}
       >
@@ -289,7 +289,7 @@ export default function AdminProfile() {
           <button
             onClick={handleSave}
             disabled={!hasChanges || updateProfile.isPending}
-            className="flex items-center gap-2 px-5 py-2.5 bg-[#1A2744] text-white text-sm font-semibold rounded-xl hover:bg-[#142035] transition-colors disabled:opacity-30 disabled:cursor-not-allowed"
+            className="flex items-center gap-2 px-5 py-2.5 bg-[#12383d] text-white text-sm font-semibold rounded-xl hover:bg-[#0f646a] transition-colors disabled:opacity-30 disabled:cursor-not-allowed"
           >
             {updateProfile.isPending ? (
               <Loader2 className="w-4 h-4 animate-spin" />
@@ -377,7 +377,7 @@ export default function AdminProfile() {
                   value={getValue("businessName")}
                   onChange={(e) => handleChange("businessName", e.target.value)}
                   placeholder="Ej: Clave Urbana Propiedades"
-                  className="border-slate-200 focus-visible:border-[#1A2744] focus-visible:ring-[#1A2744]/15"
+                  className="border-slate-200 focus-visible:border-[#12383d] focus-visible:ring-[#12383d]/15"
                 />
               </div>
 
@@ -389,7 +389,7 @@ export default function AdminProfile() {
                   value={getValue("tagline")}
                   onChange={(e) => handleChange("tagline", e.target.value)}
                   placeholder="Ej: Venta y alquiler de propiedades en Rosario"
-                  className="border-slate-200 focus-visible:border-[#1A2744] focus-visible:ring-[#1A2744]/15"
+                  className="border-slate-200 focus-visible:border-[#12383d] focus-visible:ring-[#12383d]/15"
                 />
               </div>
 
@@ -401,7 +401,7 @@ export default function AdminProfile() {
                   value={getValue("description")}
                   onChange={(e) => handleChange("description", e.target.value)}
                   placeholder="Presentá en pocas palabras a tu inmobiliaria..."
-                  className="w-full rounded-xl border border-slate-200 bg-white px-3 py-2.5 text-sm placeholder:text-slate-400 focus:outline-none focus:border-[#1A2744] focus:ring-2 focus:ring-[#1A2744]/10 resize-none"
+                  className="w-full rounded-xl border border-slate-200 bg-white px-3 py-2.5 text-sm placeholder:text-slate-400 focus:outline-none focus:border-[#12383d] focus:ring-2 focus:ring-[#12383d]/10 resize-none"
                   rows={3}
                 />
                 <p className="text-xs text-slate-500 mt-1 leading-relaxed">
@@ -426,7 +426,7 @@ export default function AdminProfile() {
                     value={getValue("ownerName")}
                     onChange={(e) => handleChange("ownerName", e.target.value)}
                     placeholder="Ej: Equipo comercial"
-                    className="border-slate-200 focus-visible:border-[#1A2744] focus-visible:ring-[#1A2744]/15"
+                    className="border-slate-200 focus-visible:border-[#12383d] focus-visible:ring-[#12383d]/15"
                   />
                   <p className="text-xs text-slate-500 mt-1 leading-relaxed">
                     Se muestra al final de la presentación.
@@ -441,7 +441,7 @@ export default function AdminProfile() {
                     value={getValue("ownerTitle")}
                     onChange={(e) => handleChange("ownerTitle", e.target.value)}
                     placeholder="Ej: Tasaciones, ventas y alquileres"
-                    className="border-slate-200 focus-visible:border-[#1A2744] focus-visible:ring-[#1A2744]/15"
+                    className="border-slate-200 focus-visible:border-[#12383d] focus-visible:ring-[#12383d]/15"
                   />
                   <p className="text-xs text-slate-500 mt-1 leading-relaxed">
                     Se muestra encima del texto de presentación.
@@ -457,7 +457,7 @@ export default function AdminProfile() {
                   value={getValue("ownerBio")}
                   onChange={(e) => handleChange("ownerBio", e.target.value)}
                   placeholder="Contá brevemente cómo trabaja tu inmobiliaria y qué tipo de propiedades gestiona..."
-                  className="w-full rounded-xl border border-slate-200 bg-white px-3 py-2.5 text-sm placeholder:text-slate-400 focus:outline-none focus:border-[#1A2744] focus:ring-2 focus:ring-[#1A2744]/10 resize-none"
+                  className="w-full rounded-xl border border-slate-200 bg-white px-3 py-2.5 text-sm placeholder:text-slate-400 focus:outline-none focus:border-[#12383d] focus:ring-2 focus:ring-[#12383d]/10 resize-none"
                   rows={4}
                 />
                 <p className="text-xs text-slate-500 mt-1 leading-relaxed">
@@ -483,7 +483,7 @@ export default function AdminProfile() {
                     value={getValue("phone")}
                     onChange={(e) => handleChange("phone", e.target.value)}
                     placeholder="+54 9 11 1234-5678"
-                    className="border-slate-200 focus-visible:border-[#1A2744] focus-visible:ring-[#1A2744]/15"
+                    className="border-slate-200 focus-visible:border-[#12383d] focus-visible:ring-[#12383d]/15"
                   />
                 </div>
 
@@ -496,7 +496,7 @@ export default function AdminProfile() {
                     value={getValue("whatsapp")}
                     onChange={(e) => handleChange("whatsapp", e.target.value)}
                     placeholder="+54 9 11 1234-5678"
-                    className="border-slate-200 focus-visible:border-[#1A2744] focus-visible:ring-[#1A2744]/15"
+                    className="border-slate-200 focus-visible:border-[#12383d] focus-visible:ring-[#12383d]/15"
                   />
                 </div>
               </div>
@@ -511,7 +511,7 @@ export default function AdminProfile() {
                   value={getValue("email")}
                   onChange={(e) => handleChange("email", e.target.value)}
                   placeholder="hola@minegocio.com"
-                  className="border-slate-200 focus-visible:border-[#1A2744] focus-visible:ring-[#1A2744]/15"
+                  className="border-slate-200 focus-visible:border-[#12383d] focus-visible:ring-[#12383d]/15"
                 />
               </div>
 
@@ -524,7 +524,7 @@ export default function AdminProfile() {
                   value={getValue("address")}
                   onChange={(e) => handleChange("address", e.target.value)}
                   placeholder="Av. Corrientes 1234, CABA"
-                  className="border-slate-200 focus-visible:border-[#1A2744] focus-visible:ring-[#1A2744]/15"
+                  className="border-slate-200 focus-visible:border-[#12383d] focus-visible:ring-[#12383d]/15"
                 />
               </div>
 
@@ -538,7 +538,7 @@ export default function AdminProfile() {
                     value={getValue("instagram")}
                     onChange={(e) => handleChange("instagram", e.target.value)}
                     placeholder="https://instagram.com/tu_negocio"
-                    className="border-slate-200 focus-visible:border-[#1A2744] focus-visible:ring-[#1A2744]/15"
+                    className="border-slate-200 focus-visible:border-[#12383d] focus-visible:ring-[#12383d]/15"
                   />
                 </div>
 
@@ -551,7 +551,7 @@ export default function AdminProfile() {
                     value={getValue("facebook")}
                     onChange={(e) => handleChange("facebook", e.target.value)}
                     placeholder="https://facebook.com/tu_negocio"
-                    className="border-slate-200 focus-visible:border-[#1A2744] focus-visible:ring-[#1A2744]/15"
+                    className="border-slate-200 focus-visible:border-[#12383d] focus-visible:ring-[#12383d]/15"
                   />
                 </div>
               </div>
@@ -594,7 +594,7 @@ export default function AdminProfile() {
                     }
                     placeholder="Ingresá tu contraseña actual"
                     autoComplete="current-password"
-                    className="border-slate-200 focus-visible:border-[#1A2744] focus-visible:ring-[#1A2744]/15"
+                    className="border-slate-200 focus-visible:border-[#12383d] focus-visible:ring-[#12383d]/15"
                   />
                 </div>
               )}
@@ -614,7 +614,7 @@ export default function AdminProfile() {
                   }
                   placeholder="Mínimo 8 caracteres"
                   autoComplete="new-password"
-                  className="border-slate-200 focus-visible:border-[#1A2744] focus-visible:ring-[#1A2744]/15"
+                  className="border-slate-200 focus-visible:border-[#12383d] focus-visible:ring-[#12383d]/15"
                 />
               </div>
 
@@ -633,7 +633,7 @@ export default function AdminProfile() {
                   }
                   placeholder="Repetí la nueva contraseña"
                   autoComplete="new-password"
-                  className="border-slate-200 focus-visible:border-[#1A2744] focus-visible:ring-[#1A2744]/15"
+                  className="border-slate-200 focus-visible:border-[#12383d] focus-visible:ring-[#12383d]/15"
                 />
               </div>
 
@@ -642,7 +642,7 @@ export default function AdminProfile() {
                   type="button"
                   onClick={handlePasswordSave}
                   disabled={setMyPassword.isPending || passwordStatus.isLoading}
-                  className="flex items-center gap-2 px-5 py-2.5 bg-[#1A2744] text-white text-sm font-semibold rounded-xl hover:bg-[#142035] transition-colors disabled:opacity-30 disabled:cursor-not-allowed"
+                  className="flex items-center gap-2 px-5 py-2.5 bg-[#12383d] text-white text-sm font-semibold rounded-xl hover:bg-[#0f646a] transition-colors disabled:opacity-30 disabled:cursor-not-allowed"
                 >
                   {setMyPassword.isPending ? (
                     <Loader2 className="w-4 h-4 animate-spin" />
@@ -664,7 +664,7 @@ export default function AdminProfile() {
             <button
               onClick={handleSave}
               disabled={updateProfile.isPending}
-              className="flex items-center gap-2 px-6 py-3 bg-[#1A2744] text-white text-sm font-semibold rounded-2xl hover:bg-[#142035] transition-colors shadow-lg disabled:opacity-30"
+              className="flex items-center gap-2 px-6 py-3 bg-[#12383d] text-white text-sm font-semibold rounded-2xl hover:bg-[#0f646a] transition-colors shadow-lg disabled:opacity-30"
             >
               {updateProfile.isPending ? (
                 <Loader2 className="w-4 h-4 animate-spin" />

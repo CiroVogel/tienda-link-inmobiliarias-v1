@@ -136,7 +136,7 @@ export default function AdminBookings() {
                     onClick={() => setFilter(item.value)}
                     className={`whitespace-nowrap rounded-xl border px-4 py-2 text-sm font-medium transition-all duration-150 ${
                       isSelected
-                        ? "border-transparent bg-[#1A2744] text-white"
+                        ? "border-transparent bg-[#12383d] text-white"
                         : "border-slate-200 text-slate-600 hover:border-slate-300 hover:text-slate-900"
                     }`}
                   >
@@ -167,7 +167,7 @@ export default function AdminBookings() {
 
         {isLoading ? (
           <div className="flex justify-center py-12">
-            <div className="h-8 w-8 animate-spin rounded-full border-2 border-slate-200 border-t-[#1A2744]" />
+            <div className="h-8 w-8 animate-spin rounded-full border-2 border-slate-200 border-t-[#12383d]" />
           </div>
         ) : filteredRequests.length === 0 ? (
           <div className="py-16 text-center text-zinc-600">
