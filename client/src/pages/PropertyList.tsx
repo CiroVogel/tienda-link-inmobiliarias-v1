@@ -71,11 +71,11 @@ export default function PropertyList() {
     publicProfile?.logoUrl?.trim() || publicProfile?.ownerImageUrl?.trim() || null;
   const instagram = publicProfile?.instagram?.trim() || "";
   const facebook = publicProfile?.facebook?.trim() || "";
-  const description = publicProfile?.description?.trim() || realEstateProfile.description;
-  const whatsapp = publicProfile?.whatsapp?.trim() || realEstateProfile.whatsapp;
-  const phone = publicProfile?.phone?.trim() || realEstateProfile.phone;
-  const email = publicProfile?.email?.trim() || realEstateProfile.email;
-  const address = publicProfile?.address?.trim() || realEstateProfile.address;
+  const description = publicProfile ? publicProfile.description?.trim() || "" : realEstateProfile.description;
+  const whatsapp = publicProfile ? publicProfile.whatsapp?.trim() || "" : realEstateProfile.whatsapp;
+  const phone = publicProfile ? publicProfile.phone?.trim() || "" : realEstateProfile.phone;
+  const email = publicProfile ? publicProfile.email?.trim() || "" : realEstateProfile.email;
+  const address = publicProfile ? publicProfile.address?.trim() || "" : realEstateProfile.address;
   const filteredProperties = useMemo(
     () =>
       properties.filter((property) => {

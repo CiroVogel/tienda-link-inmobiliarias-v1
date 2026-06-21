@@ -50,11 +50,11 @@ export default function Booking() {
   const profileWhatsapp = publicProfile
     ? publicProfile.whatsapp?.trim() || ""
     : realEstateProfile.whatsapp;
-  const description = publicProfile?.description?.trim() || realEstateProfile.description;
-  const phone = publicProfile?.phone?.trim() || realEstateProfile.phone;
-  const email = publicProfile?.email?.trim() || realEstateProfile.email;
-  const address = publicProfile?.address?.trim() || realEstateProfile.address;
-  const instagram = publicProfile?.instagram?.trim() || realEstateProfile.instagram;
+  const description = publicProfile ? publicProfile.description?.trim() || "" : realEstateProfile.description;
+  const phone = publicProfile ? publicProfile.phone?.trim() || "" : realEstateProfile.phone;
+  const email = publicProfile ? publicProfile.email?.trim() || "" : realEstateProfile.email;
+  const address = publicProfile ? publicProfile.address?.trim() || "" : realEstateProfile.address;
+  const instagram = publicProfile ? publicProfile.instagram?.trim() || "" : realEstateProfile.instagram;
   const facebook = publicProfile?.facebook?.trim() || "";
 
   usePageMeta(
