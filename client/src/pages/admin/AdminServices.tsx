@@ -419,23 +419,23 @@ export default function AdminServices() {
             </p>
           </div>
 
-          <div className="flex flex-wrap gap-3 text-xs font-bold uppercase tracking-[0.14em] text-zinc-700">
-            <span className="rounded-full border border-zinc-200 bg-white px-3 py-2">
+          <div className="flex flex-wrap gap-3 text-xs font-bold uppercase tracking-[0.14em] text-[#172124]">
+            <span className="rounded-full border border-[#ded8cc] bg-white px-3 py-2">
               {visibleProperties} visibles
             </span>
-            <span className="rounded-full border border-zinc-200 bg-white px-3 py-2">
+            <span className="rounded-full border border-[#ded8cc] bg-white px-3 py-2">
               {hiddenProperties} ocultas
             </span>
-            <span className="rounded-full border border-zinc-200 bg-white px-3 py-2">
+            <span className="rounded-full border border-[#ded8cc] bg-white px-3 py-2">
               {properties.filter((property) => property.featured).length} destacadas
             </span>
           </div>
         </div>
 
-        <div className="mb-6 rounded-xl border border-zinc-200 bg-white p-4">
+        <div className="mb-6 rounded-xl border border-[#ded8cc] bg-white p-4">
           <div className="grid gap-3 xl:grid-cols-[minmax(0,1.4fr)_180px_170px]">
             <div className="relative">
-              <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-zinc-600" />
+              <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-[#465153]" />
               <Input
                 value={search}
                 onChange={(event) => setSearch(event.target.value)}
@@ -447,13 +447,13 @@ export default function AdminServices() {
             <select
               value={sortOrder}
               onChange={(event) => setSortOrder(event.target.value as SortOrder)}
-              className="h-10 rounded-md border border-input bg-background px-3 text-sm"
+              className="h-10 rounded-md border border-[#ded8cc] bg-white px-3 text-sm"
             >
               <option value="recent">Mas recientes</option>
               <option value="oldest">Mas antiguas</option>
             </select>
 
-            <Button onClick={openCreate} className="gap-2 bg-[#1A2744] text-white hover:bg-[#142039]">
+            <Button onClick={openCreate} className="gap-2 bg-[#12383d] text-white hover:bg-[#0f646a]">
               <Plus className="h-4 w-4" />
               Nueva propiedad
             </Button>
@@ -463,7 +463,7 @@ export default function AdminServices() {
             <select
               value={operationFilter}
               onChange={(event) => setOperationFilter(event.target.value as OperationFilter)}
-              className="h-10 rounded-md border border-input bg-background px-3 text-sm"
+              className="h-10 rounded-md border border-[#ded8cc] bg-white px-3 text-sm"
             >
               <option value="all">Todas las operaciones</option>
               <option value="sale">Venta</option>
@@ -473,7 +473,7 @@ export default function AdminServices() {
             <select
               value={statusFilter}
               onChange={(event) => setStatusFilter(event.target.value as StatusFilter)}
-              className="h-10 rounded-md border border-input bg-background px-3 text-sm"
+              className="h-10 rounded-md border border-[#ded8cc] bg-white px-3 text-sm"
             >
               <option value="all">Todos los estados</option>
               <option value="available">Disponible</option>
@@ -486,7 +486,7 @@ export default function AdminServices() {
             <select
               value={featuredFilter}
               onChange={(event) => setFeaturedFilter(event.target.value as FeaturedFilter)}
-              className="h-10 rounded-md border border-input bg-background px-3 text-sm"
+              className="h-10 rounded-md border border-[#ded8cc] bg-white px-3 text-sm"
             >
               <option value="all">Todas las destacadas</option>
               <option value="featured">Solo destacadas</option>
@@ -496,7 +496,7 @@ export default function AdminServices() {
             <select
               value={visibilityFilter}
               onChange={(event) => setVisibilityFilter(event.target.value as VisibilityFilter)}
-              className="h-10 rounded-md border border-input bg-background px-3 text-sm"
+              className="h-10 rounded-md border border-[#ded8cc] bg-white px-3 text-sm"
             >
               <option value="all">Visibles y ocultas</option>
               <option value="visible">Solo visibles</option>
@@ -504,10 +504,10 @@ export default function AdminServices() {
             </select>
           </div>
 
-          <div className="mt-3 flex flex-wrap items-center justify-between gap-3 text-xs text-zinc-500">
+          <div className="mt-3 flex flex-wrap items-center justify-between gap-3 text-xs text-slate-500">
             <p>
-              Mostrando <span className="font-semibold text-zinc-950">{filteredProperties.length}</span> de{" "}
-              <span className="font-semibold text-zinc-950">{totalProperties}</span> propiedades
+              Mostrando <span className="font-semibold text-[#172124]">{filteredProperties.length}</span> de{" "}
+              <span className="font-semibold text-[#172124]">{totalProperties}</span> propiedades
             </p>
 
             <button
@@ -520,7 +520,7 @@ export default function AdminServices() {
                 setVisibilityFilter("all");
                 setSortOrder("recent");
               }}
-              className="text-xs font-bold uppercase tracking-[0.14em] text-zinc-700 hover:text-slate-900"
+              className="text-xs font-bold uppercase tracking-[0.14em] text-[#172124] hover:text-[#172124]"
             >
               Limpiar filtros
             </button>
@@ -528,18 +528,18 @@ export default function AdminServices() {
         </div>
 
         {totalProperties === 0 ? (
-          <div className="rounded-xl border-2 border-dashed border-zinc-200 bg-white px-6 py-16 text-center">
-            <Home className="mx-auto mb-3 h-10 w-10 text-zinc-300" />
-            <p className="font-semibold text-zinc-700">Todavía no cargaste propiedades.</p>
-            <p className="mt-1 text-sm text-zinc-500">
+          <div className="rounded-xl border-2 border-dashed border-[#ded8cc] bg-white px-6 py-16 text-center">
+            <Home className="mx-auto mb-3 h-10 w-10 text-[#c8c0b4]" />
+            <p className="font-semibold text-[#172124]">Todavía no cargaste propiedades.</p>
+            <p className="mt-1 text-sm text-slate-500">
               Crea la primera propiedad para empezar a publicar desde el admin.
             </p>
           </div>
         ) : filteredProperties.length === 0 ? (
-          <div className="rounded-xl border border-zinc-200 bg-white px-6 py-16 text-center">
-            <Search className="mx-auto mb-3 h-10 w-10 text-zinc-300" />
-            <p className="font-semibold text-zinc-700">No encontramos propiedades con esos filtros.</p>
-            <p className="mt-1 text-sm text-zinc-500">
+          <div className="rounded-xl border border-[#ded8cc] bg-white px-6 py-16 text-center">
+            <Search className="mx-auto mb-3 h-10 w-10 text-[#c8c0b4]" />
+            <p className="font-semibold text-[#172124]">No encontramos propiedades con esos filtros.</p>
+            <p className="mt-1 text-sm text-slate-500">
               Prueba otra búsqueda o limpia los filtros para volver al listado completo.
             </p>
           </div>
@@ -552,14 +552,14 @@ export default function AdminServices() {
               return (
                 <article
                   key={property.id}
-                  className="grid gap-4 rounded-xl border border-zinc-200 bg-white p-5 lg:grid-cols-[minmax(0,1fr)_auto]"
+                  className="grid gap-4 rounded-xl border border-[#ded8cc] bg-white p-5 lg:grid-cols-[minmax(0,1fr)_auto]"
                 >
                   <div className="min-w-0">
                     <div className="mb-2 flex flex-wrap items-center gap-2">
-                      <span className="rounded-md bg-[#1A2744] px-3 py-1 text-[11px] font-black uppercase tracking-[0.14em] text-white">
+                      <span className="rounded-md bg-[#12383d] px-3 py-1 text-[11px] font-black uppercase tracking-[0.14em] text-white">
                         {getOperationLabel(property.operation)}
                       </span>
-                      <span className="bg-zinc-100 px-3 py-1 text-[11px] font-black uppercase tracking-[0.14em] text-zinc-600">
+                      <span className="bg-[#f0ede6] px-3 py-1 text-[11px] font-black uppercase tracking-[0.14em] text-[#465153]">
                         {getStatusLabel(property.status)}
                       </span>
                       {property.featured ? (
@@ -570,13 +570,13 @@ export default function AdminServices() {
                       ) : null}
                     </div>
 
-                    <h2 className="text-lg font-black text-zinc-950">{property.title}</h2>
-                    <p className="mt-1 text-sm text-zinc-500">
+                    <h2 className="text-lg font-black text-[#172124]">{property.title}</h2>
+                    <p className="mt-1 text-sm text-slate-500">
                       {property.location} | {property.propertyType}
                     </p>
 
-                    <div className="mt-3 flex flex-wrap gap-4 text-xs text-zinc-500">
-                      <span className="font-semibold text-zinc-900">{property.price}</span>
+                    <div className="mt-3 flex flex-wrap gap-4 text-xs text-slate-500">
+                      <span className="font-semibold text-[#172124]">{property.price}</span>
                       <span>{property.address}</span>
                       <span>{property.images.length} foto{property.images.length !== 1 ? "s" : ""}</span>
                     </div>
@@ -658,7 +658,7 @@ export default function AdminServices() {
 
         <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
           <DialogContent className="flex max-h-[90vh] max-w-4xl flex-col gap-0 overflow-hidden p-0">
-            <DialogHeader className="sticky top-0 z-10 border-b border-zinc-200 bg-white px-6 py-5 pr-12">
+            <DialogHeader className="sticky top-0 z-10 border-b border-[#ded8cc] bg-white px-6 py-5 pr-12">
               <DialogTitle>{editingId ? "Editar propiedad" : "Nueva propiedad"}</DialogTitle>
             </DialogHeader>
 
@@ -684,7 +684,7 @@ export default function AdminServices() {
                         operation: event.target.value as PropertyOperation,
                       }))
                     }
-                    className="h-10 w-full rounded-md border border-input bg-background px-3 text-sm"
+                    className="h-10 w-full rounded-md border border-[#ded8cc] bg-white px-3 text-sm"
                   >
                     <option value="sale">Venta</option>
                     <option value="rent">Alquiler</option>
@@ -701,7 +701,7 @@ export default function AdminServices() {
                         status: event.target.value as PropertyStatus,
                       }))
                     }
-                    className="h-10 w-full rounded-md border border-input bg-background px-3 text-sm"
+                    className="h-10 w-full rounded-md border border-[#ded8cc] bg-white px-3 text-sm"
                   >
                     <option value="available">Disponible</option>
                     <option value="reserved">Reservada</option>
@@ -753,13 +753,13 @@ export default function AdminServices() {
                   />
                 </div>
 
-                <section className="md:col-span-2 rounded-md border border-zinc-200 bg-zinc-50 p-4">
-                  <h3 className="text-sm font-black uppercase tracking-[0.14em] text-zinc-950">
+                <section className="md:col-span-2 rounded-md border border-[#ded8cc] bg-[#f7f5ef] p-4">
+                  <h3 className="text-sm font-black uppercase tracking-[0.14em] text-[#172124]">
                     Características detalladas
                   </h3>
 
                   <div className="mt-4">
-                    <p className="mb-3 text-xs font-black uppercase tracking-[0.12em] text-zinc-500">
+                    <p className="mb-3 text-xs font-black uppercase tracking-[0.12em] text-slate-500">
                       Datos principales
                     </p>
                     <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
@@ -842,7 +842,7 @@ export default function AdminServices() {
                   </div>
 
                   <div className="mt-5">
-                    <p className="mb-3 text-xs font-black uppercase tracking-[0.12em] text-zinc-500">
+                    <p className="mb-3 text-xs font-black uppercase tracking-[0.12em] text-slate-500">
                       Superficies
                     </p>
                     <div className="grid gap-4 sm:grid-cols-3">
@@ -894,7 +894,7 @@ export default function AdminServices() {
                   </div>
 
                   <div className="mt-5">
-                    <p className="mb-3 text-xs font-black uppercase tracking-[0.12em] text-zinc-500">
+                    <p className="mb-3 text-xs font-black uppercase tracking-[0.12em] text-slate-500">
                       Ubicación / disposición
                     </p>
                     <div className="grid gap-4 sm:grid-cols-2">
@@ -908,7 +908,7 @@ export default function AdminServices() {
                               disposition: event.target.value as PropertyDisposition | "",
                             }))
                           }
-                          className="h-10 w-full rounded-md border border-input bg-background px-3 text-sm"
+                          className="h-10 w-full rounded-md border border-[#ded8cc] bg-white px-3 text-sm"
                         >
                           <option value="">Sin especificar</option>
                           {propertyDispositionOptions.map((option) => (
@@ -929,7 +929,7 @@ export default function AdminServices() {
                               orientation: event.target.value as PropertyOrientation | "",
                             }))
                           }
-                          className="h-10 w-full rounded-md border border-input bg-background px-3 text-sm"
+                          className="h-10 w-full rounded-md border border-[#ded8cc] bg-white px-3 text-sm"
                         >
                           <option value="">Sin especificar</option>
                           {propertyOrientationOptions.map((option) => (
@@ -945,14 +945,14 @@ export default function AdminServices() {
                   <div className="mt-5 grid gap-5">
                     {detailedPropertyFeatureGroups.map((group) => (
                       <div key={group.title}>
-                        <p className="mb-3 text-xs font-black uppercase tracking-[0.12em] text-zinc-500">
+                        <p className="mb-3 text-xs font-black uppercase tracking-[0.12em] text-slate-500">
                           {group.title}
                         </p>
                         <div className="grid gap-2 sm:grid-cols-2 lg:grid-cols-3">
                           {group.options.map((feature) => (
                             <label
                               key={feature}
-                              className="flex min-h-10 items-center gap-2 rounded-md border border-zinc-200 bg-white px-3 py-2 text-sm font-medium text-zinc-700"
+                              className="flex min-h-10 items-center gap-2 rounded-md border border-[#ded8cc] bg-white px-3 py-2 text-sm font-medium text-[#172124]"
                             >
                               <input
                                 type="checkbox"
@@ -971,7 +971,7 @@ export default function AdminServices() {
                 </section>
 
                 <div className="flex items-end">
-                  <label className="flex items-center gap-2 text-sm font-medium text-zinc-700">
+                  <label className="flex items-center gap-2 text-sm font-medium text-[#172124]">
                     <input
                       type="checkbox"
                       checked={form.featured}
@@ -991,7 +991,7 @@ export default function AdminServices() {
                       setForm((current) => ({ ...current, description: event.target.value }))
                     }
                     rows={4}
-                    className="w-full resize-none rounded-md border border-input bg-background px-3 py-2 text-sm"
+                    className="w-full resize-none rounded-md border border-[#ded8cc] bg-white px-3 py-2 text-sm"
                     placeholder="Descripción breve de la propiedad"
                   />
                 </div>
@@ -1004,18 +1004,18 @@ export default function AdminServices() {
                       setForm((current) => ({ ...current, featuresText: event.target.value }))
                     }
                     rows={4}
-                    className="w-full resize-none rounded-md border border-input bg-background px-3 py-2 text-sm"
+                    className="w-full resize-none rounded-md border border-[#ded8cc] bg-white px-3 py-2 text-sm"
                     placeholder={"Una por línea\nBalcón al frente\nCocina separada"}
                   />
                 </div>
               </div>
               </div>
 
-              <DialogFooter className="sticky bottom-0 border-t border-zinc-200 bg-white px-6 py-4 gap-2">
+              <DialogFooter className="sticky bottom-0 border-t border-[#ded8cc] bg-white px-6 py-4 gap-2">
                 <Button type="button" variant="outline" onClick={() => setDialogOpen(false)}>
                   Cancelar
                 </Button>
-                <Button type="submit" disabled={isSaving} className="bg-[#1A2744] text-white hover:bg-[#142039]">
+                <Button type="submit" disabled={isSaving} className="bg-[#12383d] text-white hover:bg-[#0f646a]">
                   {isSaving ? (
                     <Loader2 className="h-4 w-4 animate-spin" />
                   ) : editingId ? (
