@@ -103,10 +103,10 @@ export default function AdminAvailability() {
       <div className="p-6 max-w-3xl mx-auto">
         {/* Header */}
         <div className="mb-8">
-          <h1 className="text-2xl font-black text-slate-900 tracking-tight">
+          <h1 className="text-2xl font-black text-[#172124] tracking-tight">
             Disponibilidad
           </h1>
-          <p className="text-zinc-600 text-sm mt-0.5">
+          <p className="text-[#465153] text-sm mt-0.5">
             Configurá los días y horarios en que aceptás reservas
           </p>
         </div>
@@ -122,7 +122,7 @@ export default function AdminAvailability() {
               <div
                 key={day.id}
                 className={`bg-white rounded-xl border p-5 transition-all duration-150 ${
-                  config.isActive ? "border-border shadow-sm" : "border-border opacity-70"
+                  config.isActive ? "border-[#ded8cc] shadow-sm" : "border-[#ded8cc] opacity-70"
                 }`}
               >
                 {/* Day header */}
@@ -135,13 +135,13 @@ export default function AdminAvailability() {
                     <div>
                       <p className="font-semibold text-sm">{day.label}</p>
                       {config.isActive && slotCount > 0 && (
-                        <p className="text-xs text-zinc-600 flex items-center gap-1 mt-0.5">
+                        <p className="text-xs text-[#465153] flex items-center gap-1 mt-0.5">
                           <Clock className="w-3 h-3" />
                           {slotCount} turno{slotCount !== 1 ? "s" : ""} disponible{slotCount !== 1 ? "s" : ""}
                         </p>
                       )}
                       {!config.isActive && (
-                        <p className="text-xs text-zinc-600 mt-0.5">No disponible</p>
+                        <p className="text-xs text-[#465153] mt-0.5">No disponible</p>
                       )}
                     </div>
                   </div>
@@ -165,9 +165,9 @@ export default function AdminAvailability() {
 
                 {/* Config fields (only when active) */}
                 {config.isActive && (
-                  <div className="grid grid-cols-3 gap-4 pt-4 border-t border-border">
+                  <div className="grid grid-cols-3 gap-4 pt-4 border-t border-[#ded8cc]">
                     <div>
-                      <Label className="text-xs font-medium mb-1.5 block text-zinc-600 uppercase tracking-wider">
+                      <Label className="text-xs font-medium mb-1.5 block text-[#465153] uppercase tracking-wider">
                         Desde
                       </Label>
                       <Input
@@ -178,7 +178,7 @@ export default function AdminAvailability() {
                       />
                     </div>
                     <div>
-                      <Label className="text-xs font-medium mb-1.5 block text-zinc-600 uppercase tracking-wider">
+                      <Label className="text-xs font-medium mb-1.5 block text-[#465153] uppercase tracking-wider">
                         Hasta
                       </Label>
                       <Input
@@ -189,7 +189,7 @@ export default function AdminAvailability() {
                       />
                     </div>
                     <div>
-                      <Label className="text-xs font-medium mb-1.5 block text-zinc-600 uppercase tracking-wider">
+                      <Label className="text-xs font-medium mb-1.5 block text-[#465153] uppercase tracking-wider">
                         Duración (min)
                       </Label>
                       <Input
@@ -213,8 +213,8 @@ export default function AdminAvailability() {
 
         {/* Info */}
         <div
-          className="mt-6 rounded-xl p-4 text-sm text-zinc-600"
-          style={{ background: "oklch(97% 0 0)" }}
+          className="mt-6 rounded-xl p-4 text-sm text-[#465153]"
+          style={{ background: "#f7f5ef" }}
         >
           <p className="font-medium text-foreground mb-1">¿Cómo funciona?</p>
           <ul className="space-y-1 text-xs">
