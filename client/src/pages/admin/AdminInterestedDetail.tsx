@@ -168,41 +168,41 @@ export default function AdminInterestedDetail() {
                     </span>
                   </div>
 
-                  <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
-                    <div className="rounded-xl border border-zinc-200 bg-zinc-50 px-4 py-3">
-                      <p className="text-[11px] font-semibold uppercase tracking-[0.16em] text-zinc-600">
+                  <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 xl:grid-cols-4">
+                    <div className="flex min-h-[104px] flex-col items-center justify-center rounded-xl border border-[#ded8cc] bg-[#f7f5ef] px-4 py-3 text-center">
+                      <p className="text-xs font-bold uppercase leading-relaxed tracking-widest text-black/60">
                         WhatsApp
                       </p>
-                      <p className="mt-1 text-sm font-medium text-zinc-950">
+                      <p className="mt-2 break-words text-sm font-medium leading-relaxed text-[#172124]">
                         {interested.whatsapp}
                       </p>
                     </div>
 
-                    <div className="rounded-xl border border-zinc-200 bg-zinc-50 px-4 py-3">
-                      <p className="text-[11px] font-semibold uppercase tracking-[0.16em] text-zinc-600">
+                    <div className="flex min-h-[104px] flex-col items-center justify-center rounded-xl border border-[#ded8cc] bg-[#f7f5ef] px-4 py-3 text-center">
+                      <p className="text-xs font-bold uppercase leading-relaxed tracking-widest text-black/60">
                         Email
                       </p>
-                      <p className="mt-1 text-sm font-medium text-zinc-950">
+                      <p className="mt-2 break-all text-sm font-medium leading-relaxed text-[#172124]">
                         {interested.email || "No informado"}
                       </p>
                     </div>
 
-                    <div className="rounded-xl border border-zinc-200 bg-zinc-50 px-4 py-3">
-                      <p className="text-[11px] font-semibold uppercase tracking-[0.16em] text-zinc-600">
+                    <div className="flex min-h-[104px] flex-col items-center justify-center rounded-xl border border-[#ded8cc] bg-[#f7f5ef] px-4 py-3 text-center">
+                      <p className="text-xs font-bold uppercase leading-relaxed tracking-widest text-black/60">
                         Fecha de consulta
                       </p>
-                      <p className="mt-1 text-sm font-medium text-zinc-950">
+                      <p className="mt-2 break-words text-sm font-medium leading-relaxed text-[#172124]">
                         {format(parseISO(interested.createdAt), "d 'de' MMMM yyyy · HH:mm", {
                           locale: es,
                         })}
                       </p>
                     </div>
 
-                    <div className="rounded-xl border border-zinc-200 bg-zinc-50 px-4 py-3">
-                      <p className="text-[11px] font-semibold uppercase tracking-[0.16em] text-zinc-600">
+                    <div className="flex min-h-[104px] flex-col items-center justify-center rounded-xl border border-[#ded8cc] bg-[#f7f5ef] px-4 py-3 text-center">
+                      <p className="text-xs font-bold uppercase leading-relaxed tracking-widest text-black/60">
                         Propiedad
                       </p>
-                      <p className="mt-1 text-sm font-medium text-zinc-950">
+                      <p className="mt-2 break-words text-sm font-medium leading-relaxed text-[#172124]">
                         {interested.propertyTitle}
                       </p>
                     </div>
