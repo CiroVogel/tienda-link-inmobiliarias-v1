@@ -39,10 +39,10 @@ function NavItem({
     <Link href={href}>
       <button
         onClick={onClick}
-        className={`w-full flex items-center gap-3 border-l-[3px] ${
+        className={`w-full flex items-center gap-3 rounded-[8px] px-3 py-2.5 text-[15px] font-semibold transition ${
           isActive
-            ? "border-[#0f646a] bg-[#eef8f6] px-3 py-2.5 text-[15px] font-semibold text-[#12383d]"
-            : "border-transparent px-3 py-2.5 text-[15px] font-semibold text-[#465153] transition hover:bg-[#eef8f6] hover:text-[#12383d]"
+            ? "bg-[#d9eeee] text-[#0b3438]"
+            : "text-[#172124] hover:bg-[#eef8f6] hover:text-[#12383d]"
         }`}
       >
         <Icon className="w-4 h-4 shrink-0" />
@@ -59,6 +59,9 @@ export default function AdminLayout({ children }: { children: ReactNode }) {
   const publicPageHref = profile?.slug ? `/${profile.slug}` : "/";
 
   const isPlatformAdmin = user?.openId === "local-admin";
+
+  const businessName =
+    profile?.businessName ?? (isPlatformAdmin ? "Admin Central" : "Mi inmobiliaria");
 
   const navItems = useMemo<NavItemConfig[]>(
     () => [
@@ -137,14 +140,14 @@ export default function AdminLayout({ children }: { children: ReactNode }) {
     );
   }
 
-  const Sidebar = ({ mobile = false }: { mobile?: boolean }) => (
-    <div className="flex flex-col h-full bg-[#fbfaf6] border-r border-[#ded8cc]">
-      {/* Encabezado sidebar */}
-      <div className="px-5 py-5 border-b border-[#ded8cc]">
+  const SidebarContent = ({ mobile = false }: { mobile?: boolean }) => (
+    <>
+      {/* Encabezado */}
+      <div className="shrink-0 border-b border-[#ded8cc] px-3 py-3">
         <div className="flex items-center justify-between">
           <div>
             <p className="text-sm font-black uppercase tracking-[0.14em] text-[#172124] leading-tight">
-              {profile?.businessName ?? (isPlatformAdmin ? "Admin Central" : "Mi inmobiliaria")}
+              {businessName}
             </p>
             <p className="text-xs text-[#465153] mt-0.5 uppercase tracking-[0.14em]">
               Panel Admin
@@ -162,7 +165,7 @@ export default function AdminLayout({ children }: { children: ReactNode }) {
       </div>
 
       {/* Navegación */}
-      <nav className="flex-1 py-2 overflow-y-auto">
+      <nav className="flex-1 overflow-y-auto py-1">
         {navItems.map((item) => (
           <NavItem
             key={item.href}
@@ -172,11 +175,11 @@ export default function AdminLayout({ children }: { children: ReactNode }) {
         ))}
       </nav>
 
-      {/* Pie del sidebar */}
-      <div className="border-t border-[#ded8cc]">
-        {/* Ver página pública — solo en mobile */}
+      {/* Pie */}
+      <div className="shrink-0 border-t border-[#ded8cc]">
+        {/* Ver página pública — solo en mobile drawer */}
         {mobile && profile?.slug ? (
-          <div className="px-4 py-4 border-b border-[#ded8cc]">
+          <div className="px-3 py-3 border-b border-[#ded8cc]">
             <a
               href={publicPageHref}
               target="_blank"
@@ -190,7 +193,7 @@ export default function AdminLayout({ children }: { children: ReactNode }) {
         ) : null}
 
         {/* Usuario y logout */}
-        <div className="px-4 py-4 flex items-center gap-3">
+        <div className="px-3 py-3 flex items-center gap-3">
           <div className="w-7 h-7 rounded-[8px] border border-[#ded8cc] bg-[#f6f2ea] flex items-center justify-center text-xs font-black text-[#12383d] shrink-0">
             {user.name?.[0]?.toUpperCase() ?? "A"}
           </div>
@@ -207,48 +210,39 @@ export default function AdminLayout({ children }: { children: ReactNode }) {
           </button>
         </div>
       </div>
-    </div>
+    </>
   );
 
   return (
-    <div className="flex h-screen bg-[#f7f5ef] text-[#172124] overflow-hidden">
-      {/* Sidebar desktop */}
-      <aside className="hidden md:flex w-56 flex-col shrink-0">
-        <Sidebar />
-      </aside>
+    <div className="flex h-screen flex-col overflow-hidden bg-[#f7f5ef] text-[#172124]">
+      {/* Header único full-width */}
+      <header className="shrink-0 border-b border-[#ded8cc] bg-[#fbfaf6]/95 backdrop-blur-md shadow-[0_1px_0_rgba(25,31,28,0.04)]">
+        <div className="mx-auto flex h-14 max-w-[1440px] items-center justify-between px-4 sm:px-6 md:h-16 lg:px-8 xl:px-10">
+          {/* Mobile: hamburger + nombre */}
+          <div className="flex items-center gap-3 md:hidden">
+            <button
+              onClick={() => setMobileOpen(true)}
+              className="text-[#465153] hover:text-[#12383d] transition-colors"
+            >
+              <Menu className="w-5 h-5" />
+            </button>
+            <div>
+              <p className="text-xs font-black uppercase tracking-[0.14em] text-[#172124]">
+                {businessName}
+              </p>
+              <p className="text-[10px] text-[#465153] uppercase tracking-[0.12em]">
+                Administración
+              </p>
+            </div>
+          </div>
 
-      {/* Menú mobile — overlay + panel lateral */}
-      {mobileOpen && (
-        <div className="fixed inset-0 z-50 md:hidden">
-          <div className="absolute inset-0 bg-[#172124]/25" onClick={() => setMobileOpen(false)} />
-          <aside className="absolute left-0 top-0 bottom-0 w-56 flex flex-col">
-            <Sidebar mobile />
-          </aside>
-        </div>
-      )}
-
-      <div className="flex-1 flex flex-col min-w-0 overflow-hidden">
-        {/* Header mobile */}
-        <header className="md:hidden flex items-center gap-4 px-4 h-14 border-b border-[#ded8cc] bg-[#fbfaf6]/95 backdrop-blur-md shrink-0">
-          <button
-            onClick={() => setMobileOpen(true)}
-            className="text-[#465153] hover:text-[#12383d] transition-colors"
-          >
-            <Menu className="w-5 h-5" />
-          </button>
-          <span className="text-xs font-black uppercase tracking-[0.14em] text-[#172124]">
-            {profile?.businessName ?? (isPlatformAdmin ? "Admin Central" : "Admin")}
-          </span>
-        </header>
-
-        {/* Header desktop */}
-        <header className="sticky top-0 z-30 hidden h-16 border-b border-[#ded8cc] bg-[#fbfaf6]/95 px-5 backdrop-blur-md shadow-[0_1px_0_rgba(25,31,28,0.04)] lg:flex lg:items-center lg:justify-between lg:px-8">
-          <div>
-            <p className="text-lg font-black tracking-tight text-[#172124]">
-              {profile?.businessName ?? (isPlatformAdmin ? "Admin Central" : "Mi inmobiliaria")}
-            </p>
+          {/* Desktop: marca + subtítulo */}
+          <div className="hidden md:block">
+            <p className="text-lg font-black tracking-tight text-[#172124]">{businessName}</p>
             <p className="text-sm text-[#465153]">Administración</p>
           </div>
+
+          {/* Acción: Ver página pública */}
           {profile?.slug ? (
             <a
               href={publicPageHref}
@@ -257,12 +251,38 @@ export default function AdminLayout({ children }: { children: ReactNode }) {
               className="flex items-center gap-2 rounded-[8px] border border-[#ded8cc] bg-white px-3 py-2 text-sm font-semibold text-[#172124] transition hover:border-[#0f646a] hover:bg-[#eef8f6] hover:text-[#12383d]"
             >
               <ExternalLink className="w-3.5 h-3.5" />
-              Ver página pública
+              <span className="hidden sm:inline">Ver página pública</span>
             </a>
           ) : null}
-        </header>
+        </div>
+      </header>
 
-        <main className="flex-1 overflow-y-auto">{children}</main>
+      {/* Row de trabajo: sidebar + main */}
+      <div className="flex min-h-0 flex-1 overflow-hidden">
+        {/* Sidebar desktop flotante */}
+        <aside className="hidden h-full w-56 shrink-0 p-3 md:flex lg:p-4">
+          <div className="flex h-full min-h-0 w-full flex-col overflow-hidden rounded-[12px] border border-[#ded8cc] bg-white p-1.5 shadow-[0_16px_42px_rgba(25,31,28,0.06)]">
+            <SidebarContent />
+          </div>
+        </aside>
+
+        {/* Mobile: overlay + drawer lateral */}
+        {mobileOpen && (
+          <div className="fixed inset-0 z-50 md:hidden">
+            <div
+              className="absolute inset-0 bg-[#172124]/25"
+              onClick={() => setMobileOpen(false)}
+            />
+            <aside className="absolute bottom-0 left-0 top-0 flex w-56 flex-col bg-white shadow-[0_16px_42px_rgba(25,31,28,0.12)]">
+              <SidebarContent mobile />
+            </aside>
+          </div>
+        )}
+
+        {/* Área principal */}
+        <main className="min-w-0 flex-1 overflow-y-auto">
+          <div className="min-h-full p-3 md:p-4 lg:p-6">{children}</div>
+        </main>
       </div>
     </div>
   );
