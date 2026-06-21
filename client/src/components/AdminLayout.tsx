@@ -39,7 +39,7 @@ function NavItem({
     <Link href={href}>
       <button
         onClick={onClick}
-        className={`w-full flex items-center gap-3 rounded-[8px] px-3 py-2.5 text-[15px] font-semibold transition ${
+        className={`w-full flex items-center gap-3 rounded-[8px] px-3 py-2.5 lg:px-4 text-[15px] font-semibold transition ${
           isActive
             ? "bg-[#d9eeee] text-[#0b3438]"
             : "text-[#172124] hover:bg-[#eef8f6] hover:text-[#12383d]"
@@ -260,8 +260,8 @@ export default function AdminLayout({ children }: { children: ReactNode }) {
       {/* Row de trabajo: sidebar + main */}
       <div className="flex min-h-0 flex-1 overflow-hidden">
         {/* Sidebar desktop flotante */}
-        <aside className="hidden h-full w-56 shrink-0 p-3 md:flex lg:p-4">
-          <div className="flex h-full min-h-0 w-full flex-col overflow-hidden rounded-[12px] border border-[#ded8cc] bg-white p-1.5 shadow-[0_16px_42px_rgba(25,31,28,0.06)]">
+        <aside className="hidden h-full shrink-0 p-3 md:flex md:w-[260px] lg:w-[268px] lg:p-4">
+          <div className="flex h-full min-h-0 w-full flex-col overflow-hidden rounded-[12px] border border-[#ded8cc] bg-white p-1.5 lg:p-2 shadow-[0_16px_42px_rgba(25,31,28,0.06)]">
             <SidebarContent />
           </div>
         </aside>
