@@ -61,30 +61,34 @@ export default function AdminGallery() {
   const [uploading, setUploading] = useState(false);
   const { data: properties = [] } = trpc.properties.list.useQuery();
 
+  const hasResolvedInitialPropertyFromUrlRef = useRef(false);
+  const skipNextUrlSyncRef = useRef(false);
+
   useEffect(() => {
-    if (!properties.length) {
-      setSelectedPropertyId("");
-      return;
+    if (!properties.length) return;
+
+    if (!hasResolvedInitialPropertyFromUrlRef.current) {
+      hasResolvedInitialPropertyFromUrlRef.current = true;
+      const requestedPropertyId = getRequestedPropertyId();
+      if (requestedPropertyId && properties.some((property) => property.id === requestedPropertyId) && requestedPropertyId !== selectedPropertyId) {
+        skipNextUrlSyncRef.current = true;
+        setSelectedPropertyId(requestedPropertyId);
+        return;
+      }
     }
 
-    const requestedPropertyId = getRequestedPropertyId();
-    const nextPropertyId =
-      requestedPropertyId && properties.some((property) => property.id === requestedPropertyId)
-        ? requestedPropertyId
-        : selectedPropertyId;
-
-    if (!nextPropertyId || !properties.some((property) => property.id === nextPropertyId)) {
+    if (!selectedPropertyId || !properties.some((property) => property.id === selectedPropertyId)) {
       setSelectedPropertyId(properties[0]!.id);
-      return;
-    }
-
-    if (selectedPropertyId !== nextPropertyId) {
-      setSelectedPropertyId(nextPropertyId);
     }
   }, [properties, selectedPropertyId]);
 
   useEffect(() => {
     if (typeof window === "undefined" || !selectedPropertyId) return;
+
+    if (skipNextUrlSyncRef.current) {
+      skipNextUrlSyncRef.current = false;
+      return;
+    }
 
     const url = new URL(window.location.href);
     url.searchParams.set("propertyId", selectedPropertyId);
