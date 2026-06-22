@@ -425,7 +425,7 @@ async function buildVectorPdf(
   y += 3;
 
   // Hero — cover crop: fills the frame, no bands, no deformation
-  const HERO_H = 88;
+  const HERO_H = 105;
   if (heroB64) {
     const heroJpeg = await coverCropToBase64(heroB64, CW, HERO_H);
     if (heroJpeg) {
@@ -442,7 +442,7 @@ async function buildVectorPdf(
       align: "center",
     });
   }
-  y += HERO_H + 5;
+  y += HERO_H + 7;
 
   // Editorial ──────────────────────────────────────────────────────────────────
   const LEFT_W = CW * 0.59;
@@ -494,7 +494,7 @@ async function buildVectorPdf(
     priceBlockH = priceLabelH + 1 + PRICE_RECT_H;
   }
 
-  y += Math.max(titleBlockH, priceBlockH) + 4;
+  y += Math.max(titleBlockH, priceBlockH) + 6;
 
   // Location
   const locParts = [property.address, property.location].filter(Boolean);
@@ -504,14 +504,14 @@ async function buildVectorPdf(
       color: "#465153",
       maxW: CW,
     });
-    y += 3;
+    y += 5;
   }
 
   // Quick data row ─────────────────────────────────────────────────────────────
   if (quickData.length > 0) {
     const cols = Math.min(quickData.length, 4);
     const cellW = CW / cols;
-    const QH = 18;
+    const QH = 20;
     pdfRect(doc, MG, y, CW, QH, "#f7f5ef");
     pdfStroke(doc, "#ded8cc", 0.25);
     doc.rect(MG, y, CW, QH);
@@ -571,7 +571,7 @@ async function buildVectorPdf(
   // Full description — one paragraph at a time so jsPDF respects real \n breaks.
   // splitTextToSize ignores \n; we split manually and render each paragraph separately.
   if (fullDesc) {
-    if (y + 20 > PH - MG - 12) {
+    if (y + 20 > PH - MG - 7) {
       doc.addPage();
       y = MG;
     }
@@ -580,7 +580,7 @@ async function buildVectorPdf(
 
     const DESC_SIZE = 9;
     const DESC_LH = 1.55;
-    const PARA_GAP = pt(DESC_SIZE) * 0.75;
+    const PARA_GAP = pt(DESC_SIZE) * 0.5;
 
     const paragraphs = fullDesc.split(/\n+/).map((p) => p.trim()).filter((p) => p.length > 0);
     paragraphs.forEach((para, idx) => {
@@ -588,7 +588,7 @@ async function buildVectorPdf(
       doc.setFont("helvetica", "normal");
       const lines: string[] = doc.splitTextToSize(para, CW);
       const paraH = lines.length * pt(DESC_SIZE) * DESC_LH;
-      if (y + paraH > PH - MG - 12) {
+      if (y + paraH > PH - MG - 7) {
         doc.addPage();
         y = MG;
       }
@@ -602,12 +602,12 @@ async function buildVectorPdf(
         y += PARA_GAP;
       }
     });
-    y += 6;
+    y += 3;
   }
 
   // Characteristics table ──────────────────────────────────────────────────────
   if (propertyDetails.length > 0) {
-    if (y + 30 > PH - MG - 12) {
+    if (y + 30 > PH - MG - 7) {
       doc.addPage();
       y = MG;
     }
@@ -640,12 +640,12 @@ async function buildVectorPdf(
       pdfHLine(doc, ry + RH, cx, cx + COL_W, "#ded8cc", 0.15);
     });
 
-    y += Math.ceil(propertyDetails.length / 2) * RH + 6;
+    y += Math.ceil(propertyDetails.length / 2) * RH + 3;
   }
 
   // Feature pills ──────────────────────────────────────────────────────────────
   if (summaryFeatures.length > 0) {
-    if (y + 20 > PH - MG - 12) {
+    if (y + 20 > PH - MG - 7) {
       doc.addPage();
       y = MG;
     }
@@ -682,12 +682,14 @@ async function buildVectorPdf(
       doc.text(label, tagX + PILL_PH, y + PILL_PV, { baseline: "top" });
       tagX += pw + PILL_GAP;
     });
-    y += PILL_H + 6;
+    y += PILL_H + 3;
   }
 
   // Gallery ────────────────────────────────────────────────────────────────────
   if (galleryB64s.length > 0) {
-    if (y + 50 > PH - MG - 12) {
+    const IMG_H = 28;
+    const galleryNeeded = pt(7) * 1.5 + 2 + IMG_H + 3;
+    if (y + galleryNeeded > PH - MG - 7) {
       doc.addPage();
       y = MG;
     }
@@ -701,14 +703,13 @@ async function buildVectorPdf(
     const count = Math.min(galleryB64s.length, 3);
     const GAP = 3;
     const imgW = (CW - GAP * (count - 1)) / count;
-    const imgH = 42;
 
     for (let i = 0; i < count; i++) {
       const b64 = galleryB64s[i];
       const ix = MG + i * (imgW + GAP);
-      await pdfContainImage(doc, b64, ix, y, imgW, imgH);
+      await pdfContainImage(doc, b64, ix, y, imgW, IMG_H);
     }
-    y += imgH + 6;
+    y += IMG_H + 3;
   }
 
   // Contact block ──────────────────────────────────────────────────────────────
@@ -718,10 +719,12 @@ async function buildVectorPdf(
   if (profileAddress) contactLines.push(profileAddress);
 
   if (contactLines.length > 0 || publicPropertyUrl) {
-    const CPAD = 7;
+    const CPAD = 4;
+    const CFONT = 7.5;
+    const URL_SIZE = 7;
     const lineCount = contactLines.length + (publicPropertyUrl ? 1 : 0);
-    const CH = CPAD + lineCount * pt(8.5) * 1.6 + CPAD;
-    if (y + CH > PH - MG - 12) {
+    const CH = CPAD + lineCount * pt(CFONT) * 1.3 + CPAD;
+    if (y + CH > PH - MG - 7) {
       doc.addPage();
       y = MG;
     }
@@ -729,17 +732,17 @@ async function buildVectorPdf(
     pdfRect(doc, MG, y, CW, CH, "#12383d");
     let cy = y + CPAD;
     contactLines.forEach((line) => {
-      cy = pdfText(doc, line, MG + 8, cy, { size: 8.5, color: "#ffffff" });
+      cy = pdfText(doc, line, MG + 8, cy, { size: CFONT, color: "#ffffff" });
     });
     if (publicPropertyUrl) {
-      doc.setFontSize(8);
+      doc.setFontSize(URL_SIZE);
       doc.setFont("helvetica", "bold");
       pdfColor(doc, "#9ecfd3");
       doc.text(publicPropertyUrl, MG + 8, cy, { baseline: "top" });
       const urlW = doc.getTextWidth(publicPropertyUrl);
-      doc.link(MG + 8, cy, urlW, pt(8) * 1.45, { url: publicPropertyUrl });
+      doc.link(MG + 8, cy, urlW, pt(URL_SIZE) * 1.3, { url: publicPropertyUrl });
     }
-    y += CH + 5;
+    y += CH + 2;
   }
 
   // Footer page 2 ──────────────────────────────────────────────────────────────
