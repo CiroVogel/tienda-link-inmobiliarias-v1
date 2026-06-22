@@ -512,7 +512,7 @@ export default function PropertyDetail() {
                 Descripción
               </p>
               <div className="border-l-2 border-[#ded8cc] pl-5">
-                <p className="text-[0.95rem] leading-7 text-[#3a3a3a]">{property.description}</p>
+                <p className="whitespace-pre-line text-[0.95rem] leading-7 text-[#3a3a3a]">{property.description}</p>
               </div>
             </div>
 
