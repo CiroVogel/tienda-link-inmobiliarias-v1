@@ -537,6 +537,47 @@ async function buildVectorPdf(
     y += QH + 5;
   }
 
+  // Características destacadas (page 1) ────────────────────────────────────────
+  if (summaryFeatures.length > 0) {
+    pdfText(doc, "CARACTERÍSTICAS DESTACADAS", MG, y, {
+      size: 6.5,
+      style: "bold",
+      color: "#465153",
+    });
+    y += pt(6.5) * 1.5 + 2;
+
+    const PILL_TS = 6;
+    const PILL_PH = 2.5;
+    const PILL_PV = 1.5;
+    const PILL_H = pt(PILL_TS) * 1.4 + PILL_PV * 2;
+    const PILL_GAP = 2;
+    let tagX = MG;
+    let pillRow = 0;
+
+    for (const feat of summaryFeatures) {
+      const label = normalizePdfText(feat).toUpperCase();
+      doc.setFontSize(PILL_TS);
+      doc.setFont("helvetica", "normal");
+      const tw = doc.getTextWidth(label);
+      const pw = tw + PILL_PH * 2;
+
+      if (tagX + pw > PW - MG) {
+        pillRow++;
+        if (pillRow >= 2) break;
+        y += PILL_H + PILL_GAP;
+        tagX = MG;
+      }
+
+      pdfFill(doc, "#f7f5ef");
+      pdfStroke(doc, "#ded8cc", 0.2);
+      doc.rect(tagX, y, pw, PILL_H, "FD");
+      pdfColor(doc, "#465153");
+      doc.text(label, tagX + PILL_PH, y + PILL_PV, { baseline: "top" });
+      tagX += pw + PILL_GAP;
+    }
+    y += PILL_H + 4;
+  }
+
   // Footer page 1 ──────────────────────────────────────────────────────────────
   const f1Y = PH - MG - pt(7.5) * 1.45;
   pdfHLine(doc, f1Y - 2, MG, PW - MG, "#ded8cc", 0.2);
@@ -641,48 +682,6 @@ async function buildVectorPdf(
     });
 
     y += Math.ceil(propertyDetails.length / 2) * RH + 3;
-  }
-
-  // Feature pills ──────────────────────────────────────────────────────────────
-  if (summaryFeatures.length > 0) {
-    if (y + 20 > PH - MG - 7) {
-      doc.addPage();
-      y = MG;
-    }
-    pdfText(doc, "CARACTERÍSTICAS ADICIONALES", MG, y, {
-      size: 7,
-      style: "bold",
-      color: "#465153",
-    });
-    y += pt(7) * 1.5 + 2;
-
-    const PILL_TS = 6.5;
-    const PILL_PH = 2.5; // horizontal padding
-    const PILL_PV = 2; // vertical padding
-    const PILL_H = pt(PILL_TS) * 1.45 + PILL_PV * 2;
-    const PILL_GAP = 2.5;
-    let tagX = MG;
-
-    summaryFeatures.forEach((feat) => {
-      const label = normalizePdfText(feat).toUpperCase();
-      doc.setFontSize(PILL_TS);
-      doc.setFont("helvetica", "normal");
-      const tw = doc.getTextWidth(label);
-      const pw = tw + PILL_PH * 2;
-
-      if (tagX + pw > PW - MG) {
-        y += PILL_H + PILL_GAP;
-        tagX = MG;
-      }
-
-      pdfFill(doc, "#f7f5ef");
-      pdfStroke(doc, "#ded8cc", 0.2);
-      doc.rect(tagX, y, pw, PILL_H, "FD");
-      pdfColor(doc, "#465153");
-      doc.text(label, tagX + PILL_PH, y + PILL_PV, { baseline: "top" });
-      tagX += pw + PILL_GAP;
-    });
-    y += PILL_H + 3;
   }
 
   // Pre-calcular contacto para poder reservar su espacio junto con la galería
