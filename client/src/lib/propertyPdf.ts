@@ -1,7 +1,5 @@
 import { loadHtml2Pdf } from "@/lib/html2pdf";
 import {
-  getOperationLabel,
-  getStatusLabel,
   type PropertyOperation,
   type PropertyStatus,
 } from "@/lib/realEstateDemo";
@@ -43,21 +41,11 @@ type PdfBusinessProfile = {
   primaryColor?: string | null;
 };
 
-const WRAP_TEXT_STYLES: Partial<CSSStyleDeclaration> = {
-  whiteSpace: "normal",
-  wordBreak: "break-word",
-  overflowWrap: "anywhere",
-};
-
-const KEEP_TOGETHER_STYLES: Partial<CSSStyleDeclaration> = {
-  breakInside: "avoid",
-  pageBreakInside: "avoid",
-};
-
-const SECTION_TITLE_STYLES: Partial<CSSStyleDeclaration> = {
-  breakAfter: "avoid",
-  pageBreakAfter: "avoid",
-};
+// A4 dimensions and layout constants (mm)
+const PW = 210;
+const PH = 297;
+const MG = 16;
+const CW = PW - MG * 2; // 178mm
 
 const PDF_TEXT_REPLACEMENTS: Array<[RegExp, string]> = [
   [/\bmas\b/gi, "más"],
@@ -102,6 +90,7 @@ function formatAreaM2(value?: number | null) {
   return value != null ? `${value} m²` : null;
 }
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 function formatNumberDetail(value?: number | null) {
   return value != null ? String(value) : null;
 }
@@ -130,72 +119,7 @@ function buildPdfFilename(title: string) {
       .replace(/[̀-ͯ]/g, "")
       .replace(/[^a-z0-9]+/g, "-")
       .replace(/^-+|-+$/g, "") || "propiedad";
-
   return `${fileSlug}.pdf`;
-}
-
-function createElement<K extends keyof HTMLElementTagNameMap>(
-  tagName: K,
-  options?: {
-    text?: string;
-    styles?: Partial<CSSStyleDeclaration>;
-    attrs?: Record<string, string>;
-  },
-) {
-  const node = document.createElement(tagName);
-
-  if (options?.text) {
-    node.textContent = options.text;
-  }
-
-  if (options?.styles) {
-    Object.assign(node.style, options.styles);
-  }
-
-  if (options?.attrs) {
-    Object.entries(options.attrs).forEach(([key, value]) => {
-      node.setAttribute(key, value);
-    });
-  }
-
-  return node;
-}
-
-async function waitForImages(container: HTMLElement) {
-  const images = Array.from(container.querySelectorAll("img"));
-
-  await Promise.all(
-    images.map(
-      (image) =>
-        new Promise<void>((resolve) => {
-          if (image.complete) {
-            resolve();
-            return;
-          }
-
-          image.addEventListener("load", () => resolve(), { once: true });
-          image.addEventListener("error", () => resolve(), { once: true });
-        }),
-    ),
-  );
-}
-
-function cleanupHtml2PdfArtifacts() {
-  document
-    .querySelectorAll(".html2pdf__overlay, .html2pdf__container, iframe.html2canvas-container")
-    .forEach((node) => node.remove());
-}
-
-function getObjectTag(value: unknown) {
-  return Object.prototype.toString.call(value);
-}
-
-function isArrayBufferLike(value: unknown): value is ArrayBuffer {
-  return getObjectTag(value) === "[object ArrayBuffer]";
-}
-
-function isBlobLike(value: unknown): value is Blob {
-  return getObjectTag(value) === "[object Blob]";
 }
 
 function triggerDownload(blob: Blob, filename: string) {
@@ -207,135 +131,202 @@ function triggerDownload(blob: Blob, filename: string) {
   document.body.appendChild(anchor);
   anchor.click();
   anchor.remove();
-
   window.setTimeout(() => {
     window.URL.revokeObjectURL(objectUrl);
   }, 1000);
 }
 
-function appendTextBlock(
-  parent: HTMLElement,
-  label: string,
-  value: string,
-  {
-    labelColor = "#465153",
-    valueColor = "#172124",
-  }: { labelColor?: string; valueColor?: string } = {},
-) {
-  const wrapper = createElement("div", {
-    attrs: {
-      class: "pdf-avoid-break pdf-card",
-    },
-    styles: {
-      border: "1px solid #ded8cc",
-      borderRadius: "4px",
-      padding: "12px",
-      backgroundColor: "#f7f5ef",
-      boxSizing: "border-box",
-      ...KEEP_TOGETHER_STYLES,
-    },
-  });
+// ── jsPDF low-level helpers ────────────────────────────────────────────────────
 
-  wrapper.appendChild(
-    createElement("p", {
-      text: label,
-      styles: {
-        margin: "0",
-        fontSize: "10px",
-        fontWeight: "600",
-        letterSpacing: "0.14em",
-        textTransform: "uppercase",
-        color: labelColor,
-      },
-    }),
-  );
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+type Doc = any;
 
-  wrapper.appendChild(
-    createElement("p", {
-      text: value,
-      styles: {
-        margin: "5px 0 0",
-        fontSize: "13px",
-        lineHeight: "1.4",
-        fontWeight: "500",
-        color: valueColor,
-        ...WRAP_TEXT_STYLES,
-      },
-    }),
-  );
-
-  parent.appendChild(wrapper);
+function hexRgb(hex: string): [number, number, number] {
+  const h = hex.replace("#", "");
+  return [parseInt(h.slice(0, 2), 16), parseInt(h.slice(2, 4), 16), parseInt(h.slice(4, 6), 16)];
 }
 
-function buildPropertyPdfElement({
-  property,
-  profile,
-  publicPropertyUrl,
-}: {
-  property: PdfProperty;
-  profile: PdfBusinessProfile;
-  publicPropertyUrl: string;
-}) {
+// 1 point → mm
+function pt(points: number): number {
+  return points / 2.835;
+}
+
+function pdfFill(doc: Doc, hex: string) {
+  const [r, g, b] = hexRgb(hex);
+  doc.setFillColor(r, g, b);
+}
+
+function pdfStroke(doc: Doc, hex: string, lw = 0.25) {
+  const [r, g, b] = hexRgb(hex);
+  doc.setDrawColor(r, g, b);
+  doc.setLineWidth(lw);
+}
+
+function pdfColor(doc: Doc, hex: string) {
+  const [r, g, b] = hexRgb(hex);
+  doc.setTextColor(r, g, b);
+}
+
+function pdfRect(doc: Doc, x: number, y: number, w: number, h: number, fillHex: string) {
+  pdfFill(doc, fillHex);
+  doc.rect(x, y, w, h, "F");
+}
+
+function pdfHLine(doc: Doc, y: number, x1: number, x2: number, colorHex = "#ded8cc", lw = 0.25) {
+  pdfStroke(doc, colorHex, lw);
+  doc.line(x1, y, x2, y);
+}
+
+// Draw text with top baseline, return new Y after the block
+function pdfText(
+  doc: Doc,
+  str: string,
+  x: number,
+  y: number,
+  opts: {
+    size: number;
+    style?: "normal" | "bold" | "italic";
+    color?: string;
+    maxW?: number;
+    lh?: number;
+    align?: "left" | "right" | "center";
+  },
+): number {
+  const { size, style = "normal", color = "#172124", maxW, lh = 1.45, align = "left" } = opts;
+  doc.setFontSize(size);
+  doc.setFont("helvetica", style);
+  pdfColor(doc, color);
+  const lineH = pt(size) * lh;
+  if (maxW) {
+    const lines: string[] = doc.splitTextToSize(str, maxW);
+    doc.text(lines, x, y, { baseline: "top", align });
+    return y + lines.length * lineH;
+  }
+  doc.text(str, x, y, { baseline: "top", align });
+  return y + lineH;
+}
+
+// ── Image helpers ──────────────────────────────────────────────────────────────
+
+async function loadImageAsBase64(url: string): Promise<string | null> {
+  try {
+    const response = await fetch(url, { mode: "cors" });
+    if (!response.ok) return null;
+    const blob = await response.blob();
+    return new Promise<string | null>((resolve) => {
+      const reader = new FileReader();
+      reader.onloadend = () => resolve(reader.result as string);
+      reader.onerror = () => resolve(null);
+      reader.readAsDataURL(blob);
+    });
+  } catch {
+    return null;
+  }
+}
+
+function getImageSize(b64: string): Promise<{ w: number; h: number }> {
+  return new Promise((resolve) => {
+    const img = new Image();
+    img.onload = () => resolve({ w: img.naturalWidth, h: img.naturalHeight });
+    img.onerror = () => resolve({ w: 0, h: 0 });
+    img.src = b64;
+  });
+}
+
+// Cover-crop an image to exact mm dimensions using a canvas at 150 dpi.
+// Returns a JPEG data-URL with no white bands. Falls back to null on failure.
+async function coverCropToBase64(
+  b64: string,
+  targetWmm: number,
+  targetHmm: number,
+): Promise<string | null> {
+  const PX_PER_MM = 150 / 25.4;
+  const pxW = Math.round(targetWmm * PX_PER_MM);
+  const pxH = Math.round(targetHmm * PX_PER_MM);
+
+  const size = await getImageSize(b64);
+  if (size.w === 0 || size.h === 0) return null;
+
+  const scale = Math.max(pxW / size.w, pxH / size.h);
+  const dw = size.w * scale;
+  const dh = size.h * scale;
+  const ox = (pxW - dw) / 2;
+  const oy = (pxH - dh) / 2;
+
+  const canvas = document.createElement("canvas");
+  canvas.width = pxW;
+  canvas.height = pxH;
+  const ctx = canvas.getContext("2d");
+  if (!ctx) return null;
+
+  const img = new Image();
+  return new Promise<string | null>((resolve) => {
+    img.onload = () => {
+      ctx.drawImage(img, ox, oy, dw, dh);
+      resolve(canvas.toDataURL("image/jpeg", 0.92));
+    };
+    img.onerror = () => resolve(null);
+    img.src = b64;
+  });
+}
+
+// Draw image contained (no crop) in a rect, warm background behind
+async function pdfContainImage(
+  doc: Doc,
+  b64: string,
+  rx: number,
+  ry: number,
+  rw: number,
+  rh: number,
+) {
+  pdfRect(doc, rx, ry, rw, rh, "#f7f5ef");
+  const size = await getImageSize(b64);
+  if (size.w === 0 || size.h === 0) return;
+  const scale = Math.min(rw / size.w, rh / size.h);
+  const dw = size.w * scale;
+  const dh = size.h * scale;
+  const dx = rx + (rw - dw) / 2;
+  const dy = ry + (rh - dh) / 2;
+  const fmt = b64.startsWith("data:image/png") ? "PNG" : "JPEG";
+  doc.addImage(b64, fmt, dx, dy, dw, dh);
+}
+
+// ── Vector PDF builder ─────────────────────────────────────────────────────────
+
+async function buildVectorPdf(
+  property: PdfProperty,
+  profile: PdfBusinessProfile,
+  publicPropertyUrl: string,
+): Promise<Blob> {
+  // jsPDF is bundled inside html2pdf.bundle.min.js; loadHtml2Pdf() must be called first.
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const jspdfMod = (window as any).jspdf as
+    | { jsPDF: new (opts: Record<string, unknown>) => Doc }
+    | undefined;
+  if (!jspdfMod?.jsPDF) {
+    throw new Error("jsPDF no está disponible. Recargá la página e intentá de nuevo.");
+  }
+  const doc: Doc = new jspdfMod.jsPDF({ unit: "mm", format: "a4", orientation: "portrait" });
+
+  // ── Preload images ───────────────────────────────────────────────────────────
+  const heroUrl = property.images[0] ?? null;
+  const galleryUrls = property.images.slice(1, 4);
+  const logoUrl = profile.logoUrl?.trim() || null;
+
+  const [heroB64, logoB64, ...galleryRaw] = await Promise.all([
+    heroUrl ? loadImageAsBase64(heroUrl) : Promise.resolve(null),
+    logoUrl ? loadImageAsBase64(logoUrl) : Promise.resolve(null),
+    ...galleryUrls.map((u) => loadImageAsBase64(u)),
+  ]);
+  const galleryB64s = galleryRaw.filter((b): b is string => b !== null);
+
+  // ── Business data ────────────────────────────────────────────────────────────
   const businessName = profile.businessName?.trim() || "Inmobiliaria";
-  const safePrimaryColor =
-    profile.primaryColor && /^#(?:[0-9a-f]{3}){1,2}$/i.test(profile.primaryColor)
-      ? profile.primaryColor
-      : "#12383d";
-  const logoUrl = profile.logoUrl?.trim() || "";
-  const secondaryImages = property.images.slice(1, 4);
-  const summaryFeatures = [...property.features, ...(property.detailedFeatures ?? [])];
+  const wa = profile.whatsapp?.trim() || profile.phone?.trim() || null;
+  const email = profile.email?.trim() || null;
+  const profileAddress = profile.address?.trim() || null;
 
-  // Contact lines for header and stripe
-  const headerContactLines: string[] = [];
-  if (profile.whatsapp?.trim()) {
-    headerContactLines.push(`WhatsApp: ${profile.whatsapp.trim()}`);
-  } else if (profile.phone?.trim()) {
-    headerContactLines.push(`Tel: ${profile.phone.trim()}`);
-  }
-  if (profile.email?.trim()) headerContactLines.push(profile.email.trim());
-
-  // Description split: cut only at a natural sentence boundary for page 1.
-  // Priority: first paragraph break → last sentence end (. ! ?) → no summary (full text on page 2).
-  const fullDesc = property.description ? normalizePdfText(property.description) : "";
-  let summaryText = "";
-  let remainingText = "";
-  if (fullDesc.trim()) {
-    const trimmedDesc = fullDesc.trim();
-    if (trimmedDesc.length <= 480) {
-      // Short enough: show entirely on page 1
-      summaryText = trimmedDesc;
-    } else {
-      // 1. First paragraph break within 80–500 chars
-      const firstPara = trimmedDesc.indexOf("\n");
-      if (firstPara !== -1 && firstPara >= 80 && firstPara <= 500) {
-        summaryText = trimmedDesc.slice(0, firstPara).trimEnd();
-        remainingText = trimmedDesc.slice(firstPara).trimStart();
-      } else {
-        // 2. Last sentence end (. ! ?) in range 120–460, followed by space or end
-        let cutIdx = -1;
-        const searchEnd = Math.min(460, trimmedDesc.length - 1);
-        for (let i = searchEnd; i >= 120; i--) {
-          const ch = trimmedDesc[i];
-          if (ch === "." || ch === "!" || ch === "?") {
-            const next = trimmedDesc[i + 1];
-            if (next === undefined || next === " " || next === "\n") {
-              cutIdx = i + 1;
-              break;
-            }
-          }
-        }
-        if (cutIdx > 0) {
-          summaryText = trimmedDesc.slice(0, cutIdx).trimEnd();
-          remainingText = trimmedDesc.slice(cutIdx).trimStart();
-        } else {
-          // 3. No natural cut: no summary on page 1, full description on page 2
-          remainingText = trimmedDesc;
-        }
-      }
-    }
-  }
-
-  // Quick data: up to 4 real values
+  // ── Quick data ───────────────────────────────────────────────────────────────
   const quickData: Array<{ label: string; value: string }> = [];
   const area = property.areaM2 ?? property.coveredAreaM2;
   if (area) quickData.push({ label: "Superficie", value: `${area} m²` });
@@ -363,7 +354,7 @@ function buildPropertyPdfElement({
     });
   }
 
-  // Characteristics (page 2): skip zero counts and empty values
+  // ── Characteristics ──────────────────────────────────────────────────────────
   const propertyDetails = [
     { label: "Tipo", value: normalizePdfText(property.propertyType) },
     {
@@ -391,763 +382,389 @@ function buildPropertyPdfElement({
     { label: "Orientación", value: formatTextDetail(property.orientation) },
   ].filter(hasPdfDetailValue);
 
-  // ── ROOT ────────────────────────────────────────────────────────────────
+  const summaryFeatures = [...property.features, ...(property.detailedFeatures ?? [])];
 
-  const root = createElement("div", {
-    styles: {
-      position: "fixed",
-      left: "-200vw",
-      top: "0",
-      zIndex: "-1",
-      width: "794px",
-      backgroundColor: "#fffdf8",
-      color: "#172124",
-      fontFamily: '"Plus Jakarta Sans", system-ui, sans-serif',
-      boxSizing: "border-box",
-    },
-  });
+  // Full description shown once, on page 2 only
+  const fullDesc = property.description ? normalizePdfText(property.description).trim() : "";
 
-  // ── PAGE 1 ──────────────────────────────────────────────────────────────
+  // ════════════════════════════════════════════════════════════════════════════
+  // PAGE 1
+  // ════════════════════════════════════════════════════════════════════════════
+  let y = MG;
 
-  // Header
-  const header = createElement("header", {
-    attrs: { class: "pdf-avoid-break" },
-    styles: {
-      display: "flex",
-      justifyContent: "space-between",
-      alignItems: "flex-start",
-      gap: "20px",
-      padding: "22px 32px",
-      borderBottom: `2px solid ${safePrimaryColor}`,
-      backgroundColor: "#fffdf8",
-      boxSizing: "border-box",
-      ...KEEP_TOGETHER_STYLES,
-    },
-  });
+  // Header ─────────────────────────────────────────────────────────────────────
+  const HEADER_H = 18;
 
-  const branding = createElement("div", {
-    styles: { flex: "1 1 auto", minWidth: "0", maxWidth: "55%" },
-  });
-
-  if (logoUrl) {
-    branding.appendChild(
-      createElement("img", {
-        attrs: { src: logoUrl, alt: businessName, crossorigin: "anonymous" },
-        styles: { height: "48px", width: "auto", objectFit: "contain", display: "block" },
-      }),
-    );
+  if (logoB64) {
+    const logoSize = await getImageSize(logoB64);
+    const lh = 12;
+    const lw = logoSize.h > 0 ? Math.min(lh * (logoSize.w / logoSize.h), 55) : 40;
+    const lfmt = logoB64.startsWith("data:image/png") ? "PNG" : "JPEG";
+    doc.addImage(logoB64, lfmt, MG, y + (HEADER_H - lh) / 2, lw, lh);
   } else {
-    branding.appendChild(
-      createElement("p", {
-        text: businessName,
-        styles: {
-          margin: "0",
-          fontSize: "18px",
-          fontWeight: "700",
-          letterSpacing: "0.04em",
-          color: "#172124",
-          ...WRAP_TEXT_STYLES,
-        },
-      }),
-    );
+    pdfText(doc, businessName, MG, y + 3, { size: 13, style: "bold" });
   }
 
-  branding.appendChild(
-    createElement("p", {
-      text: "Ficha comercial de propiedad",
-      styles: {
-        margin: "9px 0 0",
-        fontSize: "10px",
-        fontWeight: "500",
-        letterSpacing: "0.14em",
-        textTransform: "uppercase",
-        color: "#465153",
-      },
-    }),
-  );
-
-  header.appendChild(branding);
-
-  if (headerContactLines.length > 0) {
-    const contactBlock = createElement("div", {
-      styles: { flex: "0 0 auto", maxWidth: "38%", textAlign: "right" },
-    });
-    headerContactLines.forEach((line) => {
-      contactBlock.appendChild(
-        createElement("p", {
-          text: line,
-          styles: {
-            margin: "0",
-            fontSize: "12px",
-            lineHeight: "1.65",
-            color: "#465153",
-            ...WRAP_TEXT_STYLES,
-          },
-        }),
-      );
-    });
-    header.appendChild(contactBlock);
-  }
-
-  root.appendChild(header);
-
-  // Hero: contain (no crop), warm background fills the fixed-height block
-  const heroWrapper = createElement("div", {
-    attrs: { class: "pdf-avoid-break" },
-    styles: {
-      position: "relative",
-      width: "100%",
-      height: "380px",
-      backgroundColor: "#f7f5ef",
-      display: "flex",
-      alignItems: "center",
-      justifyContent: "center",
-      overflow: "hidden",
-      ...KEEP_TOGETHER_STYLES,
-    },
+  pdfText(doc, "FICHA COMERCIAL DE PROPIEDAD", PW - MG, y + 3, {
+    size: 6.5,
+    style: "bold",
+    color: "#465153",
+    align: "right",
   });
-
-  if (property.images[0]) {
-    heroWrapper.appendChild(
-      createElement("img", {
-        attrs: {
-          src: property.images[0],
-          alt: property.title,
-          crossorigin: "anonymous",
-        },
-        styles: {
-          display: "block",
-          maxWidth: "100%",
-          maxHeight: "380px",
-          objectFit: "contain",
-        },
-      }),
-    );
-
-    const badgesRow = createElement("div", {
-      styles: {
-        position: "absolute",
-        top: "12px",
-        left: "12px",
-        display: "flex",
-        gap: "8px",
-        flexWrap: "wrap",
-      },
+  let contactY = y + 3 + pt(6.5) * 1.5 + 1.5;
+  if (wa) {
+    contactY = pdfText(doc, wa, PW - MG, contactY, {
+      size: 7.5,
+      color: "#465153",
+      align: "right",
     });
+  }
+  if (email) {
+    pdfText(doc, email, PW - MG, contactY, {
+      size: 7.5,
+      color: "#465153",
+      align: "right",
+    });
+  }
 
-    badgesRow.appendChild(
-      createElement("span", {
-        text: getOperationLabel(property.operation),
-        styles: {
-          padding: "6px 14px",
-          fontSize: "10px",
-          fontWeight: "700",
-          letterSpacing: "0.14em",
-          textTransform: "uppercase",
-          color: "#ffffff",
-          backgroundColor: "#12383d",
-          borderRadius: "3px",
-        },
-      }),
-    );
+  y += HEADER_H;
+  pdfHLine(doc, y, MG, PW - MG, "#ded8cc", 0.35);
+  y += 3;
 
-    badgesRow.appendChild(
-      createElement("span", {
-        text: getStatusLabel(property.status),
-        styles: {
-          padding: "6px 14px",
-          fontSize: "10px",
-          fontWeight: "600",
-          letterSpacing: "0.12em",
-          textTransform: "uppercase",
-          color: "#172124",
-          backgroundColor: "#f0ede6",
-          borderRadius: "3px",
-        },
-      }),
-    );
-
-    heroWrapper.appendChild(badgesRow);
+  // Hero — cover crop: fills the frame, no bands, no deformation
+  const HERO_H = 88;
+  if (heroB64) {
+    const heroJpeg = await coverCropToBase64(heroB64, CW, HERO_H);
+    if (heroJpeg) {
+      doc.addImage(heroJpeg, "JPEG", MG, y, CW, HERO_H);
+    } else {
+      await pdfContainImage(doc, heroB64, MG, y, CW, HERO_H);
+    }
   } else {
-    // No image fallback
-    const fallback = createElement("div", {
-      styles: {
-        width: "100%",
-        height: "100%",
-        backgroundColor: "#f7f5ef",
-        display: "flex",
-        alignItems: "center",
-        justifyContent: "center",
-        padding: "32px",
-        boxSizing: "border-box",
-      },
+    pdfRect(doc, MG, y, CW, HERO_H, "#f7f5ef");
+    pdfText(doc, property.title, MG + CW / 2, y + HERO_H / 2 - pt(13), {
+      size: 13,
+      style: "bold",
+      color: "#465153",
+      align: "center",
     });
-    fallback.appendChild(
-      createElement("p", {
-        text: property.title,
-        styles: {
-          margin: "0",
-          fontSize: "22px",
-          fontWeight: "700",
-          color: "#465153",
-          textAlign: "center",
-          ...WRAP_TEXT_STYLES,
-        },
-      }),
-    );
-    heroWrapper.appendChild(fallback);
   }
+  y += HERO_H + 5;
 
-  root.appendChild(heroWrapper);
-
-  // Editorial block: eyebrow + title left / price right
-  const editorial = createElement("div", {
-    attrs: { class: "pdf-avoid-break" },
-    styles: {
-      display: "flex",
-      justifyContent: "space-between",
-      alignItems: "flex-end",
-      gap: "20px",
-      padding: "22px 32px 18px",
-      backgroundColor: "#fffdf8",
-      boxSizing: "border-box",
-      ...KEEP_TOGETHER_STYLES,
-    },
-  });
-
-  const editorialLeft = createElement("div", {
-    styles: { flex: "1 1 auto", minWidth: "0" },
-  });
+  // Editorial ──────────────────────────────────────────────────────────────────
+  const LEFT_W = CW * 0.59;
+  const PRICE_W = CW * 0.37;
+  const PRICE_X = PW - MG - PRICE_W;
 
   const eyebrowParts = [property.propertyType, property.location].filter(Boolean);
   if (eyebrowParts.length > 0) {
-    editorialLeft.appendChild(
-      createElement("p", {
-        text: eyebrowParts.join(" · "),
-        styles: {
-          margin: "0",
-          fontSize: "11px",
-          fontWeight: "500",
-          letterSpacing: "0.12em",
-          textTransform: "uppercase",
-          color: "#465153",
-          ...WRAP_TEXT_STYLES,
-        },
-      }),
-    );
+    pdfText(doc, eyebrowParts.join(" · ").toUpperCase(), MG, y, {
+      size: 7,
+      style: "bold",
+      color: "#465153",
+    });
+    y += pt(7) * 1.5 + 1;
   }
 
-  editorialLeft.appendChild(
-    createElement("h1", {
-      text: property.title,
-      styles: {
-        margin: eyebrowParts.length > 0 ? "10px 0 0" : "0",
-        fontSize: "30px",
-        lineHeight: "1.1",
-        fontWeight: "900",
-        letterSpacing: "-0.02em",
-        color: "#172124",
-        ...WRAP_TEXT_STYLES,
-      },
-    }),
-  );
+  // Title (left)
+  const titleTopY = y;
+  doc.setFontSize(20);
+  doc.setFont("helvetica", "bold");
+  pdfColor(doc, "#172124");
+  const titleLines: string[] = doc.splitTextToSize(property.title, LEFT_W);
+  doc.text(titleLines, MG, titleTopY, { baseline: "top" });
+  const titleBlockH = titleLines.length * pt(20) * 1.2;
 
-  editorial.appendChild(editorialLeft);
-
+  // Price block (right, aligned to title top)
+  let priceBlockH = 0;
   if (property.price) {
-    const priceBlock = createElement("div", {
-      styles: { flex: "0 0 auto", textAlign: "right", minWidth: "0" },
+    const priceLabel =
+      property.operation === "sale" ? "PRECIO DE VENTA" : "PRECIO DE ALQUILER";
+    pdfText(doc, priceLabel, PRICE_X + PRICE_W / 2, titleTopY, {
+      size: 6.5,
+      style: "bold",
+      color: "#465153",
+      align: "center",
     });
-    priceBlock.appendChild(
-      createElement("p", {
-        text: property.operation === "sale" ? "Precio de venta" : "Precio de alquiler",
-        styles: {
-          margin: "0",
-          fontSize: "10px",
-          fontWeight: "500",
-          letterSpacing: "0.12em",
-          textTransform: "uppercase",
-          color: "#465153",
-        },
-      }),
-    );
-    priceBlock.appendChild(
-      createElement("p", {
-        text: property.price,
-        styles: {
-          margin: "6px 0 0",
-          fontSize: "24px",
-          fontWeight: "900",
-          color: "#172124",
-          ...WRAP_TEXT_STYLES,
-        },
-      }),
-    );
-    editorial.appendChild(priceBlock);
+    const priceLabelH = pt(6.5) * 1.5;
+    const priceRectY = titleTopY + priceLabelH + 1;
+    const PRICE_RECT_H = pt(13) * 1.9;
+    pdfRect(doc, PRICE_X, priceRectY, PRICE_W, PRICE_RECT_H, "#12383d");
+    // Vertically center the price text in the rect
+    const priceTextY = priceRectY + (PRICE_RECT_H - pt(13)) / 2;
+    pdfText(doc, property.price, PRICE_X + PRICE_W / 2, priceTextY, {
+      size: 13,
+      style: "bold",
+      color: "#ffffff",
+      align: "center",
+    });
+    priceBlockH = priceLabelH + 1 + PRICE_RECT_H;
   }
 
-  root.appendChild(editorial);
+  y += Math.max(titleBlockH, priceBlockH) + 4;
 
-  // Quick data row
+  // Location
+  const locParts = [property.address, property.location].filter(Boolean);
+  if (locParts.length > 0) {
+    y = pdfText(doc, locParts.join(" — "), MG, y, {
+      size: 8,
+      color: "#465153",
+      maxW: CW,
+    });
+    y += 3;
+  }
+
+  // Quick data row ─────────────────────────────────────────────────────────────
   if (quickData.length > 0) {
-    const quickSection = createElement("div", {
-      attrs: { class: "pdf-avoid-break" },
-      styles: {
-        padding: "0 32px 20px",
-        boxSizing: "border-box",
-        ...KEEP_TOGETHER_STYLES,
-      },
-    });
+    const cols = Math.min(quickData.length, 4);
+    const cellW = CW / cols;
+    const QH = 18;
+    pdfRect(doc, MG, y, CW, QH, "#f7f5ef");
+    pdfStroke(doc, "#ded8cc", 0.25);
+    doc.rect(MG, y, CW, QH);
 
-    const quickRow = createElement("div", {
-      styles: {
-        display: "flex",
-        border: "1px solid #ded8cc",
-        borderRadius: "6px",
-        overflow: "hidden",
-        backgroundColor: "#f7f5ef",
-      },
-    });
-
-    quickData.slice(0, 4).forEach((datum, idx) => {
-      const cell = createElement("div", {
-        styles: {
-          flex: "1",
-          padding: "14px 10px",
-          textAlign: "center",
-          borderLeft: idx > 0 ? "1px solid #ded8cc" : "none",
-          boxSizing: "border-box",
-        },
+    quickData.slice(0, 4).forEach((d, i) => {
+      if (i > 0) {
+        pdfStroke(doc, "#ded8cc", 0.2);
+        doc.line(MG + i * cellW, y, MG + i * cellW, y + QH);
+      }
+      const cx = MG + i * cellW + cellW / 2;
+      doc.setFontSize(13);
+      doc.setFont("helvetica", "bold");
+      pdfColor(doc, "#172124");
+      doc.text(d.value, cx, y + 3, { baseline: "top", align: "center" });
+      doc.setFontSize(6.5);
+      doc.setFont("helvetica", "normal");
+      pdfColor(doc, "#465153");
+      doc.text(d.label.toUpperCase(), cx, y + 3 + pt(13) * 1.3, {
+        baseline: "top",
+        align: "center",
       });
-      cell.appendChild(
-        createElement("p", {
-          text: datum.value,
-          styles: {
-            margin: "0",
-            fontSize: "20px",
-            fontWeight: "700",
-            color: "#172124",
-          },
-        }),
-      );
-      cell.appendChild(
-        createElement("p", {
-          text: datum.label,
-          styles: {
-            margin: "3px 0 0",
-            fontSize: "10px",
-            fontWeight: "500",
-            letterSpacing: "0.10em",
-            textTransform: "uppercase",
-            color: "#465153",
-          },
-        }),
-      );
-      quickRow.appendChild(cell);
     });
-
-    quickSection.appendChild(quickRow);
-    root.appendChild(quickSection);
+    y += QH + 5;
   }
 
-  // Summary (page 1 excerpt)
-  if (summaryText) {
-    const summarySection = createElement("div", {
-      attrs: { class: "pdf-avoid-break" },
-      styles: {
-        padding: "0 32px 20px",
-        boxSizing: "border-box",
-        ...KEEP_TOGETHER_STYLES,
-      },
-    });
-    summarySection.appendChild(
-      createElement("p", {
-        text: "Descripción",
-        styles: {
-          margin: "0 0 8px",
-          fontSize: "10px",
-          fontWeight: "600",
-          letterSpacing: "0.14em",
-          textTransform: "uppercase",
-          color: "#465153",
-        },
-      }),
-    );
-    summarySection.appendChild(
-      createElement("p", {
-        text: summaryText,
-        styles: {
-          margin: "0",
-          fontSize: "13px",
-          lineHeight: "1.72",
-          color: "#172124",
-          whiteSpace: "pre-line",
-          ...WRAP_TEXT_STYLES,
-        },
-      }),
-    );
-    root.appendChild(summarySection);
-  }
+  // Footer page 1 ──────────────────────────────────────────────────────────────
+  const f1Y = PH - MG - pt(7.5) * 1.45;
+  pdfHLine(doc, f1Y - 2, MG, PW - MG, "#ded8cc", 0.2);
+  doc.setFontSize(7.5);
+  doc.setFont("helvetica", "bold");
+  pdfColor(doc, "#172124");
+  doc.text(businessName, MG, f1Y, { baseline: "top" });
+  doc.setFontSize(7);
+  doc.setFont("helvetica", "normal");
+  pdfColor(doc, "#465153");
+  doc.text("Tienda Link Inmobiliarias", PW - MG, f1Y, { baseline: "top", align: "right" });
 
-  // Contact stripe (page 1)
-  const contactStripe = createElement("section", {
-    attrs: { class: "pdf-avoid-break pdf-card" },
-    styles: {
-      margin: "0 32px 32px",
-      padding: "16px 20px",
-      border: "1px solid #ded8cc",
-      borderRadius: "6px",
-      backgroundColor: "#f7f5ef",
-      boxSizing: "border-box",
-      ...KEEP_TOGETHER_STYLES,
-    },
-  });
+  // ════════════════════════════════════════════════════════════════════════════
+  // PAGE 2
+  // ════════════════════════════════════════════════════════════════════════════
+  doc.addPage();
+  y = MG;
 
-  const stripeRow = createElement("div", {
-    styles: {
-      display: "flex",
-      justifyContent: "space-between",
-      alignItems: "center",
-      gap: "16px",
-      flexWrap: "wrap",
-    },
-  });
+  // Mini header ────────────────────────────────────────────────────────────────
+  doc.setFontSize(11);
+  doc.setFont("helvetica", "bold");
+  pdfColor(doc, "#172124");
+  doc.text(businessName, MG, y, { baseline: "top" });
+  doc.setFontSize(6.5);
+  doc.setFont("helvetica", "bold");
+  pdfColor(doc, "#465153");
+  doc.text("FICHA COMERCIAL DE PROPIEDAD", PW - MG, y, { baseline: "top", align: "right" });
+  y += pt(11) * 1.4;
+  pdfHLine(doc, y, MG, PW - MG, "#ded8cc", 0.3);
+  y += 4;
 
-  const stripeLeft = createElement("div", { styles: { flex: "1 1 auto" } });
-  stripeLeft.appendChild(
-    createElement("p", {
-      text: "Contactar a la inmobiliaria",
-      styles: {
-        margin: "0 0 5px",
-        fontSize: "10px",
-        fontWeight: "600",
-        letterSpacing: "0.14em",
-        textTransform: "uppercase",
-        color: "#465153",
-      },
-    }),
-  );
+  // Full description — one paragraph at a time so jsPDF respects real \n breaks.
+  // splitTextToSize ignores \n; we split manually and render each paragraph separately.
+  if (fullDesc) {
+    if (y + 20 > PH - MG - 12) {
+      doc.addPage();
+      y = MG;
+    }
+    pdfText(doc, "DESCRIPCIÓN", MG, y, { size: 7, style: "bold", color: "#465153" });
+    y += pt(7) * 1.5 + 2;
 
-  headerContactLines.forEach((line) => {
-    stripeLeft.appendChild(
-      createElement("p", {
-        text: line,
-        styles: {
-          margin: "0",
-          fontSize: "13px",
-          lineHeight: "1.6",
-          fontWeight: "400",
-          color: "#172124",
-          ...WRAP_TEXT_STYLES,
-        },
-      }),
-    );
-  });
+    const DESC_SIZE = 9;
+    const DESC_LH = 1.55;
+    const PARA_GAP = pt(DESC_SIZE) * 0.75;
 
-  stripeRow.appendChild(stripeLeft);
-
-  if (publicPropertyUrl) {
-    const stripeRight = createElement("div", { styles: { flex: "0 0 auto" } });
-    stripeRight.appendChild(
-      createElement("a", {
-        text: "Ver ficha online →",
-        attrs: { href: publicPropertyUrl, target: "_blank", rel: "noopener noreferrer" },
-        styles: {
-          fontSize: "12px",
-          fontWeight: "600",
-          color: safePrimaryColor,
-          textDecoration: "underline",
-        },
-      }),
-    );
-    stripeRow.appendChild(stripeRight);
-  }
-
-  contactStripe.appendChild(stripeRow);
-  root.appendChild(contactStripe);
-
-  // ── PAGE 2 ──────────────────────────────────────────────────────────────
-
-  // Mini header with forced page break
-  const miniHeader = createElement("header", {
-    attrs: { class: "pdf-avoid-break" },
-    styles: {
-      pageBreakBefore: "always",
-      breakBefore: "page",
-      display: "flex",
-      alignItems: "center",
-      gap: "14px",
-      padding: "18px 32px",
-      borderBottom: "1px solid #ded8cc",
-      backgroundColor: "#fffdf8",
-      boxSizing: "border-box",
-      ...KEEP_TOGETHER_STYLES,
-    },
-  });
-
-  if (logoUrl) {
-    miniHeader.appendChild(
-      createElement("img", {
-        attrs: { src: logoUrl, alt: businessName, crossorigin: "anonymous" },
-        styles: { height: "30px", width: "auto", objectFit: "contain", display: "block" },
-      }),
-    );
-  }
-  miniHeader.appendChild(
-    createElement("p", {
-      text: businessName,
-      styles: {
-        margin: "0",
-        fontSize: "13px",
-        fontWeight: "500",
-        color: "#465153",
-        ...WRAP_TEXT_STYLES,
-      },
-    }),
-  );
-
-  root.appendChild(miniHeader);
-
-  // Page 2 content
-  const page2 = createElement("div", {
-    styles: {
-      padding: "24px 32px",
-      display: "flex",
-      flexDirection: "column",
-      gap: "22px",
-      backgroundColor: "#fffdf8",
-      boxSizing: "border-box",
-    },
-  });
-
-  // Remaining description
-  if (remainingText) {
-    const descBlock = createElement("div", {
-      attrs: { class: "pdf-avoid-break" },
-      styles: { ...KEEP_TOGETHER_STYLES },
-    });
-    descBlock.appendChild(
-      createElement("h2", {
-        text: "Descripción",
-        styles: {
-          margin: "0 0 10px",
-          fontSize: "11px",
-          fontWeight: "600",
-          letterSpacing: "0.14em",
-          textTransform: "uppercase",
-          color: "#465153",
-          ...SECTION_TITLE_STYLES,
-        },
-      }),
-    );
-    descBlock.appendChild(
-      createElement("p", {
-        text: remainingText,
-        styles: {
-          margin: "0",
-          fontSize: "13px",
-          lineHeight: "1.72",
-          color: "#172124",
-          whiteSpace: "pre-line",
-          ...WRAP_TEXT_STYLES,
-        },
-      }),
-    );
-    page2.appendChild(descBlock);
-  }
-
-  // Characteristics grid
-  if (propertyDetails.length > 0) {
-    const caracteristicasBlock = createElement("div", {
-      attrs: { class: "pdf-avoid-break" },
-      styles: { ...KEEP_TOGETHER_STYLES },
-    });
-    caracteristicasBlock.appendChild(
-      createElement("h2", {
-        text: "Características",
-        styles: {
-          margin: "0 0 12px",
-          fontSize: "11px",
-          fontWeight: "600",
-          letterSpacing: "0.14em",
-          textTransform: "uppercase",
-          color: "#465153",
-          ...SECTION_TITLE_STYLES,
-        },
-      }),
-    );
-
-    const dataGrid = createElement("div", {
-      attrs: { class: "pdf-avoid-break" },
-      styles: {
-        display: "grid",
-        gridTemplateColumns: "repeat(2, minmax(0, 1fr))",
-        gap: "8px",
-        ...KEEP_TOGETHER_STYLES,
-      },
-    });
-
-    propertyDetails.forEach((detail) => {
-      appendTextBlock(dataGrid, detail.label, normalizePdfText(detail.value));
-    });
-
-    caracteristicasBlock.appendChild(dataGrid);
-    page2.appendChild(caracteristicasBlock);
-  }
-
-  // Tags
-  if (summaryFeatures.length > 0) {
-    const tagsBlock = createElement("div", {
-      attrs: { class: "pdf-avoid-break" },
-      styles: { ...KEEP_TOGETHER_STYLES },
-    });
-    tagsBlock.appendChild(
-      createElement("h2", {
-        text: "Características adicionales",
-        styles: {
-          margin: "0 0 10px",
-          fontSize: "11px",
-          fontWeight: "600",
-          letterSpacing: "0.14em",
-          textTransform: "uppercase",
-          color: "#465153",
-          ...SECTION_TITLE_STYLES,
-        },
-      }),
-    );
-    const tagList = createElement("div", {
-      styles: {
-        display: "flex",
-        flexWrap: "wrap",
-        gap: "6px",
-      },
-    });
-    summaryFeatures.forEach((feature) => {
-      tagList.appendChild(
-        createElement("span", {
-          text: normalizePdfText(feature),
-          styles: {
-            border: "1px solid #ded8cc",
-            borderRadius: "4px",
-            padding: "5px 11px",
-            fontSize: "11px",
-            fontWeight: "500",
-            letterSpacing: "0.06em",
-            textTransform: "uppercase",
-            color: "#465153",
-            backgroundColor: "#f7f5ef",
-            ...WRAP_TEXT_STYLES,
-          },
-        }),
-      );
-    });
-    tagsBlock.appendChild(tagList);
-    page2.appendChild(tagsBlock);
-  }
-
-  // Gallery
-  if (secondaryImages.length > 0) {
-    const galleryBlock = createElement("div", {
-      attrs: { class: "pdf-avoid-break" },
-      styles: { ...KEEP_TOGETHER_STYLES },
-    });
-    galleryBlock.appendChild(
-      createElement("h2", {
-        text: "Imágenes adicionales",
-        styles: {
-          margin: "0 0 10px",
-          fontSize: "11px",
-          fontWeight: "600",
-          letterSpacing: "0.14em",
-          textTransform: "uppercase",
-          color: "#465153",
-          ...SECTION_TITLE_STYLES,
-        },
-      }),
-    );
-
-    const imageGrid = createElement("div", {
-      styles: {
-        display: "grid",
-        gap: "8px",
-        gridTemplateColumns:
-          secondaryImages.length === 1
-            ? "1fr"
-            : secondaryImages.length === 2
-              ? "repeat(2, minmax(0, 1fr))"
-              : "repeat(3, minmax(0, 1fr))",
-      },
-    });
-
-    secondaryImages.forEach((image, index) => {
-      imageGrid.appendChild(
-        createElement("img", {
-          attrs: {
-            src: image,
-            alt: `${property.title} foto ${index + 2}`,
-            crossorigin: "anonymous",
-          },
-          styles: {
-            width: "100%",
-            height: secondaryImages.length === 1 ? "240px" : "180px",
-            borderRadius: "4px",
-            objectFit: "cover",
-            display: "block",
-          },
-        }),
-      );
-    });
-
-    galleryBlock.appendChild(imageGrid);
-    page2.appendChild(galleryBlock);
-  }
-
-  // Footer
-  const footer = createElement("footer", {
-    attrs: { class: "pdf-avoid-break" },
-    styles: {
-      paddingTop: "14px",
-      borderTop: "1px solid #ded8cc",
-      display: "flex",
-      justifyContent: "space-between",
-      alignItems: "flex-start",
-      gap: "16px",
-      flexWrap: "wrap",
-      ...KEEP_TOGETHER_STYLES,
-    },
-  });
-
-  footer.appendChild(
-    createElement("p", {
-      text: businessName,
-      styles: {
-        margin: "0",
-        fontSize: "12px",
-        fontWeight: "600",
+    const paragraphs = fullDesc.split(/\n+/).map((p) => p.trim()).filter((p) => p.length > 0);
+    paragraphs.forEach((para, idx) => {
+      doc.setFontSize(DESC_SIZE);
+      doc.setFont("helvetica", "normal");
+      const lines: string[] = doc.splitTextToSize(para, CW);
+      const paraH = lines.length * pt(DESC_SIZE) * DESC_LH;
+      if (y + paraH > PH - MG - 12) {
+        doc.addPage();
+        y = MG;
+      }
+      y = pdfText(doc, para, MG, y, {
+        size: DESC_SIZE,
         color: "#172124",
-        ...WRAP_TEXT_STYLES,
-      },
-    }),
-  );
+        maxW: CW,
+        lh: DESC_LH,
+      });
+      if (idx < paragraphs.length - 1) {
+        y += PARA_GAP;
+      }
+    });
+    y += 6;
+  }
 
-  footer.appendChild(
-    createElement("p", {
-      text: "Tienda Link Inmobiliarias",
-      styles: {
-        margin: "0",
-        fontSize: "11px",
-        color: "#465153",
-        textAlign: "right",
-        ...WRAP_TEXT_STYLES,
-      },
-    }),
-  );
+  // Characteristics table ──────────────────────────────────────────────────────
+  if (propertyDetails.length > 0) {
+    if (y + 30 > PH - MG - 12) {
+      doc.addPage();
+      y = MG;
+    }
+    pdfText(doc, "CARACTERÍSTICAS", MG, y, { size: 7, style: "bold", color: "#465153" });
+    y += pt(7) * 1.5 + 2;
 
-  page2.appendChild(footer);
-  root.appendChild(page2);
+    const COL_W = (CW - 3) / 2;
+    const RH = pt(8) * 1.8 + 2;
 
-  return root;
+    propertyDetails.forEach((detail, i) => {
+      const col = i % 2;
+      const row = Math.floor(i / 2);
+      const cx = MG + col * (COL_W + 3);
+      const ry = y + row * RH;
+
+      if (row % 2 === 0) {
+        pdfRect(doc, cx, ry, COL_W, RH, "#f7f5ef");
+      }
+      doc.setFontSize(7.5);
+      doc.setFont("helvetica", "bold");
+      pdfColor(doc, "#465153");
+      doc.text(detail.label, cx + 3, ry + 2, { baseline: "top" });
+      doc.setFontSize(8.5);
+      doc.setFont("helvetica", "normal");
+      pdfColor(doc, "#172124");
+      doc.text(normalizePdfText(detail.value), cx + COL_W - 3, ry + 2, {
+        baseline: "top",
+        align: "right",
+      });
+      pdfHLine(doc, ry + RH, cx, cx + COL_W, "#ded8cc", 0.15);
+    });
+
+    y += Math.ceil(propertyDetails.length / 2) * RH + 6;
+  }
+
+  // Feature pills ──────────────────────────────────────────────────────────────
+  if (summaryFeatures.length > 0) {
+    if (y + 20 > PH - MG - 12) {
+      doc.addPage();
+      y = MG;
+    }
+    pdfText(doc, "CARACTERÍSTICAS ADICIONALES", MG, y, {
+      size: 7,
+      style: "bold",
+      color: "#465153",
+    });
+    y += pt(7) * 1.5 + 2;
+
+    const PILL_TS = 6.5;
+    const PILL_PH = 2.5; // horizontal padding
+    const PILL_PV = 2; // vertical padding
+    const PILL_H = pt(PILL_TS) * 1.45 + PILL_PV * 2;
+    const PILL_GAP = 2.5;
+    let tagX = MG;
+
+    summaryFeatures.forEach((feat) => {
+      const label = normalizePdfText(feat).toUpperCase();
+      doc.setFontSize(PILL_TS);
+      doc.setFont("helvetica", "normal");
+      const tw = doc.getTextWidth(label);
+      const pw = tw + PILL_PH * 2;
+
+      if (tagX + pw > PW - MG) {
+        y += PILL_H + PILL_GAP;
+        tagX = MG;
+      }
+
+      pdfFill(doc, "#f7f5ef");
+      pdfStroke(doc, "#ded8cc", 0.2);
+      doc.rect(tagX, y, pw, PILL_H, "FD");
+      pdfColor(doc, "#465153");
+      doc.text(label, tagX + PILL_PH, y + PILL_PV, { baseline: "top" });
+      tagX += pw + PILL_GAP;
+    });
+    y += PILL_H + 6;
+  }
+
+  // Gallery ────────────────────────────────────────────────────────────────────
+  if (galleryB64s.length > 0) {
+    if (y + 50 > PH - MG - 12) {
+      doc.addPage();
+      y = MG;
+    }
+    pdfText(doc, "IMÁGENES ADICIONALES", MG, y, {
+      size: 7,
+      style: "bold",
+      color: "#465153",
+    });
+    y += pt(7) * 1.5 + 2;
+
+    const count = Math.min(galleryB64s.length, 3);
+    const GAP = 3;
+    const imgW = (CW - GAP * (count - 1)) / count;
+    const imgH = 42;
+
+    for (let i = 0; i < count; i++) {
+      const b64 = galleryB64s[i];
+      const ix = MG + i * (imgW + GAP);
+      await pdfContainImage(doc, b64, ix, y, imgW, imgH);
+    }
+    y += imgH + 6;
+  }
+
+  // Contact block ──────────────────────────────────────────────────────────────
+  const contactLines: string[] = [];
+  if (wa) contactLines.push(wa);
+  if (email) contactLines.push(email);
+  if (profileAddress) contactLines.push(profileAddress);
+
+  if (contactLines.length > 0 || publicPropertyUrl) {
+    const CPAD = 7;
+    const lineCount = contactLines.length + (publicPropertyUrl ? 1 : 0);
+    const CH = CPAD + lineCount * pt(8.5) * 1.6 + CPAD;
+    if (y + CH > PH - MG - 12) {
+      doc.addPage();
+      y = MG;
+    }
+
+    pdfRect(doc, MG, y, CW, CH, "#12383d");
+    let cy = y + CPAD;
+    contactLines.forEach((line) => {
+      cy = pdfText(doc, line, MG + 8, cy, { size: 8.5, color: "#ffffff" });
+    });
+    if (publicPropertyUrl) {
+      doc.setFontSize(8);
+      doc.setFont("helvetica", "bold");
+      pdfColor(doc, "#9ecfd3");
+      doc.text(publicPropertyUrl, MG + 8, cy, { baseline: "top" });
+      const urlW = doc.getTextWidth(publicPropertyUrl);
+      doc.link(MG + 8, cy, urlW, pt(8) * 1.45, { url: publicPropertyUrl });
+    }
+    y += CH + 5;
+  }
+
+  // Footer page 2 ──────────────────────────────────────────────────────────────
+  const f2Y = PH - MG - pt(7.5) * 1.45;
+  pdfHLine(doc, f2Y - 2, MG, PW - MG, "#ded8cc", 0.2);
+  doc.setFontSize(7.5);
+  doc.setFont("helvetica", "bold");
+  pdfColor(doc, "#172124");
+  doc.text(businessName, MG, f2Y, { baseline: "top" });
+  doc.setFontSize(7);
+  doc.setFont("helvetica", "normal");
+  pdfColor(doc, "#465153");
+  doc.text("Tienda Link Inmobiliarias", PW - MG, f2Y, { baseline: "top", align: "right" });
+
+  return doc.output("blob") as Blob;
 }
+
+// ── Public API ─────────────────────────────────────────────────────────────────
 
 export async function generatePropertyPdf({
   property,
@@ -1155,107 +772,22 @@ export async function generatePropertyPdf({
 }: {
   property: PdfProperty;
   profile: PdfBusinessProfile;
-}) {
+}): Promise<void> {
   const slug = profile.slug?.trim() || "";
   const publicPropertyUrl =
     typeof window !== "undefined" && slug
       ? `${window.location.origin}/${slug}/propiedades/${property.id}`
       : "";
 
-  const pdfElement = buildPropertyPdfElement({
-    property,
-    profile,
-    publicPropertyUrl,
-  });
-  const iframe = document.createElement("iframe");
-  iframe.setAttribute("aria-hidden", "true");
-  iframe.style.position = "fixed";
-  iframe.style.left = "-200vw";
-  iframe.style.top = "0";
-  iframe.style.width = "834px";
-  iframe.style.height = "1200px";
-  iframe.style.border = "0";
-  iframe.style.opacity = "0";
-  iframe.style.pointerEvents = "none";
-  iframe.style.background = "#ffffff";
-  document.body.appendChild(iframe);
+  // Load the CDN bundle (html2pdf.bundle.min.js also exposes window.jspdf.jsPDF)
+  await loadHtml2Pdf();
 
-  const iframeWindow = iframe.contentWindow;
-  const iframeDocument = iframe.contentDocument;
+  const filename = buildPdfFilename(property.title);
+  const blob = await buildVectorPdf(property, profile, publicPropertyUrl);
 
-  if (!iframeWindow || !iframeDocument) {
-    iframe.remove();
-    throw new Error("No pudimos preparar el contenedor del PDF.");
+  if (!(blob instanceof Blob) || blob.size === 0) {
+    throw new Error("El PDF no se pudo generar correctamente.");
   }
 
-  iframeDocument.open();
-  iframeDocument.write("<!doctype html><html><head><meta charset=\"utf-8\"></head><body></body></html>");
-  iframeDocument.close();
-  iframeDocument.body.style.margin = "0";
-  iframeDocument.body.style.backgroundColor = "#ffffff";
-
-  const iframePdfElement = iframeDocument.importNode(pdfElement, true) as HTMLElement;
-  iframePdfElement.style.position = "static";
-  iframePdfElement.style.left = "0";
-  iframePdfElement.style.top = "0";
-  iframePdfElement.style.zIndex = "auto";
-  iframeDocument.body.appendChild(iframePdfElement);
-
-  try {
-    const html2pdf = await loadHtml2Pdf(iframeWindow);
-    await waitForImages(iframePdfElement);
-    const filename = buildPdfFilename(property.title);
-
-    const pdfBinary = (await html2pdf()
-      .set({
-        margin: 0,
-        enableLinks: true,
-        filename,
-        image: { type: "jpeg", quality: 0.98 },
-        html2canvas: {
-          scale: 2,
-          useCORS: true,
-          backgroundColor: "#ffffff",
-        },
-        jsPDF: {
-          unit: "mm",
-          format: "a4",
-          orientation: "portrait",
-        },
-        pagebreak: {
-          mode: ["css", "legacy"],
-          avoid: ["img", ".pdf-avoid-break", ".pdf-card"],
-        },
-      })
-      .from(iframePdfElement)
-      .outputPdf("arraybuffer")) as unknown;
-
-    let blob: Blob;
-    if (isArrayBufferLike(pdfBinary)) {
-      blob = new Blob([pdfBinary], { type: "application/pdf" });
-    } else if (ArrayBuffer.isView(pdfBinary)) {
-      const bytes = pdfBinary as Uint8Array;
-      const byteCopy = new Uint8Array(bytes.byteLength);
-      byteCopy.set(new Uint8Array(bytes.buffer, bytes.byteOffset, bytes.byteLength));
-      blob = new Blob([byteCopy], { type: "application/pdf" });
-    } else if (isBlobLike(pdfBinary)) {
-      blob = pdfBinary;
-    } else {
-      throw new Error("No pudimos leer el contenido binario del PDF.");
-    }
-
-    if (blob.size === 0) {
-      throw new Error("El PDF no se pudo serializar correctamente.");
-    }
-
-    triggerDownload(blob, filename);
-  } finally {
-    cleanupHtml2PdfArtifacts();
-    iframe
-      .contentDocument?.querySelectorAll(
-        ".html2pdf__overlay, .html2pdf__container, iframe.html2canvas-container",
-      )
-      .forEach((node) => node.remove());
-    iframe.remove();
-  }
+  triggerDownload(blob, filename);
 }
