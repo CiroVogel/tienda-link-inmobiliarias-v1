@@ -9,6 +9,7 @@ import { appRouter, handleMercadoPagoWebhook, processDueBookingReminders } from 
 import { createContext } from "./context";
 import { serveStatic, setupVite } from "./vite";
 import { UPLOADS_DIR } from "../uploads";
+import { ogPropertyMiddleware } from "../og";
 
 function isPortAvailable(port: number): Promise<boolean> {
   return new Promise((resolve) => {
@@ -96,6 +97,13 @@ async function startServer() {
       createContext,
     })
   );
+
+  // OG: property pages get dynamic Open Graph meta tags for social sharing.
+  // Registered before serveStatic/setupVite so it takes priority over the SPA fallback.
+  // If the property does not exist or the template is unavailable, calls next() → SPA fallback.
+  app.get("/:slug/propiedades/:propertyId", (req, res, next) => {
+    ogPropertyMiddleware(req, res, next).catch(next);
+  });
 
   // Development mode uses Vite, production mode uses static files
   if (process.env.NODE_ENV === "development") {
