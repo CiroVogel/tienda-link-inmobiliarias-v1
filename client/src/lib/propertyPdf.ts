@@ -540,21 +540,23 @@ async function buildVectorPdf(
   // Características destacadas (page 1) ────────────────────────────────────────
   if (summaryFeatures.length > 0) {
     pdfText(doc, "CARACTERÍSTICAS DESTACADAS", MG, y, {
-      size: 6.5,
+      size: 8,
       style: "bold",
       color: "#465153",
     });
-    y += pt(6.5) * 1.5 + 2;
+    y += pt(8) * 1.5 + 2;
 
-    const PILL_TS = 6;
-    const PILL_PH = 2.5;
-    const PILL_PV = 1.5;
+    const PILL_TS = 8;
+    const PILL_PH = 3.5;
+    const PILL_PV = 2.5;
     const PILL_H = pt(PILL_TS) * 1.4 + PILL_PV * 2;
-    const PILL_GAP = 2;
+    const PILL_GAP = 3;
     let tagX = MG;
     let pillRow = 0;
+    let pillCount = 0;
 
     for (const feat of summaryFeatures) {
+      if (pillCount >= 6) break;
       const label = normalizePdfText(feat).toUpperCase();
       doc.setFontSize(PILL_TS);
       doc.setFont("helvetica", "normal");
@@ -574,8 +576,9 @@ async function buildVectorPdf(
       pdfColor(doc, "#465153");
       doc.text(label, tagX + PILL_PH, y + PILL_PV, { baseline: "top" });
       tagX += pw + PILL_GAP;
+      pillCount++;
     }
-    y += PILL_H + 4;
+    y += PILL_H + 5;
   }
 
   // Footer page 1 ──────────────────────────────────────────────────────────────
@@ -727,7 +730,12 @@ async function buildVectorPdf(
     for (let i = 0; i < count; i++) {
       const b64 = galleryB64s[i];
       const ix = MG + i * (imgW + GAP);
-      await pdfContainImage(doc, b64, ix, y, imgW, IMG_H);
+      const cropped = await coverCropToBase64(b64, imgW, IMG_H);
+      if (cropped) {
+        doc.addImage(cropped, "JPEG", ix, y, imgW, IMG_H);
+      } else {
+        await pdfContainImage(doc, b64, ix, y, imgW, IMG_H);
+      }
     }
     y += IMG_H + GAP_AFTER_IMG;
   } else if (hasContact && y + CH + 2 > PAGE_LIMIT) {
