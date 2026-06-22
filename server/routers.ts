@@ -77,6 +77,7 @@ import {
   removeStoredBusinessImage,
   reorderStoredPropertyImages,
   setStoredSavedSearchArchivedState,
+  setStoredVisitRequestArchivedState,
   setStoredBusinessImage,
   setStoredBusinessArchivedState,
   setStoredPropertyPrimaryImage,
@@ -218,6 +219,13 @@ function buildLocalBusinessProfile(userId: number): BusinessProfile {
     paymentMpAccessToken: null,
     depositPercentage: 30,
     currency: "ARS",
+    plan: "free",
+    planExpiresAt: null,
+    planAssignedAt: null,
+    planNotes: null,
+    reviewStatus: "active",
+    showInDirectory: true,
+    verified: false,
     createdAt: now,
     updatedAt: now,
   };
@@ -993,6 +1001,27 @@ export const appRouter = router({
         }
 
         return addStoredVisitRequestNote(profile.slug, input.id, input.text);
+      }),
+
+    setArchived: adminProcedure
+      .input(
+        z.object({
+          id: z.string().min(1).max(200),
+          isArchived: z.boolean(),
+        }),
+      )
+      .mutation(async ({ ctx, input }) => {
+        const profile = await getAdminBusinessProfile(ctx.user);
+        if (!profile) {
+          throw new TRPCError({ code: "NOT_FOUND", message: "Perfil no encontrado" });
+        }
+
+        const request = await getStoredVisitRequest(profile.slug, input.id);
+        if (!request) {
+          throw new TRPCError({ code: "NOT_FOUND", message: "Interesado no encontrado" });
+        }
+
+        return setStoredVisitRequestArchivedState(profile.slug, input.id, input.isArchived);
       }),
   }),
 

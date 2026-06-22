@@ -32,6 +32,7 @@ export type InterestedItem = {
   email: string | null;
   message: string;
   status: InterestedStatus;
+  isArchived: boolean;
   notes: InterestedNote[];
   timeline: InterestedTimelineEntry[];
   createdAt: string;

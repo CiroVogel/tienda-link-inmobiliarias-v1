@@ -163,6 +163,7 @@ export type StoredVisitRequest = {
   email: string | null;
   message: string;
   status: StoredVisitRequestStatus;
+  isArchived: boolean;
   notes: StoredVisitRequestNote[];
   timeline: StoredVisitRequestTimelineEntry[];
   createdAt: string;
@@ -442,6 +443,13 @@ function buildStoredBusinessProfileFromSource(
     paymentMpAccessToken: source.paymentMpAccessToken ?? null,
     depositPercentage: source.depositPercentage ?? 30,
     currency: source.currency?.trim() || "ARS",
+    plan: source.plan ?? "free",
+    planExpiresAt: source.planExpiresAt ?? null,
+    planAssignedAt: source.planAssignedAt ?? null,
+    planNotes: source.planNotes ?? null,
+    reviewStatus: source.reviewStatus ?? "active",
+    showInDirectory: source.showInDirectory ?? true,
+    verified: source.verified ?? false,
     createdAt,
     updatedAt,
   };
@@ -1071,6 +1079,7 @@ function normalizeVisitRequest(request: StoredVisitRequest): StoredVisitRequest 
     ...request,
     email: request.email?.trim() || null,
     status: normalizedStatus,
+    isArchived: Boolean(request.isArchived),
     notes,
     timeline,
   };
@@ -1428,6 +1437,7 @@ export async function createStoredVisitRequest(
     email: input.email?.trim() || null,
     message: input.message.trim(),
     status: "new",
+    isArchived: false,
     notes: [],
     timeline: [],
     createdAt: now,
@@ -1494,6 +1504,20 @@ export async function addStoredVisitRequestNote(
         ...currentRequest.timeline,
         buildVisitRequestNoteEntry(nextNote),
       ],
+    };
+  });
+}
+
+export async function setStoredVisitRequestArchivedState(
+  slug: string,
+  requestId: string,
+  isArchived: boolean,
+): Promise<StoredVisitRequest> {
+  return updateStoredVisitRequestRecord(slug, requestId, (currentRequest) => {
+    return {
+      ...currentRequest,
+      isArchived,
+      updatedAt: new Date().toISOString(),
     };
   });
 }
