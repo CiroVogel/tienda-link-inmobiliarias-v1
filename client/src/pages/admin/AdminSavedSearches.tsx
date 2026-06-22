@@ -141,10 +141,10 @@ export default function AdminSavedSearches() {
       <div className="mx-auto max-w-6xl p-6">
         <div className="mb-6 flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
           <div>
-            <h1 className="text-2xl font-black tracking-tight text-slate-900">
+            <h1 className="text-2xl font-black tracking-tight text-[#172124]">
               Búsquedas recibidas
             </h1>
-            <p className="mt-1 text-sm text-slate-500">
+            <p className="mt-1 text-sm text-[#465153]">
               Necesidades cargadas por visitantes cuando todavía no encontraron una
               propiedad.
             </p>
@@ -181,7 +181,7 @@ export default function AdminSavedSearches() {
             ))}
           </div>
 
-          <div className="mb-4 flex gap-2 overflow-x-auto pb-1">
+          <div className="mb-4 flex flex-wrap gap-2">
             <button
               type="button"
               onClick={() => setFilter("all")}

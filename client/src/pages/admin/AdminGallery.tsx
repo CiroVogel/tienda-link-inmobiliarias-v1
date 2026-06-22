@@ -240,8 +240,8 @@ export default function AdminGallery() {
       <div className="mx-auto max-w-6xl p-6">
         <div className="mb-8 flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
           <div>
-            <h1 className="text-2xl font-black tracking-tight text-slate-900">Fotos de propiedades</h1>
-            <p className="mt-1 text-sm text-slate-500">
+            <h1 className="text-2xl font-black tracking-tight text-[#172124]">Fotos de propiedades</h1>
+            <p className="mt-1 text-sm text-[#465153]">
               Elegí una propiedad, subí sus imágenes y definí la principal.
             </p>
           </div>
@@ -276,14 +276,14 @@ export default function AdminGallery() {
                     {selectedProperty.location} | {selectedProperty.propertyType}
                   </p>
                   <p className="text-sm font-semibold text-[#172124]">{selectedProperty.price}</p>
-                  <p className="text-xs uppercase tracking-[0.14em] text-zinc-600">
+                  <p className="text-xs uppercase tracking-[0.14em] text-[#465153]">
                     {currentImages.length} foto{currentImages.length !== 1 ? "s" : ""}
                   </p>
                 </div>
               </div>
 
               <div className="rounded-xl border border-[#ded8cc] bg-white p-6">
-                <p className="mb-4 text-xs font-black uppercase tracking-[0.16em] text-zinc-600">
+                <p className="mb-4 text-xs font-black uppercase tracking-[0.16em] text-[#465153]">
                   Subir imágenes
                 </p>
                 <div

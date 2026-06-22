@@ -91,7 +91,7 @@ function ImageUploader({
         {currentUrl ? (
           <img src={currentUrl} alt={label} className="w-full h-full object-cover" />
         ) : (
-          <div className="w-full h-full flex flex-col items-center justify-center text-slate-400">
+          <div className="w-full h-full flex flex-col items-center justify-center text-[#465153]">
             <Upload className="w-6 h-6 mb-2" />
             <span className="text-xs">Subir imagen</span>
           </div>
@@ -278,10 +278,10 @@ export default function AdminProfile() {
       <div className="p-6 max-w-3xl mx-auto">
         <div className="flex items-center justify-between mb-8">
           <div>
-            <h1 className="text-2xl font-bold text-slate-900 tracking-tight">
+            <h1 className="text-2xl font-bold text-[#172124] tracking-tight">
               Perfil de la inmobiliaria
             </h1>
-            <p className="text-slate-500 text-sm mt-0.5">
+            <p className="text-[#465153] text-sm mt-0.5">
               Información que se muestra en tu web pública
             </p>
           </div>
@@ -324,7 +324,7 @@ export default function AdminProfile() {
                   onUpload={handleImageUpload}
                   onRemove={handleImageRemove}
                 />
-                <p className="text-xs text-slate-500 mt-2 leading-relaxed">
+                <p className="text-xs text-[#465153] mt-2 leading-relaxed">
                   Opcional. Usala para reforzar la identidad visual de la
                   inmobiliaria sin cambiar la estructura actual de la pantalla.
                 </p>
@@ -344,7 +344,7 @@ export default function AdminProfile() {
                 </Label>
 
                 <div className="flex items-center border border-slate-200 bg-slate-50 rounded-xl overflow-hidden">
-                  <span className="px-3 py-2.5 text-xs text-slate-500 border-r border-slate-200 whitespace-nowrap">
+                  <span className="px-3 py-2.5 text-xs text-[#465153] border-r border-slate-200 whitespace-nowrap">
                     {typeof window !== "undefined" ? window.location.origin : ""}/
                   </span>
 
@@ -364,7 +364,7 @@ export default function AdminProfile() {
                   />
                 </div>
 
-                <p className="text-xs text-slate-500 mt-1">
+                <p className="text-xs text-[#465153] mt-1">
                   Solo letras minúsculas, números y guiones. Ej: clave-urbana-propiedades
                 </p>
               </div>
@@ -404,7 +404,7 @@ export default function AdminProfile() {
                   className="w-full rounded-xl border border-slate-200 bg-white px-3 py-2.5 text-sm placeholder:text-slate-400 focus:outline-none focus:border-[#12383d] focus:ring-2 focus:ring-[#12383d]/10 resize-none"
                   rows={3}
                 />
-                <p className="text-xs text-slate-500 mt-1 leading-relaxed">
+                <p className="text-xs text-[#465153] mt-1 leading-relaxed">
                   Se muestra debajo de la frase principal en la imagen de portada.
                 </p>
               </div>
@@ -428,7 +428,7 @@ export default function AdminProfile() {
                     placeholder="Ej: Equipo comercial"
                     className="border-slate-200 focus-visible:border-[#12383d] focus-visible:ring-[#12383d]/15"
                   />
-                  <p className="text-xs text-slate-500 mt-1 leading-relaxed">
+                  <p className="text-xs text-[#465153] mt-1 leading-relaxed">
                     Se muestra al final de la presentación.
                   </p>
                 </div>
@@ -443,7 +443,7 @@ export default function AdminProfile() {
                     placeholder="Ej: Tasaciones, ventas y alquileres"
                     className="border-slate-200 focus-visible:border-[#12383d] focus-visible:ring-[#12383d]/15"
                   />
-                  <p className="text-xs text-slate-500 mt-1 leading-relaxed">
+                  <p className="text-xs text-[#465153] mt-1 leading-relaxed">
                     Se muestra encima del texto de presentación.
                   </p>
                 </div>
@@ -460,7 +460,7 @@ export default function AdminProfile() {
                   className="w-full rounded-xl border border-slate-200 bg-white px-3 py-2.5 text-sm placeholder:text-slate-400 focus:outline-none focus:border-[#12383d] focus:ring-2 focus:ring-[#12383d]/10 resize-none"
                   rows={4}
                 />
-                <p className="text-xs text-slate-500 mt-1 leading-relaxed">
+                <p className="text-xs text-[#465153] mt-1 leading-relaxed">
                   Se muestra en la sección "Sobre la inmobiliaria", debajo de la portada.
                 </p>
               </div>
@@ -573,7 +573,7 @@ export default function AdminProfile() {
                   disabled
                   className="bg-slate-50 border-slate-200"
                 />
-                <p className="text-xs text-slate-500 mt-1">
+                <p className="text-xs text-[#465153] mt-1">
                   Este email es el que se usa para entrar a la administración.
                 </p>
               </div>

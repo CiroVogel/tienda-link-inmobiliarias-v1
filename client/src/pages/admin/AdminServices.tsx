@@ -413,8 +413,8 @@ export default function AdminServices() {
       <div className="mx-auto max-w-6xl p-6">
         <div className="mb-8 flex flex-col gap-4 xl:flex-row xl:items-end xl:justify-between">
           <div>
-            <h1 className="text-2xl font-black tracking-tight text-slate-900">Propiedades</h1>
-            <p className="mt-1 text-sm text-slate-500">
+            <h1 className="text-2xl font-black tracking-tight text-[#172124]">Propiedades</h1>
+            <p className="mt-1 text-sm text-[#465153]">
               {totalProperties} propiedad{totalProperties !== 1 ? "es" : ""} en gestión
             </p>
           </div>
@@ -504,7 +504,7 @@ export default function AdminServices() {
             </select>
           </div>
 
-          <div className="mt-3 flex flex-wrap items-center justify-between gap-3 text-xs text-slate-500">
+          <div className="mt-3 flex flex-wrap items-center justify-between gap-3 text-xs text-[#465153]">
             <p>
               Mostrando <span className="font-semibold text-[#172124]">{filteredProperties.length}</span> de{" "}
               <span className="font-semibold text-[#172124]">{totalProperties}</span> propiedades
@@ -531,7 +531,7 @@ export default function AdminServices() {
           <div className="rounded-xl border-2 border-dashed border-[#ded8cc] bg-white px-6 py-16 text-center">
             <Home className="mx-auto mb-3 h-10 w-10 text-[#c8c0b4]" />
             <p className="font-semibold text-[#172124]">Todavía no cargaste propiedades.</p>
-            <p className="mt-1 text-sm text-slate-500">
+            <p className="mt-1 text-sm text-[#465153]">
               Crea la primera propiedad para empezar a publicar desde el admin.
             </p>
           </div>
@@ -539,7 +539,7 @@ export default function AdminServices() {
           <div className="rounded-xl border border-[#ded8cc] bg-white px-6 py-16 text-center">
             <Search className="mx-auto mb-3 h-10 w-10 text-[#c8c0b4]" />
             <p className="font-semibold text-[#172124]">No encontramos propiedades con esos filtros.</p>
-            <p className="mt-1 text-sm text-slate-500">
+            <p className="mt-1 text-sm text-[#465153]">
               Prueba otra búsqueda o limpia los filtros para volver al listado completo.
             </p>
           </div>
@@ -571,7 +571,7 @@ export default function AdminServices() {
                     </div>
 
                     <h2 className="text-lg font-black text-[#172124]">{property.title}</h2>
-                    <p className="mt-1 text-sm text-slate-500">
+                    <p className="mt-1 text-sm text-[#465153]">
                       {property.location} | {property.propertyType}
                     </p>
 
@@ -753,7 +753,7 @@ export default function AdminServices() {
                   </h3>
 
                   <div className="mt-4">
-                    <p className="mb-3 text-xs font-black uppercase tracking-[0.12em] text-slate-500">
+                    <p className="mb-3 text-xs font-black uppercase tracking-[0.12em] text-[#465153]">
                       Datos principales
                     </p>
                     <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
@@ -836,7 +836,7 @@ export default function AdminServices() {
                   </div>
 
                   <div className="mt-5">
-                    <p className="mb-3 text-xs font-black uppercase tracking-[0.12em] text-slate-500">
+                    <p className="mb-3 text-xs font-black uppercase tracking-[0.12em] text-[#465153]">
                       Superficies
                     </p>
                     <div className="grid gap-4 sm:grid-cols-3">
@@ -888,7 +888,7 @@ export default function AdminServices() {
                   </div>
 
                   <div className="mt-5">
-                    <p className="mb-3 text-xs font-black uppercase tracking-[0.12em] text-slate-500">
+                    <p className="mb-3 text-xs font-black uppercase tracking-[0.12em] text-[#465153]">
                       Ubicación / disposición
                     </p>
                     <div className="grid gap-4 sm:grid-cols-2">
@@ -939,7 +939,7 @@ export default function AdminServices() {
                   <div className="mt-5 grid gap-5">
                     {detailedPropertyFeatureGroups.map((group) => (
                       <div key={group.title}>
-                        <p className="mb-3 text-xs font-black uppercase tracking-[0.12em] text-slate-500">
+                        <p className="mb-3 text-xs font-black uppercase tracking-[0.12em] text-[#465153]">
                           {group.title}
                         </p>
                         <div className="grid gap-2 sm:grid-cols-2 lg:grid-cols-3">

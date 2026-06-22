@@ -99,7 +99,7 @@ export default function AdminBookings() {
       <div className="mx-auto max-w-5xl p-6">
         <div className="mb-6 flex items-center justify-between gap-3">
           <div>
-            <h1 className="text-2xl font-black tracking-tight text-slate-900">
+            <h1 className="text-2xl font-black tracking-tight text-[#172124]">
               Consultas
             </h1>
             <p className="mt-0.5 text-sm text-[#465153]">
@@ -192,7 +192,7 @@ export default function AdminBookings() {
                   <div className="flex flex-col gap-4 lg:flex-row lg:items-start">
                     <div className="min-w-0 flex-1">
                       <div className="mb-2 flex flex-wrap items-center gap-3">
-                        <h3 className="truncate text-sm font-semibold text-slate-900">
+                        <h3 className="truncate text-sm font-semibold text-[#172124]">
                           {request.name}
                         </h3>
                         <span

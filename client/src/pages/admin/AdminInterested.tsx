@@ -90,10 +90,10 @@ export default function AdminInterested() {
       <div className="mx-auto max-w-6xl p-6">
         <div className="mb-6 flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
           <div>
-            <h1 className="text-2xl font-black tracking-tight text-slate-900">
+            <h1 className="text-2xl font-black tracking-tight text-[#172124]">
               Interesados
             </h1>
-            <p className="mt-1 text-sm text-slate-500">
+            <p className="mt-1 text-sm text-[#465153]">
               Seguimiento de cada consulta con estado, notas e historial.
             </p>
           </div>
