@@ -168,19 +168,20 @@ export function PropertyCard({
             </div>
           ) : null}
 
-          {/* Logo de inmobiliaria — solo si existe */}
-          {logoUrl ? (
-            <div className="absolute bottom-3 left-3">
-              <div className="rounded-[4px] bg-white px-3 py-2 shadow-[0_2px_8px_rgba(0,0,0,0.18)]">
+          {/* Logo de inmobiliaria — cuadrado con fallback a inicial */}
+          <div className="absolute bottom-3 left-3">
+            <span className="flex h-10 w-10 shrink-0 items-center justify-center overflow-hidden rounded-[8px] border border-[#d8d1c4] bg-[#fffdf8]/90 text-sm font-bold text-[#12383d] shadow-[0_8px_20px_rgba(25,31,28,0.08)]">
+              {logoUrl ? (
                 <img
                   src={logoUrl}
-                  alt=""
-                  aria-hidden="true"
-                  className="block h-8 w-auto max-w-[110px] object-contain"
+                  alt={businessName ?? ""}
+                  className="h-full w-full object-contain"
                 />
-              </div>
-            </div>
-          ) : null}
+              ) : (
+                <span aria-hidden="true">{(businessName?.trim() || "I").charAt(0).toUpperCase()}</span>
+              )}
+            </span>
+          </div>
         </div>
       </Link>
 

@@ -49,15 +49,17 @@ function Header({
       <div className="mx-auto flex h-16 max-w-[1440px] items-center justify-between gap-4 px-5 lg:px-10">
         <Link href={`/${slug}`}>
           <span className="flex items-center gap-3">
-            {brandImageUrl ? (
-              <span className="flex h-7 w-7 shrink-0 items-center justify-center overflow-hidden rounded-sm sm:h-8 sm:w-8">
+            <span className="flex h-9 w-9 shrink-0 items-center justify-center overflow-hidden rounded-[8px] border border-[#d8d1c4] bg-[#fffdf8]/85 text-sm font-bold text-[#12383d] shadow-[0_8px_20px_rgba(25,31,28,0.08)]">
+              {brandImageUrl ? (
                 <img
                   src={brandImageUrl}
                   alt={businessName}
-                  className="h-full w-full scale-[1.18] object-contain"
+                  className="h-full w-full object-contain"
                 />
-              </span>
-            ) : null}
+              ) : (
+                <span aria-hidden="true">{businessName.trim().charAt(0).toUpperCase()}</span>
+              )}
+            </span>
             <span className="max-w-[180px] truncate text-xs font-black uppercase tracking-[0.12em] text-[#182125] sm:max-w-none sm:text-sm sm:tracking-[0.18em]">
               {businessName}
             </span>

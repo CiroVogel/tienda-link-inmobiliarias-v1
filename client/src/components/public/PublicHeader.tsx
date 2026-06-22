@@ -30,13 +30,17 @@ export function PublicHeader({
         {/* Centro — marca */}
         <Link href={`/${slug}`}>
           <span className="flex min-w-0 items-center justify-center gap-2.5">
-            {brandImageUrl ? (
-              <img
-                src={brandImageUrl}
-                alt={businessName}
-                className="h-7 w-7 shrink-0 object-contain"
-              />
-            ) : null}
+            <span className="flex h-9 w-9 shrink-0 items-center justify-center overflow-hidden rounded-[8px] border border-[#d8d1c4] bg-[#fffdf8]/85 text-sm font-bold text-[#12383d] shadow-[0_8px_20px_rgba(25,31,28,0.08)]">
+              {brandImageUrl ? (
+                <img
+                  src={brandImageUrl}
+                  alt={businessName}
+                  className="h-full w-full object-contain"
+                />
+              ) : (
+                <span aria-hidden="true">{businessName.trim().charAt(0).toUpperCase()}</span>
+              )}
+            </span>
             <span className="max-w-[180px] truncate text-xs font-black uppercase tracking-[0.12em] text-[#182125] sm:max-w-none sm:text-sm sm:tracking-[0.18em]">
               {businessName}
             </span>
