@@ -3,11 +3,13 @@ import { Link } from "wouter";
 import { format, parseISO } from "date-fns";
 import { es } from "date-fns/locale";
 import {
+  Archive,
   Clock,
   Mail,
   MessageCircle,
   Phone,
   RefreshCw,
+  RotateCcw,
   Search,
 } from "lucide-react";
 import { toast } from "sonner";
@@ -31,7 +33,7 @@ import {
 } from "@/lib/interested";
 import { trpc } from "@/lib/trpc";
 
-type ConsultasFilter = "all" | "new" | "active" | "resolved";
+type ConsultasFilter = "all" | "new" | "active" | "resolved" | "archived";
 
 export default function AdminBookings() {
   const [filter, setFilter] = useState<ConsultasFilter>("all");
@@ -49,25 +51,38 @@ export default function AdminBookings() {
     },
   });
 
+  const setArchived = trpc.visitRequests.setArchived.useMutation({
+    onSuccess: async (_, variables) => {
+      toast.success(variables.isArchived ? "Consulta archivada" : "Consulta reactivada");
+      await utils.visitRequests.list.invalidate();
+    },
+    onError: (error) => {
+      toast.error(error.message || "No se pudo actualizar la consulta");
+    },
+  });
+
   const requestItems = requests as InterestedItem[];
 
   const counts = useMemo(() => {
-    const active = requestItems.filter(
+    const activeItems = requestItems.filter((r) => !r.isArchived);
+
+    const active = activeItems.filter(
       (request) =>
         request.status === "contacted" ||
         request.status === "visited" ||
         request.status === "negotiating",
     ).length;
 
-    const resolved = requestItems.filter((request) =>
+    const resolved = activeItems.filter((request) =>
       isInterestedResolved(request.status),
     ).length;
 
     return {
-      all: requestItems.length,
-      new: requestItems.filter((request) => request.status === "new").length,
+      all: activeItems.length,
+      new: activeItems.filter((request) => request.status === "new").length,
       active,
       resolved,
+      archived: requestItems.filter((r) => r.isArchived).length,
     };
   }, [requestItems]);
 
@@ -76,11 +91,15 @@ export default function AdminBookings() {
 
     return requestItems.filter((request) => {
       const matchesFilter =
-        filter === "all" ||
-        (filter === "new" && request.status === "new") ||
-        (filter === "active" &&
-          ["contacted", "visited", "negotiating"].includes(request.status)) ||
-        (filter === "resolved" && isInterestedResolved(request.status));
+        filter === "archived"
+          ? request.isArchived
+          : filter === "all"
+            ? !request.isArchived
+            : !request.isArchived &&
+              ((filter === "new" && request.status === "new") ||
+                (filter === "active" &&
+                  ["contacted", "visited", "negotiating"].includes(request.status)) ||
+                (filter === "resolved" && isInterestedResolved(request.status)));
 
       const matchesSearch =
         !normalizedSearch ||
@@ -103,7 +122,7 @@ export default function AdminBookings() {
               Consultas
             </h1>
             <p className="mt-0.5 text-sm text-[#465153]">
-              {counts.new} nuevas · {counts.active} en seguimiento · {counts.resolved} resueltas
+              {counts.new} nuevas · {counts.active} en seguimiento · {counts.resolved} resueltas · {counts.archived} archivadas
             </p>
           </div>
 
@@ -125,6 +144,7 @@ export default function AdminBookings() {
               { value: "new", label: "Nuevas", count: counts.new },
               { value: "active", label: "En seguimiento", count: counts.active },
               { value: "resolved", label: "Resueltas", count: counts.resolved },
+              { value: "archived", label: "Archivadas", count: counts.archived },
             ] as Array<{ value: ConsultasFilter; label: string; count: number }>).map(
               (item) => {
                 const isSelected = filter === item.value;
@@ -174,9 +194,11 @@ export default function AdminBookings() {
             <Clock className="mx-auto mb-3 h-10 w-10 opacity-30" />
             <p className="font-medium">No hay consultas para mostrar</p>
             <p className="mt-1 text-sm">
-              {search || filter !== "all"
-                ? "No encontramos consultas con esos filtros."
-                : "Todavía no entraron consultas nuevas."}
+              {filter === "archived"
+                ? "No hay consultas archivadas."
+                : search || filter !== "all"
+                  ? "No encontramos consultas con esos filtros."
+                  : "Todavía no entraron consultas nuevas."}
             </p>
           </div>
         ) : (
@@ -200,9 +222,14 @@ export default function AdminBookings() {
                         >
                           {statusConfig.label}
                         </span>
-                        <span className="text-xs font-medium uppercase tracking-[0.14em] text-slate-600">
+                        <span className="text-xs font-medium uppercase tracking-[0.14em] text-[#465153]">
                           {request.reference}
                         </span>
+                        {request.isArchived ? (
+                          <span className="inline-flex items-center rounded-full border border-[#ded8cc] bg-[#f0ede6] px-2 py-0.5 text-xs font-medium text-[#465153]">
+                            Archivada
+                          </span>
+                        ) : null}
                       </div>
 
                       <div className="mb-3 flex flex-wrap gap-x-4 gap-y-1 text-xs text-[#465153]">
@@ -278,6 +305,33 @@ export default function AdminBookings() {
                         <MessageCircle className="h-4 w-4" />
                         WhatsApp
                       </a>
+
+                      <button
+                        type="button"
+                        onClick={() => {
+                          if (
+                            !request.isArchived &&
+                            !window.confirm(
+                              "¿Archivar esta consulta?\nLa consulta dejará de aparecer entre las activas, pero podrá reactivarse más adelante.",
+                            )
+                          )
+                            return;
+                          setArchived.mutate({ id: request.id, isArchived: !request.isArchived });
+                        }}
+                        className="inline-flex h-9 w-full items-center justify-center gap-2 rounded-md border border-[#ded8cc] bg-white px-3 text-sm font-medium text-[#172124] hover:border-[#12383d] hover:bg-[#eef4f2] hover:text-[#12383d]"
+                      >
+                        {request.isArchived ? (
+                          <>
+                            <RotateCcw className="h-4 w-4" />
+                            Reactivar
+                          </>
+                        ) : (
+                          <>
+                            <Archive className="h-4 w-4" />
+                            Archivar
+                          </>
+                        )}
+                      </button>
                     </div>
                   </div>
                 </div>
