@@ -1,4 +1,4 @@
-﻿import { loadHtml2Pdf } from "@/lib/html2pdf";
+import { loadHtml2Pdf } from "@/lib/html2pdf";
 import {
   getOperationLabel,
   getStatusLabel,
@@ -60,35 +60,35 @@ const SECTION_TITLE_STYLES: Partial<CSSStyleDeclaration> = {
 };
 
 const PDF_TEXT_REPLACEMENTS: Array<[RegExp, string]> = [
-  [/\bmas\b/gi, "m\u00e1s"],
-  [/\bimagenes\b/gi, "im\u00e1genes"],
-  [/\bdescripcion\b/gi, "descripci\u00f3n"],
-  [/\bcaracteristicas\b/gi, "caracter\u00edsticas"],
-  [/\bbanos\b/gi, "ba\u00f1os"],
-  [/\bbano\b/gi, "ba\u00f1o"],
-  [/\bjardin\b/gi, "jard\u00edn"],
-  [/\bdeposito\b/gi, "dep\u00f3sito"],
-  [/\bgalpon\b/gi, "galp\u00f3n"],
-  [/\bbalcon\b/gi, "balc\u00f3n"],
-  [/\bmetalica\b/gi, "met\u00e1lica"],
-  [/\bmatricula\b/gi, "matr\u00edcula"],
-  [/\binformacion\b/gi, "informaci\u00f3n"],
-  [/\bcredito\b/gi, "cr\u00e9dito"],
-  [/\bpublica\b/gi, "p\u00fablica"],
-  [/\bexposicion\b/gi, "exposici\u00f3n"],
-  [/\bcirculacion\b/gi, "circulaci\u00f3n"],
-  [/\bcercania\b/gi, "cercan\u00eda"],
-  [/\btransito\b/gi, "tr\u00e1nsito"],
-  [/\brecepcion\b/gi, "recepci\u00f3n"],
-  [/\bubicacion\b/gi, "ubicaci\u00f3n"],
-  [/\bestrategica\b/gi, "estrat\u00e9gica"],
-  [/\bpractica\b/gi, "pr\u00e1ctica"],
-  [/\binversion\b/gi, "inversi\u00f3n"],
-  [/\brio\b/gi, "r\u00edo"],
-  [/\bopcion\b/gi, "opci\u00f3n"],
-  [/\bcomoda\b/gi, "c\u00f3moda"],
-  [/\bdistribucion\b/gi, "distribuci\u00f3n"],
-  [/\bcaracter\b/gi, "car\u00e1cter"],
+  [/\bmas\b/gi, "más"],
+  [/\bimagenes\b/gi, "imágenes"],
+  [/\bdescripcion\b/gi, "descripción"],
+  [/\bcaracteristicas\b/gi, "características"],
+  [/\bbanos\b/gi, "baños"],
+  [/\bbano\b/gi, "baño"],
+  [/\bjardin\b/gi, "jardín"],
+  [/\bdeposito\b/gi, "depósito"],
+  [/\bgalpon\b/gi, "galpón"],
+  [/\bbalcon\b/gi, "balcón"],
+  [/\bmetalica\b/gi, "metálica"],
+  [/\bmatricula\b/gi, "matrícula"],
+  [/\binformacion\b/gi, "información"],
+  [/\bcredito\b/gi, "crédito"],
+  [/\bpublica\b/gi, "pública"],
+  [/\bexposicion\b/gi, "exposición"],
+  [/\bcirculacion\b/gi, "circulación"],
+  [/\bcercania\b/gi, "cercanía"],
+  [/\btransito\b/gi, "tránsito"],
+  [/\brecepcion\b/gi, "recepción"],
+  [/\bubicacion\b/gi, "ubicación"],
+  [/\bestrategica\b/gi, "estratégica"],
+  [/\bpractica\b/gi, "práctica"],
+  [/\binversion\b/gi, "inversión"],
+  [/\brio\b/gi, "río"],
+  [/\bopcion\b/gi, "opción"],
+  [/\bcomoda\b/gi, "cómoda"],
+  [/\bdistribucion\b/gi, "distribución"],
+  [/\bcaracter\b/gi, "carácter"],
 ];
 
 function normalizePdfText(value: string) {
@@ -99,7 +99,7 @@ function normalizePdfText(value: string) {
 }
 
 function formatAreaM2(value?: number | null) {
-  return value != null ? `${value} m\u00b2` : null;
+  return value != null ? `${value} m²` : null;
 }
 
 function formatNumberDetail(value?: number | null) {
@@ -108,7 +108,7 @@ function formatNumberDetail(value?: number | null) {
 
 function formatAgeDetail(value?: number | null) {
   if (value == null) return null;
-  return value === 0 ? "A estrenar" : `${value} a\u00f1o${value === 1 ? "" : "s"}`;
+  return value === 0 ? "A estrenar" : `${value} año${value === 1 ? "" : "s"}`;
 }
 
 function formatTextDetail(value?: string | null) {
@@ -127,7 +127,7 @@ function buildPdfFilename(title: string) {
     title
       .toLowerCase()
       .normalize("NFD")
-      .replace(/[\u0300-\u036f]/g, "")
+      .replace(/[̀-ͯ]/g, "")
       .replace(/[^a-z0-9]+/g, "-")
       .replace(/^-+|-+$/g, "") || "propiedad";
 
@@ -218,8 +218,8 @@ function appendTextBlock(
   label: string,
   value: string,
   {
-    labelColor = "#6b7280",
-    valueColor = "#111827",
+    labelColor = "#465153",
+    valueColor = "#172124",
   }: { labelColor?: string; valueColor?: string } = {},
 ) {
   const wrapper = createElement("div", {
@@ -227,8 +227,10 @@ function appendTextBlock(
       class: "pdf-avoid-break pdf-card",
     },
     styles: {
-      border: "1px solid #e5e7eb",
-      padding: "14px",
+      border: "1px solid #ded8cc",
+      borderRadius: "4px",
+      padding: "12px",
+      backgroundColor: "#f7f5ef",
       boxSizing: "border-box",
       ...KEEP_TOGETHER_STYLES,
     },
@@ -239,8 +241,8 @@ function appendTextBlock(
       text: label,
       styles: {
         margin: "0",
-        fontSize: "11px",
-        fontWeight: "800",
+        fontSize: "10px",
+        fontWeight: "700",
         letterSpacing: "0.16em",
         textTransform: "uppercase",
         color: labelColor,
@@ -252,9 +254,9 @@ function appendTextBlock(
     createElement("p", {
       text: value,
       styles: {
-        margin: "8px 0 0",
-        fontSize: "15px",
-        lineHeight: "1.45",
+        margin: "6px 0 0",
+        fontSize: "14px",
+        lineHeight: "1.4",
         fontWeight: "800",
         color: valueColor,
         ...WRAP_TEXT_STYLES,
@@ -278,16 +280,93 @@ function buildPropertyPdfElement({
   const safePrimaryColor =
     profile.primaryColor && /^#(?:[0-9a-f]{3}){1,2}$/i.test(profile.primaryColor)
       ? profile.primaryColor
-      : "#111827";
+      : "#12383d";
   const logoUrl = profile.logoUrl?.trim() || "";
   const secondaryImages = property.images.slice(1, 4);
   const summaryFeatures = [...property.features, ...(property.detailedFeatures ?? [])];
-  const city = profile.address?.split(",").pop()?.trim() || property.location;
-  const contactLine = [
-    profile.phone || profile.whatsapp ? `WhatsApp ${profile.phone || profile.whatsapp}` : "",
-    profile.email ? `Email ${profile.email}` : "",
-    city,
-  ].filter(Boolean);
+
+  // Contact lines for header and stripe
+  const headerContactLines: string[] = [];
+  if (profile.whatsapp?.trim()) {
+    headerContactLines.push(`WhatsApp: ${profile.whatsapp.trim()}`);
+  } else if (profile.phone?.trim()) {
+    headerContactLines.push(`Tel: ${profile.phone.trim()}`);
+  }
+  if (profile.email?.trim()) headerContactLines.push(profile.email.trim());
+
+  // Description split: first ~340 chars (word boundary) on page 1, rest on page 2
+  const MAX_SUMMARY_CHARS = 340;
+  const fullDesc = property.description ? normalizePdfText(property.description) : "";
+  let summaryText = "";
+  let remainingText = "";
+  if (fullDesc.trim()) {
+    if (fullDesc.length > MAX_SUMMARY_CHARS + 60) {
+      const cut = fullDesc.lastIndexOf(" ", MAX_SUMMARY_CHARS);
+      const idx = cut > 100 ? cut : MAX_SUMMARY_CHARS;
+      summaryText = fullDesc.slice(0, idx).trimEnd();
+      remainingText = fullDesc.slice(idx).trimStart();
+    } else {
+      summaryText = fullDesc;
+    }
+  }
+
+  // Quick data: up to 4 real values
+  const quickData: Array<{ label: string; value: string }> = [];
+  const area = property.areaM2 ?? property.coveredAreaM2;
+  if (area) quickData.push({ label: "Superficie", value: `${area} m²` });
+  if (property.bedrooms && property.bedrooms > 0) {
+    quickData.push({
+      label: property.bedrooms === 1 ? "Dormitorio" : "Dormitorios",
+      value: String(property.bedrooms),
+    });
+  } else if (property.rooms && property.rooms > 0) {
+    quickData.push({
+      label: property.rooms === 1 ? "Ambiente" : "Ambientes",
+      value: String(property.rooms),
+    });
+  }
+  if (property.bathrooms && property.bathrooms > 0) {
+    quickData.push({
+      label: property.bathrooms === 1 ? "Baño" : "Baños",
+      value: String(property.bathrooms),
+    });
+  }
+  if (quickData.length < 4 && property.garages && property.garages > 0) {
+    quickData.push({
+      label: property.garages === 1 ? "Cochera" : "Cocheras",
+      value: String(property.garages),
+    });
+  }
+
+  // Characteristics (page 2): skip zero counts and empty values
+  const propertyDetails = [
+    { label: "Tipo", value: normalizePdfText(property.propertyType) },
+    {
+      label: "Ambientes",
+      value: property.rooms && property.rooms > 0 ? String(property.rooms) : null,
+    },
+    {
+      label: "Dormitorios",
+      value: property.bedrooms && property.bedrooms > 0 ? String(property.bedrooms) : null,
+    },
+    {
+      label: "Baños",
+      value: property.bathrooms && property.bathrooms > 0 ? String(property.bathrooms) : null,
+    },
+    {
+      label: "Cocheras",
+      value: property.garages && property.garages > 0 ? String(property.garages) : null,
+    },
+    { label: "Antigüedad", value: formatAgeDetail(property.ageYears) },
+    { label: "Expensas", value: formatTextDetail(property.expenses) },
+    { label: "Sup. cubierta", value: formatAreaM2(property.coveredAreaM2) },
+    { label: "Sup. descubierta", value: formatAreaM2(property.uncoveredAreaM2) },
+    { label: "Sup. total", value: formatAreaM2(property.areaM2) },
+    { label: "Disposición", value: formatTextDetail(property.disposition) },
+    { label: "Orientación", value: formatTextDetail(property.orientation) },
+  ].filter(hasPdfDetailValue);
+
+  // ── ROOT ────────────────────────────────────────────────────────────────
 
   const root = createElement("div", {
     styles: {
@@ -296,417 +375,666 @@ function buildPropertyPdfElement({
       top: "0",
       zIndex: "-1",
       width: "794px",
-      backgroundColor: "#ffffff",
-      padding: "32px",
-      color: "#111827",
+      backgroundColor: "#fffdf8",
+      color: "#172124",
       fontFamily: '"Plus Jakarta Sans", system-ui, sans-serif',
       boxSizing: "border-box",
     },
   });
 
-  const page = createElement("div", {
-    styles: {
-      minHeight: "1080px",
-      display: "flex",
-      flexDirection: "column",
-      gap: "24px",
-      backgroundColor: "#ffffff",
-    },
-  });
+  // ── PAGE 1 ──────────────────────────────────────────────────────────────
 
-  root.appendChild(page);
-
+  // Header
   const header = createElement("header", {
-    attrs: {
-      class: "pdf-avoid-break",
-    },
+    attrs: { class: "pdf-avoid-break" },
     styles: {
       display: "flex",
       justifyContent: "space-between",
       alignItems: "flex-start",
       gap: "20px",
-      borderBottom: `1px solid ${safePrimaryColor}22`,
-      paddingBottom: "20px",
+      padding: "22px 32px",
+      borderBottom: `2px solid ${safePrimaryColor}`,
+      backgroundColor: "#fffdf8",
+      boxSizing: "border-box",
       ...KEEP_TOGETHER_STYLES,
     },
   });
 
   const branding = createElement("div", {
-    styles: {
-      flex: "1 1 auto",
-      minWidth: "0",
-      maxWidth: "58%",
-    },
+    styles: { flex: "1 1 auto", minWidth: "0", maxWidth: "55%" },
   });
 
   if (logoUrl) {
-    const logo = createElement("img", {
-      attrs: {
-        src: logoUrl,
-        alt: businessName,
-        crossorigin: "anonymous",
-      },
-      styles: {
-        height: "56px",
-        width: "auto",
-        objectFit: "contain",
-        display: "block",
-      },
-    });
-    header.appendChild(branding);
-    branding.appendChild(logo);
+    branding.appendChild(
+      createElement("img", {
+        attrs: { src: logoUrl, alt: businessName, crossorigin: "anonymous" },
+        styles: { height: "48px", width: "auto", objectFit: "contain", display: "block" },
+      }),
+    );
   } else {
     branding.appendChild(
       createElement("p", {
         text: businessName,
         styles: {
           margin: "0",
-          fontSize: "22px",
+          fontSize: "18px",
           fontWeight: "900",
-          letterSpacing: "0.12em",
-          textTransform: "uppercase",
-          color: "#111827",
+          letterSpacing: "0.06em",
+          color: "#172124",
           ...WRAP_TEXT_STYLES,
         },
       }),
     );
-    header.appendChild(branding);
   }
 
   branding.appendChild(
     createElement("p", {
       text: "Ficha comercial de propiedad",
       styles: {
-        margin: "16px 0 0",
-        fontSize: "12px",
-        fontWeight: "800",
-        letterSpacing: "0.14em",
+        margin: "9px 0 0",
+        fontSize: "10px",
+        fontWeight: "700",
+        letterSpacing: "0.18em",
         textTransform: "uppercase",
-        color: "#6b7280",
+        color: "#465153",
+      },
+    }),
+  );
+
+  header.appendChild(branding);
+
+  if (headerContactLines.length > 0) {
+    const contactBlock = createElement("div", {
+      styles: { flex: "0 0 auto", maxWidth: "38%", textAlign: "right" },
+    });
+    headerContactLines.forEach((line) => {
+      contactBlock.appendChild(
+        createElement("p", {
+          text: line,
+          styles: {
+            margin: "0",
+            fontSize: "12px",
+            lineHeight: "1.65",
+            color: "#465153",
+            ...WRAP_TEXT_STYLES,
+          },
+        }),
+      );
+    });
+    header.appendChild(contactBlock);
+  }
+
+  root.appendChild(header);
+
+  // Hero
+  const heroWrapper = createElement("div", {
+    attrs: { class: "pdf-avoid-break" },
+    styles: {
+      position: "relative",
+      width: "100%",
+      height: "400px",
+      overflow: "hidden",
+      ...KEEP_TOGETHER_STYLES,
+    },
+  });
+
+  if (property.images[0]) {
+    heroWrapper.appendChild(
+      createElement("img", {
+        attrs: {
+          src: property.images[0],
+          alt: property.title,
+          crossorigin: "anonymous",
+        },
+        styles: {
+          position: "absolute",
+          top: "0",
+          left: "0",
+          width: "100%",
+          height: "100%",
+          objectFit: "cover",
+          display: "block",
+        },
+      }),
+    );
+
+    const badgesRow = createElement("div", {
+      styles: {
+        position: "absolute",
+        top: "16px",
+        left: "16px",
+        display: "flex",
+        gap: "8px",
+        flexWrap: "wrap",
+      },
+    });
+
+    badgesRow.appendChild(
+      createElement("span", {
+        text: getOperationLabel(property.operation),
+        styles: {
+          padding: "6px 14px",
+          fontSize: "10px",
+          fontWeight: "900",
+          letterSpacing: "0.16em",
+          textTransform: "uppercase",
+          color: "#ffffff",
+          backgroundColor: "#12383d",
+          borderRadius: "3px",
+        },
+      }),
+    );
+
+    badgesRow.appendChild(
+      createElement("span", {
+        text: getStatusLabel(property.status),
+        styles: {
+          padding: "6px 14px",
+          fontSize: "10px",
+          fontWeight: "900",
+          letterSpacing: "0.16em",
+          textTransform: "uppercase",
+          color: "#172124",
+          backgroundColor: "#f0ede6",
+          borderRadius: "3px",
+        },
+      }),
+    );
+
+    heroWrapper.appendChild(badgesRow);
+  } else {
+    // No image fallback
+    const fallback = createElement("div", {
+      styles: {
+        width: "100%",
+        height: "100%",
+        backgroundColor: "#f7f5ef",
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+        padding: "32px",
+        boxSizing: "border-box",
+      },
+    });
+    fallback.appendChild(
+      createElement("p", {
+        text: property.title,
+        styles: {
+          margin: "0",
+          fontSize: "22px",
+          fontWeight: "700",
+          color: "#465153",
+          textAlign: "center",
+          ...WRAP_TEXT_STYLES,
+        },
+      }),
+    );
+    heroWrapper.appendChild(fallback);
+  }
+
+  root.appendChild(heroWrapper);
+
+  // Editorial block: eyebrow + title left / price right
+  const editorial = createElement("div", {
+    attrs: { class: "pdf-avoid-break" },
+    styles: {
+      display: "flex",
+      justifyContent: "space-between",
+      alignItems: "flex-end",
+      gap: "20px",
+      padding: "22px 32px 18px",
+      backgroundColor: "#fffdf8",
+      boxSizing: "border-box",
+      ...KEEP_TOGETHER_STYLES,
+    },
+  });
+
+  const editorialLeft = createElement("div", {
+    styles: { flex: "1 1 auto", minWidth: "0" },
+  });
+
+  const eyebrowParts = [property.propertyType, property.location].filter(Boolean);
+  if (eyebrowParts.length > 0) {
+    editorialLeft.appendChild(
+      createElement("p", {
+        text: eyebrowParts.join(" · "),
+        styles: {
+          margin: "0",
+          fontSize: "11px",
+          fontWeight: "700",
+          letterSpacing: "0.18em",
+          textTransform: "uppercase",
+          color: "#465153",
+          ...WRAP_TEXT_STYLES,
+        },
+      }),
+    );
+  }
+
+  editorialLeft.appendChild(
+    createElement("h1", {
+      text: property.title,
+      styles: {
+        margin: eyebrowParts.length > 0 ? "10px 0 0" : "0",
+        fontSize: "30px",
+        lineHeight: "1.1",
+        fontWeight: "900",
+        letterSpacing: "-0.02em",
+        color: "#172124",
         ...WRAP_TEXT_STYLES,
       },
     }),
   );
 
-  const contactBlock = createElement("div", {
+  editorial.appendChild(editorialLeft);
+
+  if (property.price) {
+    const priceBlock = createElement("div", {
+      styles: { flex: "0 0 auto", textAlign: "right", minWidth: "0" },
+    });
+    priceBlock.appendChild(
+      createElement("p", {
+        text: property.operation === "sale" ? "Precio de venta" : "Precio de alquiler",
+        styles: {
+          margin: "0",
+          fontSize: "10px",
+          fontWeight: "700",
+          letterSpacing: "0.14em",
+          textTransform: "uppercase",
+          color: "#465153",
+        },
+      }),
+    );
+    priceBlock.appendChild(
+      createElement("p", {
+        text: property.price,
+        styles: {
+          margin: "6px 0 0",
+          fontSize: "24px",
+          fontWeight: "900",
+          color: "#172124",
+          ...WRAP_TEXT_STYLES,
+        },
+      }),
+    );
+    editorial.appendChild(priceBlock);
+  }
+
+  root.appendChild(editorial);
+
+  // Quick data row
+  if (quickData.length > 0) {
+    const quickSection = createElement("div", {
+      attrs: { class: "pdf-avoid-break" },
+      styles: {
+        padding: "0 32px 20px",
+        boxSizing: "border-box",
+        ...KEEP_TOGETHER_STYLES,
+      },
+    });
+
+    const quickRow = createElement("div", {
+      styles: {
+        display: "flex",
+        border: "1px solid #ded8cc",
+        borderRadius: "6px",
+        overflow: "hidden",
+        backgroundColor: "#f7f5ef",
+      },
+    });
+
+    quickData.slice(0, 4).forEach((datum, idx) => {
+      const cell = createElement("div", {
+        styles: {
+          flex: "1",
+          padding: "14px 10px",
+          textAlign: "center",
+          borderLeft: idx > 0 ? "1px solid #ded8cc" : "none",
+          boxSizing: "border-box",
+        },
+      });
+      cell.appendChild(
+        createElement("p", {
+          text: datum.value,
+          styles: {
+            margin: "0",
+            fontSize: "20px",
+            fontWeight: "900",
+            color: "#172124",
+          },
+        }),
+      );
+      cell.appendChild(
+        createElement("p", {
+          text: datum.label,
+          styles: {
+            margin: "3px 0 0",
+            fontSize: "10px",
+            fontWeight: "600",
+            letterSpacing: "0.12em",
+            textTransform: "uppercase",
+            color: "#465153",
+          },
+        }),
+      );
+      quickRow.appendChild(cell);
+    });
+
+    quickSection.appendChild(quickRow);
+    root.appendChild(quickSection);
+  }
+
+  // Summary (page 1 excerpt)
+  if (summaryText) {
+    const summarySection = createElement("div", {
+      attrs: { class: "pdf-avoid-break" },
+      styles: {
+        padding: "0 32px 20px",
+        boxSizing: "border-box",
+        ...KEEP_TOGETHER_STYLES,
+      },
+    });
+    summarySection.appendChild(
+      createElement("p", {
+        text: "Descripción",
+        styles: {
+          margin: "0 0 8px",
+          fontSize: "10px",
+          fontWeight: "700",
+          letterSpacing: "0.18em",
+          textTransform: "uppercase",
+          color: "#465153",
+        },
+      }),
+    );
+    summarySection.appendChild(
+      createElement("p", {
+        text: summaryText,
+        styles: {
+          margin: "0",
+          fontSize: "13px",
+          lineHeight: "1.72",
+          color: "#172124",
+          whiteSpace: "pre-line",
+          ...WRAP_TEXT_STYLES,
+        },
+      }),
+    );
+    root.appendChild(summarySection);
+  }
+
+  // Contact stripe (page 1)
+  const contactStripe = createElement("section", {
+    attrs: { class: "pdf-avoid-break pdf-card" },
     styles: {
-      flex: "0 0 34%",
-      maxWidth: "34%",
-      minWidth: "0",
-      textAlign: "right",
+      margin: "0 32px 32px",
+      padding: "16px 20px",
+      border: "1px solid #ded8cc",
+      borderRadius: "6px",
+      backgroundColor: "#f7f5ef",
+      boxSizing: "border-box",
+      ...KEEP_TOGETHER_STYLES,
     },
   });
 
-  contactLine.forEach((item) => {
-    contactBlock.appendChild(
+  const stripeRow = createElement("div", {
+    styles: {
+      display: "flex",
+      justifyContent: "space-between",
+      alignItems: "center",
+      gap: "16px",
+      flexWrap: "wrap",
+    },
+  });
+
+  const stripeLeft = createElement("div", { styles: { flex: "1 1 auto" } });
+  stripeLeft.appendChild(
+    createElement("p", {
+      text: "Contactar a la inmobiliaria",
+      styles: {
+        margin: "0 0 5px",
+        fontSize: "10px",
+        fontWeight: "700",
+        letterSpacing: "0.16em",
+        textTransform: "uppercase",
+        color: "#465153",
+      },
+    }),
+  );
+
+  headerContactLines.forEach((line) => {
+    stripeLeft.appendChild(
       createElement("p", {
-        text: item,
+        text: line,
         styles: {
           margin: "0",
           fontSize: "13px",
           lineHeight: "1.6",
-          color: "#4b5563",
+          fontWeight: "600",
+          color: "#172124",
           ...WRAP_TEXT_STYLES,
         },
       }),
     );
   });
 
-  header.appendChild(contactBlock);
-  page.appendChild(header);
+  stripeRow.appendChild(stripeLeft);
 
-  const hero = createElement("img", {
-    attrs: {
-      src: property.images[0],
-      alt: property.title,
-      crossorigin: "anonymous",
-      class: "pdf-avoid-break",
-    },
-    styles: {
-      width: "100%",
-      height: "328px",
-      borderRadius: "4px",
-      objectFit: "cover",
-      display: "block",
-    },
-  });
-  page.appendChild(hero);
+  if (publicPropertyUrl) {
+    const stripeRight = createElement("div", { styles: { flex: "0 0 auto" } });
+    stripeRight.appendChild(
+      createElement("a", {
+        text: "Ver ficha online →",
+        attrs: { href: publicPropertyUrl, target: "_blank", rel: "noopener noreferrer" },
+        styles: {
+          fontSize: "12px",
+          fontWeight: "700",
+          color: safePrimaryColor,
+          textDecoration: "underline",
+        },
+      }),
+    );
+    stripeRow.appendChild(stripeRight);
+  }
 
-  const introGrid = createElement("section", {
-    attrs: {
-      class: "pdf-avoid-break",
-    },
+  contactStripe.appendChild(stripeRow);
+  root.appendChild(contactStripe);
+
+  // ── PAGE 2 ──────────────────────────────────────────────────────────────
+
+  // Mini header with forced page break
+  const miniHeader = createElement("header", {
+    attrs: { class: "pdf-avoid-break" },
     styles: {
+      pageBreakBefore: "always",
+      breakBefore: "page",
       display: "flex",
-      flexDirection: "column",
-      gap: "18px",
-      ...KEEP_TOGETHER_STYLES,
-    },
-  });
-  const introMain = createElement("div");
-  introMain.appendChild(
-    createElement("p", {
-      text: `${property.address}, ${property.location}`,
-      styles: {
-        margin: "0",
-        fontSize: "12px",
-        fontWeight: "800",
-        letterSpacing: "0.14em",
-        textTransform: "uppercase",
-        color: "#6b7280",
-        ...WRAP_TEXT_STYLES,
-      },
-    }),
-  );
-  introMain.appendChild(
-    createElement("h1", {
-      text: property.title,
-      styles: {
-        margin: "12px 0 0",
-        fontSize: "40px",
-        lineHeight: "1.02",
-        fontWeight: "900",
-        letterSpacing: "-0.025em",
-        color: "#111827",
-        ...WRAP_TEXT_STYLES,
-      },
-    }),
-  );
-  introMain.appendChild(
-    createElement("p", {
-      text: property.price,
-      styles: {
-        margin: "14px 0 0",
-        fontSize: "30px",
-        fontWeight: "900",
-        color: "#111827",
-        ...WRAP_TEXT_STYLES,
-      },
-    }),
-  );
-  introGrid.appendChild(introMain);
-
-  const introSide = createElement("div", {
-    attrs: {
-      class: "pdf-avoid-break pdf-card",
-    },
-    styles: {
-      borderRadius: "4px",
-      border: "1px solid #e5e7eb",
-      padding: "18px",
+      alignItems: "center",
+      gap: "14px",
+      padding: "18px 32px",
+      borderBottom: "1px solid #ded8cc",
+      backgroundColor: "#fffdf8",
       boxSizing: "border-box",
       ...KEEP_TOGETHER_STYLES,
     },
   });
 
-  const badgeRow = createElement("div", {
-    styles: {
-      display: "flex",
-      flexWrap: "wrap",
-      gap: "8px",
-    },
-  });
-  badgeRow.appendChild(
-    createElement("span", {
-      text: getOperationLabel(property.operation),
-      styles: {
-        padding: "7px 10px",
-        fontSize: "11px",
-        fontWeight: "900",
-        letterSpacing: "0.12em",
-        textTransform: "uppercase",
-        color: "#ffffff",
-        backgroundColor: safePrimaryColor,
-      },
-    }),
-  );
-  badgeRow.appendChild(
-    createElement("span", {
-      text: getStatusLabel(property.status),
-      styles: {
-        padding: "7px 10px",
-        fontSize: "11px",
-        fontWeight: "900",
-        letterSpacing: "0.12em",
-        textTransform: "uppercase",
-        color: "#374151",
-        backgroundColor: "#f3f4f6",
-      },
-    }),
-  );
-  introSide.appendChild(badgeRow);
-  introSide.appendChild(
+  if (logoUrl) {
+    miniHeader.appendChild(
+      createElement("img", {
+        attrs: { src: logoUrl, alt: businessName, crossorigin: "anonymous" },
+        styles: { height: "30px", width: "auto", objectFit: "contain", display: "block" },
+      }),
+    );
+  }
+  miniHeader.appendChild(
     createElement("p", {
-      text: "Propiedad presentada para compartir por WhatsApp o email con informaci\u00f3n clave, im\u00e1genes y contacto directo de la inmobiliaria.",
+      text: businessName,
       styles: {
-        margin: "14px 0 0",
+        margin: "0",
         fontSize: "13px",
-        lineHeight: "1.65",
-        color: "#4b5563",
+        fontWeight: "700",
+        color: "#465153",
         ...WRAP_TEXT_STYLES,
       },
     }),
   );
-  introGrid.appendChild(introSide);
-  page.appendChild(introGrid);
 
-  const contentGrid = createElement("section", {
+  root.appendChild(miniHeader);
+
+  // Page 2 content
+  const page2 = createElement("div", {
     styles: {
+      padding: "24px 32px",
       display: "flex",
       flexDirection: "column",
-      gap: "20px",
+      gap: "22px",
+      backgroundColor: "#fffdf8",
+      boxSizing: "border-box",
     },
   });
 
-  const descriptionBlock = createElement("div", {
-    styles: {
-      ...KEEP_TOGETHER_STYLES,
-    },
-    attrs: {
-      class: "pdf-avoid-break",
-    },
-  });
-  descriptionBlock.appendChild(
-    createElement("h2", {
-      text: "Descripci\u00f3n",
+  // Remaining description
+  if (remainingText) {
+    const descBlock = createElement("div", {
+      attrs: { class: "pdf-avoid-break" },
+      styles: { ...KEEP_TOGETHER_STYLES },
+    });
+    descBlock.appendChild(
+      createElement("h2", {
+        text: "Descripción",
+        styles: {
+          margin: "0 0 10px",
+          fontSize: "11px",
+          fontWeight: "700",
+          letterSpacing: "0.18em",
+          textTransform: "uppercase",
+          color: "#465153",
+          ...SECTION_TITLE_STYLES,
+        },
+      }),
+    );
+    descBlock.appendChild(
+      createElement("p", {
+        text: remainingText,
+        styles: {
+          margin: "0",
+          fontSize: "13px",
+          lineHeight: "1.72",
+          color: "#172124",
+          whiteSpace: "pre-line",
+          ...WRAP_TEXT_STYLES,
+        },
+      }),
+    );
+    page2.appendChild(descBlock);
+  }
+
+  // Characteristics grid
+  if (propertyDetails.length > 0) {
+    const caracteristicasBlock = createElement("div", {
+      attrs: { class: "pdf-avoid-break" },
+      styles: { ...KEEP_TOGETHER_STYLES },
+    });
+    caracteristicasBlock.appendChild(
+      createElement("h2", {
+        text: "Características",
+        styles: {
+          margin: "0 0 12px",
+          fontSize: "11px",
+          fontWeight: "700",
+          letterSpacing: "0.18em",
+          textTransform: "uppercase",
+          color: "#465153",
+          ...SECTION_TITLE_STYLES,
+        },
+      }),
+    );
+
+    const dataGrid = createElement("div", {
+      attrs: { class: "pdf-avoid-break" },
       styles: {
-        margin: "0",
-        fontSize: "14px",
-        fontWeight: "900",
-        letterSpacing: "0.14em",
-        textTransform: "uppercase",
-        color: "#111827",
-        ...SECTION_TITLE_STYLES,
-      },
-    }),
-  );
-  descriptionBlock.appendChild(
-    createElement("p", {
-      text: normalizePdfText(property.description),
-      styles: {
-        margin: "14px 0 0",
-        fontSize: "13px",
-        lineHeight: "1.72",
-        color: "#374151",
-        ...WRAP_TEXT_STYLES,
-      },
-    }),
-  );
-  contentGrid.appendChild(descriptionBlock);
-
-  const featuresBlock = createElement("div", {
-    styles: {
-      ...KEEP_TOGETHER_STYLES,
-    },
-    attrs: {
-      class: "pdf-avoid-break",
-    },
-  });
-  featuresBlock.appendChild(
-    createElement("h2", {
-      text: "Caracter\u00edsticas principales",
-      styles: {
-        margin: "0",
-        fontSize: "14px",
-        fontWeight: "900",
-        letterSpacing: "0.14em",
-        textTransform: "uppercase",
-        color: "#111827",
-        ...SECTION_TITLE_STYLES,
-      },
-    }),
-  );
-
-  const dataGrid = createElement("div", {
-    attrs: {
-      class: "pdf-avoid-break",
-    },
-    styles: {
-      marginTop: "14px",
-      display: "grid",
-      gridTemplateColumns: "repeat(2, minmax(0, 1fr))",
-      gap: "12px",
-      ...KEEP_TOGETHER_STYLES,
-    },
-  });
-
-  const propertyDetails = [
-    { label: "Tipo", value: normalizePdfText(property.propertyType) },
-    { label: "Ambientes", value: formatNumberDetail(property.rooms) },
-    { label: "Dormitorios", value: formatNumberDetail(property.bedrooms) },
-    { label: "Ba\u00f1os", value: formatNumberDetail(property.bathrooms) },
-    { label: "Cocheras", value: formatNumberDetail(property.garages) },
-    { label: "Antig\u00fcedad", value: formatAgeDetail(property.ageYears) },
-    { label: "Expensas", value: formatTextDetail(property.expenses) },
-    { label: "Sup. cubierta", value: formatAreaM2(property.coveredAreaM2) },
-    { label: "Sup. descubierta", value: formatAreaM2(property.uncoveredAreaM2) },
-    { label: "Sup. total", value: formatAreaM2(property.areaM2) },
-    { label: "Disposici\u00f3n", value: formatTextDetail(property.disposition) },
-    { label: "Orientaci\u00f3n", value: formatTextDetail(property.orientation) },
-  ].filter(hasPdfDetailValue);
-
-  propertyDetails.forEach((detail) => {
-    appendTextBlock(dataGrid, detail.label, normalizePdfText(detail.value));
-  });
-  featuresBlock.appendChild(dataGrid);
-
-  if (summaryFeatures.length > 0) {
-    const tagList = createElement("div", {
-      attrs: {
-        class: "pdf-avoid-break",
-      },
-      styles: {
-        marginTop: "14px",
-        display: "flex",
-        flexWrap: "wrap",
+        display: "grid",
+        gridTemplateColumns: "repeat(2, minmax(0, 1fr))",
         gap: "8px",
         ...KEEP_TOGETHER_STYLES,
       },
     });
 
+    propertyDetails.forEach((detail) => {
+      appendTextBlock(dataGrid, detail.label, normalizePdfText(detail.value));
+    });
+
+    caracteristicasBlock.appendChild(dataGrid);
+    page2.appendChild(caracteristicasBlock);
+  }
+
+  // Tags
+  if (summaryFeatures.length > 0) {
+    const tagsBlock = createElement("div", {
+      attrs: { class: "pdf-avoid-break" },
+      styles: { ...KEEP_TOGETHER_STYLES },
+    });
+    tagsBlock.appendChild(
+      createElement("h2", {
+        text: "Características adicionales",
+        styles: {
+          margin: "0 0 10px",
+          fontSize: "11px",
+          fontWeight: "700",
+          letterSpacing: "0.18em",
+          textTransform: "uppercase",
+          color: "#465153",
+          ...SECTION_TITLE_STYLES,
+        },
+      }),
+    );
+    const tagList = createElement("div", {
+      styles: {
+        display: "flex",
+        flexWrap: "wrap",
+        gap: "6px",
+      },
+    });
     summaryFeatures.forEach((feature) => {
       tagList.appendChild(
         createElement("span", {
           text: normalizePdfText(feature),
           styles: {
-            border: "1px solid #e5e7eb",
-            padding: "8px 12px",
-            fontSize: "12px",
+            border: "1px solid #ded8cc",
+            borderRadius: "4px",
+            padding: "5px 11px",
+            fontSize: "11px",
             fontWeight: "600",
-            letterSpacing: "0.1em",
+            letterSpacing: "0.08em",
             textTransform: "uppercase",
-            color: "#4b5563",
+            color: "#465153",
+            backgroundColor: "#f7f5ef",
             ...WRAP_TEXT_STYLES,
           },
         }),
       );
     });
-
-    featuresBlock.appendChild(tagList);
+    tagsBlock.appendChild(tagList);
+    page2.appendChild(tagsBlock);
   }
 
-  contentGrid.appendChild(featuresBlock);
-  page.appendChild(contentGrid);
-
+  // Gallery
   if (secondaryImages.length > 0) {
-    const imagesSection = createElement("section", {
-      styles: {
-        ...KEEP_TOGETHER_STYLES,
-      },
-      attrs: {
-        class: "pdf-avoid-break",
-      },
+    const galleryBlock = createElement("div", {
+      attrs: { class: "pdf-avoid-break" },
+      styles: { ...KEEP_TOGETHER_STYLES },
     });
-    imagesSection.appendChild(
+    galleryBlock.appendChild(
       createElement("h2", {
-        text: "M\u00e1s im\u00e1genes",
+        text: "Imágenes adicionales",
         styles: {
-          margin: "0",
-          fontSize: "14px",
-          fontWeight: "900",
-          letterSpacing: "0.14em",
+          margin: "0 0 10px",
+          fontSize: "11px",
+          fontWeight: "700",
+          letterSpacing: "0.18em",
           textTransform: "uppercase",
-          color: "#111827",
+          color: "#465153",
           ...SECTION_TITLE_STYLES,
         },
       }),
@@ -714,9 +1042,8 @@ function buildPropertyPdfElement({
 
     const imageGrid = createElement("div", {
       styles: {
-        marginTop: "14px",
         display: "grid",
-        gap: "12px",
+        gap: "8px",
         gridTemplateColumns:
           secondaryImages.length === 1
             ? "1fr"
@@ -736,7 +1063,7 @@ function buildPropertyPdfElement({
           },
           styles: {
             width: "100%",
-            height: secondaryImages.length === 1 ? "220px" : "160px",
+            height: secondaryImages.length === 1 ? "240px" : "180px",
             borderRadius: "4px",
             objectFit: "cover",
             display: "block",
@@ -745,158 +1072,135 @@ function buildPropertyPdfElement({
       );
     });
 
-    imagesSection.appendChild(imageGrid);
-    page.appendChild(imagesSection);
+    galleryBlock.appendChild(imageGrid);
+    page2.appendChild(galleryBlock);
   }
 
-  const contactSection = createElement("section", {
-    attrs: {
-      class: "pdf-avoid-break pdf-card",
-    },
+  // Closing: contact + URL
+  const closingBlock = createElement("div", {
+    attrs: { class: "pdf-avoid-break pdf-card" },
     styles: {
-      borderRadius: "4px",
-      border: `1px solid ${safePrimaryColor}22`,
-      padding: "20px",
-      backgroundColor: `${safePrimaryColor}08`,
+      padding: "18px 20px",
+      border: "1px solid #ded8cc",
+      borderRadius: "6px",
+      backgroundColor: "#f7f5ef",
       boxSizing: "border-box",
       ...KEEP_TOGETHER_STYLES,
     },
   });
-  contactSection.appendChild(
+
+  closingBlock.appendChild(
     createElement("h2", {
-      text: "Contacto y ficha p\u00fablica",
+      text: "Contacto",
       styles: {
-        margin: "0",
-        fontSize: "14px",
-        fontWeight: "900",
-        letterSpacing: "0.14em",
+        margin: "0 0 12px",
+        fontSize: "11px",
+        fontWeight: "700",
+        letterSpacing: "0.18em",
         textTransform: "uppercase",
-        color: "#111827",
+        color: "#465153",
         ...SECTION_TITLE_STYLES,
       },
     }),
   );
-  const contactItems = createElement("div", {
-    styles: {
-      marginTop: "14px",
-      display: "grid",
-      gap: "12px",
-    },
-  });
-  contactLine.forEach((item) => {
-    contactItems.appendChild(
+
+  const closingContactLines: string[] = [];
+  if (profile.whatsapp?.trim()) closingContactLines.push(`WhatsApp: ${profile.whatsapp.trim()}`);
+  if (
+    profile.phone?.trim() &&
+    profile.phone.trim() !== profile.whatsapp?.trim()
+  ) {
+    closingContactLines.push(`Tel: ${profile.phone.trim()}`);
+  }
+  if (profile.email?.trim()) closingContactLines.push(profile.email.trim());
+  if (profile.address?.trim()) closingContactLines.push(profile.address.trim());
+
+  closingContactLines.forEach((line) => {
+    closingBlock.appendChild(
       createElement("p", {
-        text: item,
+        text: line,
         styles: {
-          margin: "0",
+          margin: "0 0 3px",
           fontSize: "13px",
-          lineHeight: "1.65",
-          color: "#374151",
+          lineHeight: "1.6",
+          color: "#172124",
           ...WRAP_TEXT_STYLES,
         },
       }),
     );
   });
+
   if (publicPropertyUrl) {
-    const publicLinkRow = createElement("p", {
+    const urlRow = createElement("p", {
       styles: {
-        margin: "0",
-        fontSize: "13px",
-        lineHeight: "1.65",
-        color: "#374151",
+        margin: closingContactLines.length > 0 ? "10px 0 0" : "0",
+        fontSize: "12px",
+        lineHeight: "1.5",
+        color: "#465153",
         ...WRAP_TEXT_STYLES,
       },
     });
-    publicLinkRow.appendChild(document.createTextNode("Ficha p\u00fablica online: "));
-    publicLinkRow.appendChild(
+    urlRow.appendChild(document.createTextNode("Ficha online: "));
+    urlRow.appendChild(
       createElement("a", {
-        text: "Ver propiedad",
-        attrs: {
-          href: publicPropertyUrl,
-          target: "_blank",
-          rel: "noopener noreferrer",
-        },
+        text: publicPropertyUrl,
+        attrs: { href: publicPropertyUrl, target: "_blank", rel: "noopener noreferrer" },
         styles: {
           color: safePrimaryColor,
           textDecoration: "underline",
-          fontWeight: "700",
+          fontWeight: "600",
           ...WRAP_TEXT_STYLES,
         },
       }),
     );
-    contactItems.appendChild(publicLinkRow);
+    closingBlock.appendChild(urlRow);
   }
-  contactSection.appendChild(contactItems);
-  page.appendChild(contactSection);
 
+  page2.appendChild(closingBlock);
+
+  // Footer
   const footer = createElement("footer", {
-    attrs: {
-      class: "pdf-avoid-break",
-    },
+    attrs: { class: "pdf-avoid-break" },
     styles: {
-      marginTop: "auto",
-      borderTop: "1px solid #e5e7eb",
-      paddingTop: "20px",
+      paddingTop: "14px",
+      borderTop: "1px solid #ded8cc",
+      display: "flex",
+      justifyContent: "space-between",
+      alignItems: "flex-start",
+      gap: "16px",
+      flexWrap: "wrap",
       ...KEEP_TOGETHER_STYLES,
     },
   });
-  const footerRow = createElement("div", {
-    styles: {
-      display: "flex",
-      alignItems: "flex-start",
-      justifyContent: "space-between",
-      gap: "16px",
-      flexWrap: "wrap",
-    },
-  });
-  const footerLeft = createElement("div", {
-    styles: {
-      flex: "1 1 220px",
-      minWidth: "0",
-    },
-  });
-  footerLeft.appendChild(
+
+  footer.appendChild(
     createElement("p", {
       text: businessName,
       styles: {
         margin: "0",
-        fontSize: "14px",
-        fontWeight: "700",
-        color: "#111827",
-        ...WRAP_TEXT_STYLES,
-      },
-    }),
-  );
-  footerLeft.appendChild(
-    createElement("p", {
-      text: "Matr\u00edcula: a informar",
-      styles: {
-        margin: "4px 0 0",
         fontSize: "12px",
-        color: "#6b7280",
+        fontWeight: "700",
+        color: "#172124",
         ...WRAP_TEXT_STYLES,
       },
     }),
   );
-  footerRow.appendChild(footerLeft);
-  footerRow.appendChild(
+
+  footer.appendChild(
     createElement("p", {
-      text: "Ficha generada desde Tienda Link Inmobiliarias",
+      text: "Tienda Link Inmobiliarias",
       styles: {
         margin: "0",
-        flex: "1 1 240px",
-        minWidth: "0",
-        maxWidth: "260px",
+        fontSize: "11px",
+        color: "#465153",
         textAlign: "right",
-        fontSize: "12px",
-        lineHeight: "1.5",
-        color: "#6b7280",
         ...WRAP_TEXT_STYLES,
       },
     }),
   );
-  footer.appendChild(footerRow);
-  page.appendChild(footer);
+
+  page2.appendChild(footer);
+  root.appendChild(page2);
 
   return root;
 }
@@ -1011,5 +1315,3 @@ export async function generatePropertyPdf({
     iframe.remove();
   }
 }
-
-
