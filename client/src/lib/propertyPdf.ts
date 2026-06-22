@@ -685,11 +685,32 @@ async function buildVectorPdf(
     y += PILL_H + 3;
   }
 
+  // Pre-calcular contacto para poder reservar su espacio junto con la galería
+  const contactLines: string[] = [];
+  if (wa) contactLines.push(wa);
+  if (email) contactLines.push(email);
+  if (profileAddress) contactLines.push(profileAddress);
+  const hasContact = contactLines.length > 0 || !!publicPropertyUrl;
+
+  const CPAD = 4;
+  const CFONT = 7.5;
+  const URL_SIZE = 7;
+  const contactLineCount = contactLines.length + (publicPropertyUrl ? 1 : 0);
+  // CH: padding superior + líneas + padding inferior
+  const CH = hasContact ? CPAD * 2 + contactLineCount * pt(CFONT) * 1.3 : 0;
+  // Límite útil: footer hline está en PH-MG-pt(7.5)*1.45-2 ≈ 275mm; dejamos 4mm de aire
+  const PAGE_LIMIT = PH - MG - 8; // ≈ 273mm
+
   // Gallery ────────────────────────────────────────────────────────────────────
   if (galleryB64s.length > 0) {
     const IMG_H = 28;
-    const galleryNeeded = pt(7) * 1.5 + 2 + IMG_H + 3;
-    if (y + galleryNeeded > PH - MG - 7) {
+    const GALLERY_LABEL_H = pt(7) * 1.5 + 2; // ≈ 5.7mm
+    const GAP_AFTER_IMG = 3;
+    const GAP_AFTER_CONTACT = hasContact ? 2 : 0;
+    // Reservar galería + contacto juntos para evitar que el contacto salte solo a P3
+    const blockNeeded =
+      GALLERY_LABEL_H + IMG_H + GAP_AFTER_IMG + CH + GAP_AFTER_CONTACT;
+    if (y + blockNeeded > PAGE_LIMIT) {
       doc.addPage();
       y = MG;
     }
@@ -698,7 +719,7 @@ async function buildVectorPdf(
       style: "bold",
       color: "#465153",
     });
-    y += pt(7) * 1.5 + 2;
+    y += GALLERY_LABEL_H;
 
     const count = Math.min(galleryB64s.length, 3);
     const GAP = 3;
@@ -709,26 +730,16 @@ async function buildVectorPdf(
       const ix = MG + i * (imgW + GAP);
       await pdfContainImage(doc, b64, ix, y, imgW, IMG_H);
     }
-    y += IMG_H + 3;
+    y += IMG_H + GAP_AFTER_IMG;
+  } else if (hasContact && y + CH + 2 > PAGE_LIMIT) {
+    // Sin galería: verificación independiente para el contacto
+    doc.addPage();
+    y = MG;
   }
 
   // Contact block ──────────────────────────────────────────────────────────────
-  const contactLines: string[] = [];
-  if (wa) contactLines.push(wa);
-  if (email) contactLines.push(email);
-  if (profileAddress) contactLines.push(profileAddress);
-
-  if (contactLines.length > 0 || publicPropertyUrl) {
-    const CPAD = 4;
-    const CFONT = 7.5;
-    const URL_SIZE = 7;
-    const lineCount = contactLines.length + (publicPropertyUrl ? 1 : 0);
-    const CH = CPAD + lineCount * pt(CFONT) * 1.3 + CPAD;
-    if (y + CH > PH - MG - 7) {
-      doc.addPage();
-      y = MG;
-    }
-
+  // Sin check de página aquí: el bloque de galería ya garantizó el espacio
+  if (hasContact) {
     pdfRect(doc, MG, y, CW, CH, "#12383d");
     let cy = y + CPAD;
     contactLines.forEach((line) => {
