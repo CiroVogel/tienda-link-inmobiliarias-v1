@@ -3,6 +3,7 @@ import { Link, useParams } from "wouter";
 import { format, parseISO } from "date-fns";
 import { es } from "date-fns/locale";
 import {
+  Archive,
   ArrowLeft,
   Clock,
   ExternalLink,
@@ -12,6 +13,7 @@ import {
   NotebookPen,
   Phone,
   RefreshCw,
+  RotateCcw,
   Save,
   UserRound,
 } from "lucide-react";
@@ -71,6 +73,17 @@ export default function AdminInterestedDetail() {
     },
     onError: (error) => {
       toast.error(error.message || "No se pudo guardar la nota");
+    },
+  });
+
+  const setArchived = trpc.visitRequests.setArchived.useMutation({
+    onSuccess: async (_, variables) => {
+      toast.success(variables.isArchived ? "Interesado archivado" : "Interesado reactivado");
+      await utils.visitRequests.list.invalidate();
+      await utils.visitRequests.get.invalidate({ id: requestId });
+    },
+    onError: (error) => {
+      toast.error(error.message || "No se pudo actualizar el interesado");
     },
   });
 
@@ -166,6 +179,11 @@ export default function AdminInterestedDetail() {
                     <span className="text-xs font-bold uppercase tracking-[0.14em] text-[#465153]">
                       {interested.reference}
                     </span>
+                    {interested.isArchived ? (
+                      <span className="inline-flex items-center rounded-full border border-[#ded8cc] bg-[#f0ede6] px-2 py-0.5 text-xs font-medium text-[#465153]">
+                        Archivado
+                      </span>
+                    ) : null}
                   </div>
 
                   <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 xl:grid-cols-4">
@@ -265,6 +283,33 @@ export default function AdminInterestedDetail() {
                       Ver propiedad
                     </a>
                   ) : null}
+
+                  <button
+                    type="button"
+                    onClick={() => {
+                      if (
+                        !interested.isArchived &&
+                        !window.confirm(
+                          "¿Archivar este interesado?\nDejará de aparecer entre los activos, pero podrá reactivarse más adelante.",
+                        )
+                      )
+                        return;
+                      setArchived.mutate({ id: interested.id, isArchived: !interested.isArchived });
+                    }}
+                    className="inline-flex h-10 w-full items-center justify-center gap-2 rounded-md border border-[#ded8cc] bg-white px-4 text-sm font-medium text-[#172124] hover:border-[#12383d] hover:bg-[#eef4f2] hover:text-[#12383d]"
+                  >
+                    {interested.isArchived ? (
+                      <>
+                        <RotateCcw className="h-4 w-4" />
+                        Reactivar interesado
+                      </>
+                    ) : (
+                      <>
+                        <Archive className="h-4 w-4" />
+                        Archivar interesado
+                      </>
+                    )}
+                  </button>
                 </div>
               </div>
 
