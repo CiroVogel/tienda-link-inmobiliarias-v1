@@ -109,7 +109,7 @@ function TechnicalAttrRow({ attrs }: { attrs: Attr[] }) {
                   <span className="block text-[0.86rem] font-semibold text-zinc-800">
                     {attr.primary}
                   </span>
-                  <span className="block text-[0.72rem] font-medium text-[#6a716f]">
+                  <span className="block text-[0.72rem] font-medium text-[#465153]">
                     {attr.secondary}
                   </span>
                 </span>
@@ -195,9 +195,9 @@ export function PropertyCard({
 
         {/* Tipo de propiedad + Precio */}
         <div className="mt-2 flex items-start justify-between gap-3">
-          <p className="text-[0.8rem] font-medium text-[#6a716f]">{property.propertyType}</p>
+          <p className="text-[0.8rem] font-medium text-[#465153]">{property.propertyType}</p>
           <div className="shrink-0 text-right">
-            <p className="text-[10px] font-semibold uppercase leading-none tracking-wide text-[#6a716f]">
+            <p className="text-[10px] font-semibold uppercase leading-none tracking-wide text-[#465153]">
               {getOperationPriceLabel(property.operation)}
             </p>
             <p className="mt-0.5 text-lg font-black leading-tight text-zinc-950">
@@ -207,7 +207,7 @@ export function PropertyCard({
         </div>
 
         {/* Ubicación */}
-        <div className="mt-1 flex items-center gap-1 text-[0.8rem] font-medium text-[#6a716f]">
+        <div className="mt-1 flex items-center gap-1 text-[0.8rem] font-medium text-[#465153]">
           <MapPin className="h-3.5 w-3.5 shrink-0" />
           <span className="truncate">{property.location}</span>
         </div>

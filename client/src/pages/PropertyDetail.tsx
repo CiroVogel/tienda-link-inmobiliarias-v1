@@ -72,7 +72,7 @@ function buildPropertyDetailItems(property: DemoProperty) {
   return [
     { label: "Ambientes", value: formatNumberDetail(property.rooms) },
     { label: "Dormitorios", value: formatNumberDetail(property.bedrooms) },
-    { label: "Baños", value: formatNumberDetail(property.bathrooms) },
+    { label: "Baños", value: property.bathrooms != null && property.bathrooms > 0 ? String(property.bathrooms) : null },
     { label: "Cocheras", value: formatNumberDetail(property.garages) },
     { label: "Antigüedad", value: formatAgeDetail(property.ageYears) },
     { label: "Expensas", value: formatTextDetail(property.expenses) },
@@ -147,7 +147,7 @@ export default function PropertyDetail() {
   if (isLoading && !property) {
     return (
       <div className="flex min-h-screen items-center justify-center bg-[#f7f5ef] px-5">
-        <p className="text-sm font-medium text-[#6a716f]">Cargando propiedad...</p>
+        <p className="text-sm font-medium text-[#465153]">Cargando propiedad...</p>
       </div>
     );
   }
@@ -156,7 +156,7 @@ export default function PropertyDetail() {
     return (
       <div className="flex min-h-screen items-center justify-center bg-[#f7f5ef] px-5">
         <div className="max-w-sm text-center">
-          <p className="mb-3 text-xs font-bold uppercase tracking-[0.18em] text-[#6a716f]">
+          <p className="mb-3 text-xs font-bold uppercase tracking-[0.18em] text-[#465153]">
             Propiedad no encontrada
           </p>
           <h1 className="mb-6 text-4xl font-black text-zinc-950">
@@ -176,7 +176,7 @@ export default function PropertyDetail() {
   const summaryFacts = [
     { label: "Superficie", value: formatAreaDetail(property.areaM2), Icon: Ruler },
     { label: "Dormitorios", value: formatNumberDetail(property.bedrooms), Icon: BedDouble },
-    { label: "Baños", value: formatNumberDetail(property.bathrooms), Icon: Bath },
+    { label: "Baños", value: property.bathrooms != null && property.bathrooms > 0 ? String(property.bathrooms) : null, Icon: Bath },
   ].filter((fact) => Boolean(fact.value));
   const detailItems = buildPropertyDetailItems(property);
   const selectedDetailedFeatureGroups = detailedPropertyFeatureGroups
@@ -347,20 +347,20 @@ export default function PropertyDetail() {
 
             {/* Tipo de propiedad */}
             {property.propertyType ? (
-              <p className="mt-2 text-[0.8rem] font-medium text-[#6a716f]">
+              <p className="mt-2 text-[0.8rem] font-medium text-[#465153]">
                 {property.propertyType}
               </p>
             ) : null}
 
             {/* Ubicación */}
-            <p className="mt-2 flex items-center gap-2 text-sm font-medium text-[#6a716f]">
+            <p className="mt-2 flex items-center gap-2 text-sm font-medium text-[#465153]">
               <MapPin className="h-4 w-4 shrink-0 text-[#6a716f]" />
               {property.address}, {property.location}
             </p>
 
             {/* Precio */}
             <div className="mt-5">
-              <p className="text-[10px] font-semibold uppercase leading-none tracking-wide text-[#6a716f]">
+              <p className="text-[10px] font-semibold uppercase leading-none tracking-wide text-[#465153]">
                 {getOperationPriceLabel(property.operation)}
               </p>
               <p className="mt-1 text-[1.9rem] font-black leading-tight text-zinc-950">
@@ -379,7 +379,7 @@ export default function PropertyDetail() {
                         <span className="block text-[0.86rem] font-semibold text-zinc-800">
                           {value}
                         </span>
-                        <span className="block text-[0.72rem] font-medium text-[#6a716f]">
+                        <span className="block text-[0.72rem] font-medium text-[#465153]">
                           {label}
                         </span>
                       </span>
@@ -392,7 +392,7 @@ export default function PropertyDetail() {
             {/* Detalles técnicos */}
             {hasDetailedBlock ? (
               <div className="mt-5 border-t border-[#ded8cc] pt-5">
-                <p className="mb-3 text-xs font-bold uppercase tracking-[0.18em] text-[#6a716f]">
+                <p className="mb-3 text-xs font-bold uppercase tracking-[0.18em] text-[#465153]">
                   Detalles de la propiedad
                 </p>
 
@@ -405,7 +405,7 @@ export default function PropertyDetail() {
                           index < detailItems.length - 1 ? "border-b border-[#ece6dd]" : ""
                         }`}
                       >
-                        <span className="text-sm text-[#6a716f]">{item.label}</span>
+                        <span className="text-sm text-[#465153]">{item.label}</span>
                         <span className="text-sm font-semibold text-zinc-950">{item.value}</span>
                       </div>
                     ))}
@@ -416,7 +416,7 @@ export default function PropertyDetail() {
                   <div className="mt-4 grid gap-4">
                     {selectedDetailedFeatureGroups.map((group) => (
                       <div key={group.title}>
-                        <p className="mb-2 text-xs font-bold uppercase tracking-[0.18em] text-[#6a716f]">
+                        <p className="mb-2 text-xs font-bold uppercase tracking-[0.18em] text-[#465153]">
                           {group.title}
                         </p>
                         <div className="flex flex-wrap gap-2">
@@ -439,7 +439,7 @@ export default function PropertyDetail() {
             {/* Características libres */}
             {hasFreeFeatures ? (
               <div className="mt-5 border-t border-[#ded8cc] pt-5">
-                <p className="mb-3 text-xs font-bold uppercase tracking-[0.18em] text-[#6a716f]">
+                <p className="mb-3 text-xs font-bold uppercase tracking-[0.18em] text-[#465153]">
                   Características
                 </p>
                 <div className="flex flex-wrap gap-2">
@@ -457,7 +457,7 @@ export default function PropertyDetail() {
 
             {/* Descripción */}
             <div className="mt-5 border-t border-[#ded8cc] pt-5">
-              <p className="mb-3 text-xs font-bold uppercase tracking-[0.18em] text-[#6a716f]">
+              <p className="mb-3 text-xs font-bold uppercase tracking-[0.18em] text-[#465153]">
                 Descripción
               </p>
               <div className="border-l-2 border-[#ded8cc] pl-5">
@@ -467,7 +467,7 @@ export default function PropertyDetail() {
 
             {/* Contacto */}
             <div className="mt-5 border-t border-[#ded8cc] pt-5">
-              <p className="mb-3 text-xs font-bold uppercase tracking-[0.18em] text-[#6a716f]">
+              <p className="mb-3 text-xs font-bold uppercase tracking-[0.18em] text-[#465153]">
                 Consulta directa con {businessName}
               </p>
               <div>

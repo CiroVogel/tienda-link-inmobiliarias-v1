@@ -94,7 +94,7 @@ export default function SavedSearchSection({
     "h-11 rounded-lg border border-[#ded8cc] bg-white px-3 text-sm text-[#3a3a3a] outline-none placeholder:text-[#6a716f] focus:border-[#0f646a]";
   const selectClass =
     "h-11 rounded-lg border border-[#ded8cc] bg-white px-3 text-sm font-medium text-[#3a3a3a] outline-none focus:border-[#0f646a]";
-  const labelClass = "grid gap-1.5 text-sm font-semibold text-[#6a716f]";
+  const labelClass = "grid gap-1.5 text-sm font-semibold text-[#465153]";
 
   return (
     <section className={className}>
@@ -106,13 +106,13 @@ export default function SavedSearchSection({
               <div className="mb-5 flex h-11 w-11 items-center justify-center rounded-full bg-[#eef4f2]">
                 <BellRing className="h-5 w-5 text-[#0f646a]" />
               </div>
-              <p className="mb-3 text-xs font-bold uppercase tracking-[0.18em] text-[#6a716f]">
+              <p className="mb-3 text-xs font-bold uppercase tracking-[0.18em] text-[#465153]">
                 {eyebrow}
               </p>
               <h2 className="text-3xl font-black tracking-tight text-[#182125] md:text-4xl">
                 {"¿No encontraste lo que buscás?"}
               </h2>
-              <p className="mt-4 max-w-md text-sm leading-7 text-[#6a716f]">
+              <p className="mt-4 max-w-md text-sm leading-7 text-[#465153]">
                 {"Dejanos tu búsqueda y te avisamos cuando tengamos una propiedad que se ajuste a lo que necesitás."}
               </p>
               <button
@@ -133,7 +133,7 @@ export default function SavedSearchSection({
           >
             {/* Barra superior: eyebrow + botón Cerrar */}
             <div className="flex items-center justify-between border-b border-[#ece6dd] px-6 py-4 sm:px-8">
-              <p className="text-xs font-bold uppercase tracking-[0.18em] text-[#6a716f]">
+              <p className="text-xs font-bold uppercase tracking-[0.18em] text-[#465153]">
                 {eyebrow}
               </p>
               <button
@@ -153,7 +153,7 @@ export default function SavedSearchSection({
                 <h2 className="text-2xl font-black tracking-tight text-[#182125] md:text-3xl">
                   {"¿No encontraste lo que buscás?"}
                 </h2>
-                <p className="mt-3 text-sm leading-7 text-[#6a716f]">
+                <p className="mt-3 text-sm leading-7 text-[#465153]">
                   {"Dejanos tu búsqueda y te avisamos cuando tengamos una propiedad que se ajuste a lo que necesitás."}
                 </p>
               </div>
@@ -162,7 +162,7 @@ export default function SavedSearchSection({
               <div>
                 {isSubmitted ? (
                   <div className="space-y-4">
-                    <p className="text-xs font-bold uppercase tracking-[0.14em] text-[#6a716f]">
+                    <p className="text-xs font-bold uppercase tracking-[0.14em] text-[#465153]">
                       {"Búsqueda guardada"}
                     </p>
                     <p className="text-sm leading-7 text-[#3a3a3a]">
