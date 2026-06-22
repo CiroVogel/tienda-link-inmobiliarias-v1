@@ -1,4 +1,4 @@
-import { loadHtml2Pdf } from "@/lib/html2pdf";
+import { loadJsPDF, type JsPDFConstructor } from "@/lib/html2pdf";
 import {
   type PropertyOperation,
   type PropertyStatus,
@@ -297,16 +297,9 @@ async function buildVectorPdf(
   property: PdfProperty,
   profile: PdfBusinessProfile,
   publicPropertyUrl: string,
+  JsPDF: JsPDFConstructor,
 ): Promise<Blob> {
-  // jsPDF is bundled inside html2pdf.bundle.min.js; loadHtml2Pdf() must be called first.
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const jspdfMod = (window as any).jspdf as
-    | { jsPDF: new (opts: Record<string, unknown>) => Doc }
-    | undefined;
-  if (!jspdfMod?.jsPDF) {
-    throw new Error("jsPDF no está disponible. Recargá la página e intentá de nuevo.");
-  }
-  const doc: Doc = new jspdfMod.jsPDF({ unit: "mm", format: "a4", orientation: "portrait" });
+  const doc: Doc = new JsPDF({ unit: "mm", format: "a4", orientation: "portrait" });
 
   // ── Preload images ───────────────────────────────────────────────────────────
   const heroUrl = property.images[0] ?? null;
@@ -779,11 +772,11 @@ export async function generatePropertyPdf({
       ? `${window.location.origin}/${slug}/propiedades/${property.id}`
       : "";
 
-  // Load the CDN bundle (html2pdf.bundle.min.js also exposes window.jspdf.jsPDF)
-  await loadHtml2Pdf();
+  // Load jsPDF UMD from its own CDN (exposes window.jspdf.jsPDF reliably)
+  const JsPDF = await loadJsPDF();
 
   const filename = buildPdfFilename(property.title);
-  const blob = await buildVectorPdf(property, profile, publicPropertyUrl);
+  const blob = await buildVectorPdf(property, profile, publicPropertyUrl, JsPDF);
 
   if (!(blob instanceof Blob) || blob.size === 0) {
     throw new Error("El PDF no se pudo generar correctamente.");
