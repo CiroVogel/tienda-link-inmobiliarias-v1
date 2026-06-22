@@ -11,6 +11,7 @@ import {
   MessageCircle,
   Phone,
   Ruler,
+  Share2,
   X,
 } from "lucide-react";
 import { Link, useParams } from "wouter";
@@ -111,6 +112,7 @@ export default function PropertyDetail() {
   );
   const [selectedImage, setSelectedImage] = useState(0);
   const [modalOpen, setModalOpen] = useState(false);
+  const [shareStatus, setShareStatus] = useState<"idle" | "copied" | "shared">("idle");
   const galleryImages = getPropertyGalleryImages(property);
   const businessName = publicProfile
     ? publicProfile.businessName?.trim() || "Inmobiliaria"
@@ -189,6 +191,55 @@ export default function PropertyDetail() {
     .filter((group) => group.options.length > 0);
   const hasDetailedBlock = detailItems.length > 0 || selectedDetailedFeatureGroups.length > 0;
   const hasFreeFeatures = property.features.length > 0;
+
+  async function handleShare() {
+    if (!property) return;
+    const url = typeof window !== "undefined" ? window.location.href : "";
+    if (!url) return;
+
+    const shareText = [
+      getOperationLabel(property.operation),
+      property.propertyType,
+      property.location,
+      property.price,
+    ]
+      .filter(Boolean)
+      .join(" · ");
+
+    const canUseNativeShare =
+      typeof navigator !== "undefined" &&
+      typeof navigator.share === "function" &&
+      (navigator.maxTouchPoints > 0 ||
+        Boolean(window.matchMedia?.("(pointer: coarse)").matches));
+
+    try {
+      if (canUseNativeShare) {
+        await navigator.share({ title: property.title, text: shareText, url });
+        setShareStatus("shared");
+        window.setTimeout(() => setShareStatus("idle"), 2200);
+        return;
+      }
+
+      if (typeof navigator !== "undefined" && navigator.clipboard?.writeText) {
+        await navigator.clipboard.writeText(url);
+        setShareStatus("copied");
+        window.setTimeout(() => setShareStatus("idle"), 2200);
+      } else {
+        window.prompt("Copiá el link para compartir:", url);
+      }
+    } catch (error) {
+      if (error instanceof DOMException && error.name === "AbortError") return;
+      try {
+        if (typeof navigator !== "undefined" && navigator.clipboard?.writeText) {
+          await navigator.clipboard.writeText(url);
+          setShareStatus("copied");
+          window.setTimeout(() => setShareStatus("idle"), 2200);
+        }
+      } catch {
+        // ignore
+      }
+    }
+  }
 
   return (
     <div className="min-h-screen bg-[#f7f5ef]">
@@ -518,6 +569,21 @@ export default function PropertyDetail() {
                   <MessageCircle className="h-4 w-4" />
                 </a>
               ) : null}
+            </div>
+
+            <div className="mt-2">
+              <button
+                type="button"
+                onClick={() => { void handleShare(); }}
+                className="inline-flex w-full items-center justify-center gap-2 rounded-[5px] border border-[#ded8cc] bg-white px-6 py-3 text-xs font-black uppercase tracking-[0.16em] text-[#172124] transition hover:border-[#12383d] hover:bg-[#eef4f2] hover:text-[#12383d]"
+              >
+                <Share2 className="h-4 w-4" />
+                {shareStatus === "copied"
+                  ? "¡Link copiado!"
+                  : shareStatus === "shared"
+                    ? "Compartido"
+                    : "Compartir"}
+              </button>
             </div>
           </aside>
         </section>
