@@ -242,8 +242,8 @@ function appendTextBlock(
       styles: {
         margin: "0",
         fontSize: "10px",
-        fontWeight: "700",
-        letterSpacing: "0.16em",
+        fontWeight: "600",
+        letterSpacing: "0.14em",
         textTransform: "uppercase",
         color: labelColor,
       },
@@ -254,10 +254,10 @@ function appendTextBlock(
     createElement("p", {
       text: value,
       styles: {
-        margin: "6px 0 0",
-        fontSize: "14px",
+        margin: "5px 0 0",
+        fontSize: "13px",
         lineHeight: "1.4",
-        fontWeight: "800",
+        fontWeight: "500",
         color: valueColor,
         ...WRAP_TEXT_STYLES,
       },
@@ -294,19 +294,44 @@ function buildPropertyPdfElement({
   }
   if (profile.email?.trim()) headerContactLines.push(profile.email.trim());
 
-  // Description split: first ~340 chars (word boundary) on page 1, rest on page 2
-  const MAX_SUMMARY_CHARS = 340;
+  // Description split: cut only at a natural sentence boundary for page 1.
+  // Priority: first paragraph break → last sentence end (. ! ?) → no summary (full text on page 2).
   const fullDesc = property.description ? normalizePdfText(property.description) : "";
   let summaryText = "";
   let remainingText = "";
   if (fullDesc.trim()) {
-    if (fullDesc.length > MAX_SUMMARY_CHARS + 60) {
-      const cut = fullDesc.lastIndexOf(" ", MAX_SUMMARY_CHARS);
-      const idx = cut > 100 ? cut : MAX_SUMMARY_CHARS;
-      summaryText = fullDesc.slice(0, idx).trimEnd();
-      remainingText = fullDesc.slice(idx).trimStart();
+    const trimmedDesc = fullDesc.trim();
+    if (trimmedDesc.length <= 480) {
+      // Short enough: show entirely on page 1
+      summaryText = trimmedDesc;
     } else {
-      summaryText = fullDesc;
+      // 1. First paragraph break within 80–500 chars
+      const firstPara = trimmedDesc.indexOf("\n");
+      if (firstPara !== -1 && firstPara >= 80 && firstPara <= 500) {
+        summaryText = trimmedDesc.slice(0, firstPara).trimEnd();
+        remainingText = trimmedDesc.slice(firstPara).trimStart();
+      } else {
+        // 2. Last sentence end (. ! ?) in range 120–460, followed by space or end
+        let cutIdx = -1;
+        const searchEnd = Math.min(460, trimmedDesc.length - 1);
+        for (let i = searchEnd; i >= 120; i--) {
+          const ch = trimmedDesc[i];
+          if (ch === "." || ch === "!" || ch === "?") {
+            const next = trimmedDesc[i + 1];
+            if (next === undefined || next === " " || next === "\n") {
+              cutIdx = i + 1;
+              break;
+            }
+          }
+        }
+        if (cutIdx > 0) {
+          summaryText = trimmedDesc.slice(0, cutIdx).trimEnd();
+          remainingText = trimmedDesc.slice(cutIdx).trimStart();
+        } else {
+          // 3. No natural cut: no summary on page 1, full description on page 2
+          remainingText = trimmedDesc;
+        }
+      }
     }
   }
 
@@ -418,8 +443,8 @@ function buildPropertyPdfElement({
         styles: {
           margin: "0",
           fontSize: "18px",
-          fontWeight: "900",
-          letterSpacing: "0.06em",
+          fontWeight: "700",
+          letterSpacing: "0.04em",
           color: "#172124",
           ...WRAP_TEXT_STYLES,
         },
@@ -433,8 +458,8 @@ function buildPropertyPdfElement({
       styles: {
         margin: "9px 0 0",
         fontSize: "10px",
-        fontWeight: "700",
-        letterSpacing: "0.18em",
+        fontWeight: "500",
+        letterSpacing: "0.14em",
         textTransform: "uppercase",
         color: "#465153",
       },
@@ -466,13 +491,17 @@ function buildPropertyPdfElement({
 
   root.appendChild(header);
 
-  // Hero
+  // Hero: contain (no crop), warm background fills the fixed-height block
   const heroWrapper = createElement("div", {
     attrs: { class: "pdf-avoid-break" },
     styles: {
       position: "relative",
       width: "100%",
-      height: "400px",
+      height: "380px",
+      backgroundColor: "#f7f5ef",
+      display: "flex",
+      alignItems: "center",
+      justifyContent: "center",
       overflow: "hidden",
       ...KEEP_TOGETHER_STYLES,
     },
@@ -487,13 +516,10 @@ function buildPropertyPdfElement({
           crossorigin: "anonymous",
         },
         styles: {
-          position: "absolute",
-          top: "0",
-          left: "0",
-          width: "100%",
-          height: "100%",
-          objectFit: "cover",
           display: "block",
+          maxWidth: "100%",
+          maxHeight: "380px",
+          objectFit: "contain",
         },
       }),
     );
@@ -501,8 +527,8 @@ function buildPropertyPdfElement({
     const badgesRow = createElement("div", {
       styles: {
         position: "absolute",
-        top: "16px",
-        left: "16px",
+        top: "12px",
+        left: "12px",
         display: "flex",
         gap: "8px",
         flexWrap: "wrap",
@@ -515,8 +541,8 @@ function buildPropertyPdfElement({
         styles: {
           padding: "6px 14px",
           fontSize: "10px",
-          fontWeight: "900",
-          letterSpacing: "0.16em",
+          fontWeight: "700",
+          letterSpacing: "0.14em",
           textTransform: "uppercase",
           color: "#ffffff",
           backgroundColor: "#12383d",
@@ -531,8 +557,8 @@ function buildPropertyPdfElement({
         styles: {
           padding: "6px 14px",
           fontSize: "10px",
-          fontWeight: "900",
-          letterSpacing: "0.16em",
+          fontWeight: "600",
+          letterSpacing: "0.12em",
           textTransform: "uppercase",
           color: "#172124",
           backgroundColor: "#f0ede6",
@@ -601,8 +627,8 @@ function buildPropertyPdfElement({
         styles: {
           margin: "0",
           fontSize: "11px",
-          fontWeight: "700",
-          letterSpacing: "0.18em",
+          fontWeight: "500",
+          letterSpacing: "0.12em",
           textTransform: "uppercase",
           color: "#465153",
           ...WRAP_TEXT_STYLES,
@@ -638,8 +664,8 @@ function buildPropertyPdfElement({
         styles: {
           margin: "0",
           fontSize: "10px",
-          fontWeight: "700",
-          letterSpacing: "0.14em",
+          fontWeight: "500",
+          letterSpacing: "0.12em",
           textTransform: "uppercase",
           color: "#465153",
         },
@@ -699,7 +725,7 @@ function buildPropertyPdfElement({
           styles: {
             margin: "0",
             fontSize: "20px",
-            fontWeight: "900",
+            fontWeight: "700",
             color: "#172124",
           },
         }),
@@ -710,8 +736,8 @@ function buildPropertyPdfElement({
           styles: {
             margin: "3px 0 0",
             fontSize: "10px",
-            fontWeight: "600",
-            letterSpacing: "0.12em",
+            fontWeight: "500",
+            letterSpacing: "0.10em",
             textTransform: "uppercase",
             color: "#465153",
           },
@@ -740,8 +766,8 @@ function buildPropertyPdfElement({
         styles: {
           margin: "0 0 8px",
           fontSize: "10px",
-          fontWeight: "700",
-          letterSpacing: "0.18em",
+          fontWeight: "600",
+          letterSpacing: "0.14em",
           textTransform: "uppercase",
           color: "#465153",
         },
@@ -794,8 +820,8 @@ function buildPropertyPdfElement({
       styles: {
         margin: "0 0 5px",
         fontSize: "10px",
-        fontWeight: "700",
-        letterSpacing: "0.16em",
+        fontWeight: "600",
+        letterSpacing: "0.14em",
         textTransform: "uppercase",
         color: "#465153",
       },
@@ -810,7 +836,7 @@ function buildPropertyPdfElement({
           margin: "0",
           fontSize: "13px",
           lineHeight: "1.6",
-          fontWeight: "600",
+          fontWeight: "400",
           color: "#172124",
           ...WRAP_TEXT_STYLES,
         },
@@ -828,7 +854,7 @@ function buildPropertyPdfElement({
         attrs: { href: publicPropertyUrl, target: "_blank", rel: "noopener noreferrer" },
         styles: {
           fontSize: "12px",
-          fontWeight: "700",
+          fontWeight: "600",
           color: safePrimaryColor,
           textDecoration: "underline",
         },
@@ -873,7 +899,7 @@ function buildPropertyPdfElement({
       styles: {
         margin: "0",
         fontSize: "13px",
-        fontWeight: "700",
+        fontWeight: "500",
         color: "#465153",
         ...WRAP_TEXT_STYLES,
       },
@@ -906,8 +932,8 @@ function buildPropertyPdfElement({
         styles: {
           margin: "0 0 10px",
           fontSize: "11px",
-          fontWeight: "700",
-          letterSpacing: "0.18em",
+          fontWeight: "600",
+          letterSpacing: "0.14em",
           textTransform: "uppercase",
           color: "#465153",
           ...SECTION_TITLE_STYLES,
@@ -942,8 +968,8 @@ function buildPropertyPdfElement({
         styles: {
           margin: "0 0 12px",
           fontSize: "11px",
-          fontWeight: "700",
-          letterSpacing: "0.18em",
+          fontWeight: "600",
+          letterSpacing: "0.14em",
           textTransform: "uppercase",
           color: "#465153",
           ...SECTION_TITLE_STYLES,
@@ -981,8 +1007,8 @@ function buildPropertyPdfElement({
         styles: {
           margin: "0 0 10px",
           fontSize: "11px",
-          fontWeight: "700",
-          letterSpacing: "0.18em",
+          fontWeight: "600",
+          letterSpacing: "0.14em",
           textTransform: "uppercase",
           color: "#465153",
           ...SECTION_TITLE_STYLES,
@@ -1005,8 +1031,8 @@ function buildPropertyPdfElement({
             borderRadius: "4px",
             padding: "5px 11px",
             fontSize: "11px",
-            fontWeight: "600",
-            letterSpacing: "0.08em",
+            fontWeight: "500",
+            letterSpacing: "0.06em",
             textTransform: "uppercase",
             color: "#465153",
             backgroundColor: "#f7f5ef",
@@ -1031,8 +1057,8 @@ function buildPropertyPdfElement({
         styles: {
           margin: "0 0 10px",
           fontSize: "11px",
-          fontWeight: "700",
-          letterSpacing: "0.18em",
+          fontWeight: "600",
+          letterSpacing: "0.14em",
           textTransform: "uppercase",
           color: "#465153",
           ...SECTION_TITLE_STYLES,
@@ -1076,88 +1102,6 @@ function buildPropertyPdfElement({
     page2.appendChild(galleryBlock);
   }
 
-  // Closing: contact + URL
-  const closingBlock = createElement("div", {
-    attrs: { class: "pdf-avoid-break pdf-card" },
-    styles: {
-      padding: "18px 20px",
-      border: "1px solid #ded8cc",
-      borderRadius: "6px",
-      backgroundColor: "#f7f5ef",
-      boxSizing: "border-box",
-      ...KEEP_TOGETHER_STYLES,
-    },
-  });
-
-  closingBlock.appendChild(
-    createElement("h2", {
-      text: "Contacto",
-      styles: {
-        margin: "0 0 12px",
-        fontSize: "11px",
-        fontWeight: "700",
-        letterSpacing: "0.18em",
-        textTransform: "uppercase",
-        color: "#465153",
-        ...SECTION_TITLE_STYLES,
-      },
-    }),
-  );
-
-  const closingContactLines: string[] = [];
-  if (profile.whatsapp?.trim()) closingContactLines.push(`WhatsApp: ${profile.whatsapp.trim()}`);
-  if (
-    profile.phone?.trim() &&
-    profile.phone.trim() !== profile.whatsapp?.trim()
-  ) {
-    closingContactLines.push(`Tel: ${profile.phone.trim()}`);
-  }
-  if (profile.email?.trim()) closingContactLines.push(profile.email.trim());
-  if (profile.address?.trim()) closingContactLines.push(profile.address.trim());
-
-  closingContactLines.forEach((line) => {
-    closingBlock.appendChild(
-      createElement("p", {
-        text: line,
-        styles: {
-          margin: "0 0 3px",
-          fontSize: "13px",
-          lineHeight: "1.6",
-          color: "#172124",
-          ...WRAP_TEXT_STYLES,
-        },
-      }),
-    );
-  });
-
-  if (publicPropertyUrl) {
-    const urlRow = createElement("p", {
-      styles: {
-        margin: closingContactLines.length > 0 ? "10px 0 0" : "0",
-        fontSize: "12px",
-        lineHeight: "1.5",
-        color: "#465153",
-        ...WRAP_TEXT_STYLES,
-      },
-    });
-    urlRow.appendChild(document.createTextNode("Ficha online: "));
-    urlRow.appendChild(
-      createElement("a", {
-        text: publicPropertyUrl,
-        attrs: { href: publicPropertyUrl, target: "_blank", rel: "noopener noreferrer" },
-        styles: {
-          color: safePrimaryColor,
-          textDecoration: "underline",
-          fontWeight: "600",
-          ...WRAP_TEXT_STYLES,
-        },
-      }),
-    );
-    closingBlock.appendChild(urlRow);
-  }
-
-  page2.appendChild(closingBlock);
-
   // Footer
   const footer = createElement("footer", {
     attrs: { class: "pdf-avoid-break" },
@@ -1179,7 +1123,7 @@ function buildPropertyPdfElement({
       styles: {
         margin: "0",
         fontSize: "12px",
-        fontWeight: "700",
+        fontWeight: "600",
         color: "#172124",
         ...WRAP_TEXT_STYLES,
       },
