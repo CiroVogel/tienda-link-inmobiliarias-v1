@@ -223,6 +223,7 @@ export default function AdminServices() {
   const [pdfPropertyId, setPdfPropertyId] = useState<string | null>(null);
   const [view, setView] = useState<"active" | "archived">("active");
   const [archiveActionId, setArchiveActionId] = useState<string | null>(null);
+  const [invalidField, setInvalidField] = useState<string | null>(null);
 
   const { data: properties = [] } = trpc.properties.list.useQuery();
   const { data: profile } = trpc.business.get.useQuery();
@@ -317,13 +318,20 @@ export default function AdminServices() {
   function openCreate() {
     setEditingId(null);
     setForm(EMPTY_FORM);
+    setInvalidField(null);
     setDialogOpen(true);
   }
 
   function openEdit(property: AdminProperty) {
     setEditingId(property.id);
     setForm(toForm(property));
+    setInvalidField(null);
     setDialogOpen(true);
+  }
+
+  function handleDialogOpenChange(open: boolean) {
+    setDialogOpen(open);
+    if (!open) setInvalidField(null);
   }
 
   function toggleDetailedFeature(feature: string, checked: boolean) {
@@ -438,11 +446,38 @@ export default function AdminServices() {
   async function handleSubmit(event: React.FormEvent) {
     event.preventDefault();
 
-    if (!form.title.trim() || !form.price.trim() || !form.location.trim() || !form.propertyType.trim()) {
-      toast.error("Completa título, precio, ubicación y tipo de propiedad.");
+    if (!form.title.trim()) {
+      setInvalidField("title");
+      toast.error("Completá el título de la propiedad.");
+      return;
+    }
+    if (!form.price.trim()) {
+      setInvalidField("price");
+      toast.error("Completá el precio de la propiedad.");
+      return;
+    }
+    if (!form.location.trim()) {
+      setInvalidField("location");
+      toast.error("Completá la ubicación de la propiedad.");
+      return;
+    }
+    if (!form.address.trim()) {
+      setInvalidField("address");
+      toast.error("Completá la dirección de la propiedad.");
+      return;
+    }
+    if (!form.propertyType.trim()) {
+      setInvalidField("propertyType");
+      toast.error("Completá el tipo de propiedad.");
+      return;
+    }
+    if (!form.description.trim()) {
+      setInvalidField("description");
+      toast.error("Completá la descripción de la propiedad.");
       return;
     }
 
+    setInvalidField(null);
     const payload = toPayload(form);
 
     if (editingId) {
@@ -807,7 +842,7 @@ export default function AdminServices() {
           </div>
         ))}
 
-        <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
+        <Dialog open={dialogOpen} onOpenChange={handleDialogOpenChange}>
           <DialogContent className="flex max-h-[90vh] max-w-4xl flex-col gap-0 overflow-hidden p-0">
             <DialogHeader className="sticky top-0 z-10 border-b border-[#ded8cc] bg-white px-6 py-5 pr-12">
               <DialogTitle>{editingId ? "Editar propiedad" : "Nueva propiedad"}</DialogTitle>
@@ -817,12 +852,17 @@ export default function AdminServices() {
               <div className="min-h-0 flex-1 overflow-y-auto px-6 py-5">
                 <div className="grid gap-4 md:grid-cols-2">
                 <div className="md:col-span-2">
-                  <Label className="mb-1.5 block">Título</Label>
+                  <Label className="mb-1.5 block">Título <span className="text-[#b45309]">*</span></Label>
                   <Input
                     value={form.title}
-                    onChange={(event) => setForm((current) => ({ ...current, title: event.target.value }))}
+                    onChange={(event) => {
+                      setForm((current) => ({ ...current, title: event.target.value }));
+                      if (invalidField === "title") setInvalidField(null);
+                    }}
                     placeholder="Ej: Departamento 2 dormitorios en Centro"
+                    className={invalidField === "title" ? "border-[#b45309]" : ""}
                   />
+                  {invalidField === "title" ? <p className="mt-1 text-xs text-[#b45309]">Este campo es obligatorio.</p> : null}
                 </div>
 
                 <div>
@@ -863,45 +903,59 @@ export default function AdminServices() {
                 </div>
 
                 <div>
-                  <Label className="mb-1.5 block">Precio</Label>
+                  <Label className="mb-1.5 block">Precio <span className="text-[#b45309]">*</span></Label>
                   <Input
                     value={form.price}
-                    onChange={(event) => setForm((current) => ({ ...current, price: event.target.value }))}
+                    onChange={(event) => {
+                      setForm((current) => ({ ...current, price: event.target.value }));
+                      if (invalidField === "price") setInvalidField(null);
+                    }}
                     placeholder="USD 118.000"
+                    className={invalidField === "price" ? "border-[#b45309]" : ""}
                   />
+                  {invalidField === "price" ? <p className="mt-1 text-xs text-[#b45309]">Este campo es obligatorio.</p> : null}
                 </div>
 
                 <div>
-                  <Label className="mb-1.5 block">Tipo de propiedad</Label>
+                  <Label className="mb-1.5 block">Tipo de propiedad <span className="text-[#b45309]">*</span></Label>
                   <Input
                     value={form.propertyType}
-                    onChange={(event) =>
-                      setForm((current) => ({ ...current, propertyType: event.target.value }))
-                    }
+                    onChange={(event) => {
+                      setForm((current) => ({ ...current, propertyType: event.target.value }));
+                      if (invalidField === "propertyType") setInvalidField(null);
+                    }}
                     placeholder="Departamento"
+                    className={invalidField === "propertyType" ? "border-[#b45309]" : ""}
                   />
+                  {invalidField === "propertyType" ? <p className="mt-1 text-xs text-[#b45309]">Este campo es obligatorio.</p> : null}
                 </div>
 
                 <div>
-                  <Label className="mb-1.5 block">Ubicación</Label>
+                  <Label className="mb-1.5 block">Ubicación <span className="text-[#b45309]">*</span></Label>
                   <Input
                     value={form.location}
-                    onChange={(event) =>
-                      setForm((current) => ({ ...current, location: event.target.value }))
-                    }
+                    onChange={(event) => {
+                      setForm((current) => ({ ...current, location: event.target.value }));
+                      if (invalidField === "location") setInvalidField(null);
+                    }}
                     placeholder="Centro, Rosario"
+                    className={invalidField === "location" ? "border-[#b45309]" : ""}
                   />
+                  {invalidField === "location" ? <p className="mt-1 text-xs text-[#b45309]">Este campo es obligatorio.</p> : null}
                 </div>
 
                 <div>
-                  <Label className="mb-1.5 block">Dirección</Label>
+                  <Label className="mb-1.5 block">Dirección <span className="text-[#b45309]">*</span></Label>
                   <Input
                     value={form.address}
-                    onChange={(event) =>
-                      setForm((current) => ({ ...current, address: event.target.value }))
-                    }
+                    onChange={(event) => {
+                      setForm((current) => ({ ...current, address: event.target.value }));
+                      if (invalidField === "address") setInvalidField(null);
+                    }}
                     placeholder="Entre Ríos al 900"
+                    className={invalidField === "address" ? "border-[#b45309]" : ""}
                   />
+                  {invalidField === "address" ? <p className="mt-1 text-xs text-[#b45309]">Este campo es obligatorio.</p> : null}
                 </div>
 
                 <section className="md:col-span-2 rounded-md border border-[#ded8cc] bg-[#f7f5ef] p-4">
@@ -1135,16 +1189,18 @@ export default function AdminServices() {
                 </div>
 
                 <div className="md:col-span-2">
-                  <Label className="mb-1.5 block">Descripción</Label>
+                  <Label className="mb-1.5 block">Descripción <span className="text-[#b45309]">*</span></Label>
                   <textarea
                     value={form.description}
-                    onChange={(event) =>
-                      setForm((current) => ({ ...current, description: event.target.value }))
-                    }
+                    onChange={(event) => {
+                      setForm((current) => ({ ...current, description: event.target.value }));
+                      if (invalidField === "description") setInvalidField(null);
+                    }}
                     rows={4}
-                    className="w-full resize-none rounded-md border border-[#ded8cc] bg-white px-3 py-2 text-sm"
+                    className={`w-full resize-none rounded-md border bg-white px-3 py-2 text-sm ${invalidField === "description" ? "border-[#b45309]" : "border-[#ded8cc]"}`}
                     placeholder="Descripción breve de la propiedad"
                   />
+                  {invalidField === "description" ? <p className="mt-1 text-xs text-[#b45309]">Este campo es obligatorio.</p> : null}
                 </div>
 
                 <div className="md:col-span-2">
