@@ -503,9 +503,9 @@ export default function Home({ forcedSlug }: HomeProps) {
   const cityLabel = getCityLabel(address) ?? (publicProfile ? "" : realEstateProfile.city);
   const featuredProperties = properties
     .filter((property) => property.featured)
-    .slice(0, 3);
+    .slice(0, 9);
   const featuredCards =
-    featuredProperties.length > 0 ? featuredProperties : properties.slice(0, 3);
+    featuredProperties.length > 0 ? featuredProperties : properties.slice(0, 9);
   const heroProperty = featuredProperties[0] ?? properties[0];
   return (
     <div className="min-h-screen bg-[#f7f5ef]">
