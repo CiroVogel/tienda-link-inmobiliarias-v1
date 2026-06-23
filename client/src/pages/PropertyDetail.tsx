@@ -13,6 +13,8 @@ import {
   Ruler,
   Share2,
   X,
+  ZoomIn,
+  ZoomOut,
 } from "lucide-react";
 import { Link, useParams } from "wouter";
 import { usePublicProperty } from "@/lib/propertyData";
@@ -113,6 +115,7 @@ export default function PropertyDetail() {
   const [selectedImage, setSelectedImage] = useState(0);
   const [modalOpen, setModalOpen] = useState(false);
   const [shareStatus, setShareStatus] = useState<"idle" | "copied" | "shared">("idle");
+  const [zoom, setZoom] = useState(false);
   const galleryImages = getPropertyGalleryImages(property);
   const businessName = publicProfile
     ? publicProfile.businessName?.trim() || "Inmobiliaria"
@@ -263,7 +266,7 @@ export default function PropertyDetail() {
             <img
               src={galleryImages[selectedImage] ?? galleryImages[0]}
               alt={property.title}
-              className="aspect-[4/3] w-full object-cover md:aspect-[16/9]"
+              className="aspect-[4/3] w-full object-cover md:aspect-[2/1] lg:aspect-[5/2]"
             />
             {galleryImages.length > 1 ? (
               <span className="absolute bottom-3 left-3 flex items-center gap-1.5 rounded-[5px] bg-[#12383d]/85 px-3 py-2 text-[11px] font-black uppercase tracking-[0.12em] text-white backdrop-blur-sm transition group-hover:bg-[#12383d]">
@@ -299,69 +302,122 @@ export default function PropertyDetail() {
           </div>
         ) : null}
 
-        {/* Lightbox */}
-            <Dialog open={modalOpen} onOpenChange={setModalOpen}>
-              <DialogContent
-                showCloseButton={false}
-                className="max-w-[95vw] overflow-hidden rounded-lg border-0 bg-[#111111] p-0 sm:max-w-[85vw]"
-              >
-                <div className="relative flex flex-col items-center">
-                  {/* Botón cerrar */}
-                  <DialogClose className="absolute right-3 top-3 z-10 flex h-10 w-10 items-center justify-center rounded-full bg-white/10 text-white transition hover:bg-white/20">
-                    <X className="h-5 w-5" />
-                    <span className="sr-only">Cerrar</span>
-                  </DialogClose>
+        {/* Visor fullscreen */}
+        <Dialog
+          open={modalOpen}
+          onOpenChange={(open) => {
+            if (!open) setZoom(false);
+            setModalOpen(open);
+          }}
+        >
+          <DialogContent
+            showCloseButton={false}
+            className="overflow-hidden border-0 p-0 gap-0"
+            style={{
+              position: "fixed",
+              inset: 0,
+              left: 0,
+              top: 0,
+              width: "100vw",
+              height: "100vh",
+              maxWidth: "none",
+              maxHeight: "none",
+              transform: "none",
+              borderRadius: 0,
+              boxShadow: "none",
+              background: "#000",
+              margin: 0,
+            }}
+          >
+            {/* Fondo desenfocado */}
+            <div className="absolute inset-0 overflow-hidden" aria-hidden="true">
+              <img
+                src={galleryImages[selectedImage]}
+                alt=""
+                className="h-full w-full scale-110 object-cover opacity-30 blur-2xl"
+              />
+            </div>
+            {/* Capa oscura */}
+            <div className="absolute inset-0 bg-black/50" aria-hidden="true" />
 
-                  {/* Imagen ampliada */}
-                  <img
-                    src={galleryImages[selectedImage]}
-                    alt={`${property.title} foto ${selectedImage + 1}`}
-                    className="mx-auto max-h-[85vh] w-auto max-w-full object-contain"
-                  />
+            {/* Layout */}
+            <div className="relative flex h-full flex-col">
+              {/* Barra superior */}
+              <div className="flex shrink-0 items-center justify-between px-4 pb-2 pt-4">
+                <button
+                  type="button"
+                  aria-label={zoom ? "Restablecer zoom" : "Ampliar foto"}
+                  onClick={() => setZoom((z) => !z)}
+                  className="flex h-10 w-10 items-center justify-center rounded-full bg-white/10 text-white transition hover:bg-white/20"
+                >
+                  {zoom ? (
+                    <ZoomOut className="h-5 w-5" />
+                  ) : (
+                    <ZoomIn className="h-5 w-5" />
+                  )}
+                </button>
 
-                  {/* Flechas + contador */}
-                  <div className="flex w-full items-center justify-between px-3 py-3">
-                    {galleryImages.length > 1 ? (
-                      <button
-                        type="button"
-                        aria-label="Foto anterior"
-                        onClick={() =>
-                          setSelectedImage((i) =>
-                            i === 0 ? galleryImages.length - 1 : i - 1,
-                          )
-                        }
-                        className="flex h-10 w-10 items-center justify-center rounded-full bg-white/10 text-white transition hover:bg-white/20"
-                      >
-                        <ChevronLeft className="h-5 w-5" />
-                      </button>
-                    ) : (
-                      <span />
-                    )}
+                <span className="text-xs font-semibold text-white/70">
+                  {selectedImage + 1} / {galleryImages.length}
+                </span>
 
-                    <span className="text-xs font-semibold text-white/70">
-                      {selectedImage + 1} / {galleryImages.length}
-                    </span>
+                <DialogClose className="flex h-10 w-10 items-center justify-center rounded-full bg-white/10 text-white transition hover:bg-white/20">
+                  <X className="h-5 w-5" />
+                  <span className="sr-only">Cerrar</span>
+                </DialogClose>
+              </div>
 
-                    {galleryImages.length > 1 ? (
-                      <button
-                        type="button"
-                        aria-label="Foto siguiente"
-                        onClick={() =>
-                          setSelectedImage((i) =>
-                            i === galleryImages.length - 1 ? 0 : i + 1,
-                          )
-                        }
-                        className="flex h-10 w-10 items-center justify-center rounded-full bg-white/10 text-white transition hover:bg-white/20"
-                      >
-                        <ChevronRight className="h-5 w-5" />
-                      </button>
-                    ) : (
-                      <span />
-                    )}
-                  </div>
+              {/* Área de imagen */}
+              <div className="flex flex-1 items-center justify-center overflow-auto">
+                <img
+                  src={galleryImages[selectedImage]}
+                  alt={`${property.title} foto ${selectedImage + 1}`}
+                  onClick={() => setZoom((z) => !z)}
+                  className={`object-contain transition-all duration-300 ${
+                    zoom
+                      ? "max-h-none max-w-none w-[180vw] cursor-zoom-out"
+                      : "max-h-[calc(100dvh-7rem)] max-w-[96vw] cursor-zoom-in"
+                  }`}
+                />
+              </div>
+
+              {/* Barra inferior — flechas */}
+              {galleryImages.length > 1 ? (
+                <div className="flex shrink-0 items-center justify-between px-4 pb-4 pt-2">
+                  <button
+                    type="button"
+                    aria-label="Foto anterior"
+                    onClick={() => {
+                      setSelectedImage((i) =>
+                        i === 0 ? galleryImages.length - 1 : i - 1,
+                      );
+                      setZoom(false);
+                    }}
+                    className="flex h-12 w-12 items-center justify-center rounded-full bg-white/10 text-white transition hover:bg-white/20"
+                  >
+                    <ChevronLeft className="h-6 w-6" />
+                  </button>
+
+                  <button
+                    type="button"
+                    aria-label="Foto siguiente"
+                    onClick={() => {
+                      setSelectedImage((i) =>
+                        i === galleryImages.length - 1 ? 0 : i + 1,
+                      );
+                      setZoom(false);
+                    }}
+                    className="flex h-12 w-12 items-center justify-center rounded-full bg-white/10 text-white transition hover:bg-white/20"
+                  >
+                    <ChevronRight className="h-6 w-6" />
+                  </button>
                 </div>
-              </DialogContent>
-            </Dialog>
+              ) : (
+                <div className="h-4 shrink-0" />
+              )}
+            </div>
+          </DialogContent>
+        </Dialog>
 
         {/* Card editorial */}
         <div className="mt-6 rounded-[16px] border border-[#ded8cc] bg-[#fffdf8] p-5 sm:p-7">
