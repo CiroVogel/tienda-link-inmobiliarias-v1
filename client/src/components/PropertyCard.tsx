@@ -210,7 +210,12 @@ export function PropertyCard({
         {/* Ubicación */}
         <div className="mt-1 flex items-center gap-1 text-[0.8rem] font-medium text-[#465153]">
           <MapPin className="h-3.5 w-3.5 shrink-0" />
-          <span className="truncate">{property.location}</span>
+          {(() => {
+            const text = [property.address?.trim(), property.location?.trim()]
+              .filter(Boolean)
+              .join(" · ");
+            return <span className="truncate" title={text}>{text}</span>;
+          })()}
         </div>
 
         {/* Descripción */}
