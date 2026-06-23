@@ -1,6 +1,6 @@
 export type PropertyOperation = "sale" | "rent";
 
-export type PropertyStatus = "available" | "reserved" | "sold" | "rented" | "hidden";
+export type PropertyStatus = "available" | "reserved" | "sold" | "rented" | "hidden" | "archived";
 
 export const propertyDispositionOptions = ["Frente", "Contrafrente", "Interno", "Lateral"] as const;
 
@@ -301,7 +301,9 @@ export const propertyImageFallback =
   "https://images.unsplash.com/photo-1484154218962-a197022b5858?auto=format&fit=crop&w=1400&q=82";
 
 export function getVisibleProperties() {
-  return demoProperties.filter((property) => property.status !== "hidden");
+  return demoProperties.filter(
+    (property) => property.status !== "hidden" && property.status !== "archived",
+  );
 }
 
 export function getFeaturedProperties() {
@@ -336,6 +338,7 @@ export function getStatusLabel(status: PropertyStatus) {
     sold: "Vendida",
     rented: "Alquilada",
     hidden: "Oculta",
+    archived: "Archivada",
   };
 
   return labels[status];

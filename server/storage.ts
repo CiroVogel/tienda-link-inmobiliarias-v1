@@ -1184,13 +1184,13 @@ export async function getStoredProperty(slug: string, propertyId: string): Promi
 export async function listPublicProperties(slug: string): Promise<DemoProperty[]> {
   const properties = await listStoredProperties(slug);
   return properties
-    .filter((property) => property.status !== "hidden")
+    .filter((property) => property.status !== "hidden" && property.status !== "archived")
     .map(mapStoredPropertyToPublic);
 }
 
 export async function getPublicProperty(slug: string, propertyId: string): Promise<DemoProperty | null> {
   const property = await getStoredProperty(slug, propertyId);
-  if (!property || property.status === "hidden") return null;
+  if (!property || property.status === "hidden" || property.status === "archived") return null;
   return mapStoredPropertyToPublic(property);
 }
 

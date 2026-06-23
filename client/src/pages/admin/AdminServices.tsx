@@ -1,6 +1,7 @@
 ﻿import { useMemo, useState } from "react";
 import { Link } from "wouter";
 import {
+  Archive,
   Download,
   Eye,
   EyeOff,
@@ -9,6 +10,7 @@ import {
   Loader2,
   Pencil,
   Plus,
+  RotateCcw,
   Search,
   Star,
 } from "lucide-react";
@@ -219,6 +221,8 @@ export default function AdminServices() {
   const [sortOrder, setSortOrder] = useState<SortOrder>("recent");
   const [quickActionId, setQuickActionId] = useState<string | null>(null);
   const [pdfPropertyId, setPdfPropertyId] = useState<string | null>(null);
+  const [view, setView] = useState<"active" | "archived">("active");
+  const [archiveActionId, setArchiveActionId] = useState<string | null>(null);
 
   const { data: properties = [] } = trpc.properties.list.useQuery();
   const { data: profile } = trpc.business.get.useQuery();
@@ -251,6 +255,8 @@ export default function AdminServices() {
 
     return [...properties]
       .filter((property) => {
+        if (property.status === "archived") return false;
+
         if (normalizedSearch && !toSearchableText(property).includes(normalizedSearch)) {
           return false;
         }
@@ -298,6 +304,15 @@ export default function AdminServices() {
     statusFilter,
     visibilityFilter,
   ]);
+
+  const archivedProperties = useMemo(() => {
+    return [...properties]
+      .filter((property) => property.status === "archived")
+      .sort((left, right) => {
+        const diff = parseCreatedAt(left.createdAt) - parseCreatedAt(right.createdAt);
+        return diff !== 0 ? -diff : left.title.localeCompare(right.title, "es");
+      });
+  }, [properties]);
 
   function openCreate() {
     setEditingId(null);
@@ -357,6 +372,44 @@ export default function AdminServices() {
     );
   }
 
+  async function archiveProperty(property: AdminProperty) {
+    const confirmed = window.confirm(
+      "¿Archivar esta propiedad? Dejará de verse en la página pública y se moverá a Archivadas.",
+    );
+    if (!confirmed) return;
+
+    setArchiveActionId(property.id);
+    try {
+      await updateProperty.mutateAsync({
+        id: property.id,
+        ...toPayload(toForm(property)),
+        status: "archived",
+      });
+      toast.success("Propiedad archivada");
+    } finally {
+      setArchiveActionId(null);
+    }
+  }
+
+  async function restoreProperty(property: AdminProperty) {
+    const confirmed = window.confirm(
+      "¿Restaurar esta propiedad? Volverá a mostrarse públicamente como disponible.",
+    );
+    if (!confirmed) return;
+
+    setArchiveActionId(property.id);
+    try {
+      await updateProperty.mutateAsync({
+        id: property.id,
+        ...toPayload(toForm(property)),
+        status: "available",
+      });
+      toast.success("Propiedad restaurada");
+    } finally {
+      setArchiveActionId(null);
+    }
+  }
+
   async function handleDownloadPdf(property: AdminProperty) {
     if (!profile) {
       toast.error("Necesitamos el perfil de la inmobiliaria para generar el PDF.");
@@ -404,8 +457,9 @@ export default function AdminServices() {
     await createProperty.mutateAsync(payload);
   }
 
-  const totalProperties = properties.length;
-  const visibleProperties = properties.filter((property) => property.status !== "hidden").length;
+  const activeProperties = properties.filter((property) => property.status !== "archived");
+  const totalProperties = activeProperties.length;
+  const visibleProperties = activeProperties.filter((property) => property.status !== "hidden").length;
   const hiddenProperties = totalProperties - visibleProperties;
 
   return (
@@ -432,7 +486,38 @@ export default function AdminServices() {
           </div>
         </div>
 
-        <div className="mb-6 rounded-xl border border-[#ded8cc] bg-white p-4">
+        {/* Tabs: Activas / Archivadas */}
+        <div className="mb-6 flex gap-1 rounded-xl border border-[#ded8cc] bg-white p-1 w-fit">
+          <button
+            type="button"
+            onClick={() => setView("active")}
+            className={`rounded-[8px] px-5 py-2 text-sm font-bold transition-colors ${
+              view === "active"
+                ? "bg-[#12383d] text-white"
+                : "text-[#465153] hover:text-[#172124]"
+            }`}
+          >
+            Propiedades activas
+          </button>
+          <button
+            type="button"
+            onClick={() => setView("archived")}
+            className={`inline-flex items-center gap-2 rounded-[8px] px-5 py-2 text-sm font-bold transition-colors ${
+              view === "archived"
+                ? "bg-[#12383d] text-white"
+                : "text-[#465153] hover:text-[#172124]"
+            }`}
+          >
+            Archivadas
+            {archivedProperties.length > 0 ? (
+              <span className={`rounded-full px-2 py-0.5 text-[11px] font-black ${view === "archived" ? "bg-white/20 text-white" : "bg-[#f0ede6] text-[#465153]"}`}>
+                {archivedProperties.length}
+              </span>
+            ) : null}
+          </button>
+        </div>
+
+        {view === "active" && <div className="mb-6 rounded-xl border border-[#ded8cc] bg-white p-4">
           <div className="grid gap-3 xl:grid-cols-[minmax(0,1.4fr)_180px_170px]">
             <div className="relative">
               <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-[#465153]" />
@@ -525,9 +610,9 @@ export default function AdminServices() {
               Limpiar filtros
             </button>
           </div>
-        </div>
+        </div>}
 
-        {totalProperties === 0 ? (
+        {view === "active" && (totalProperties === 0 ? (
           <div className="rounded-xl border-2 border-dashed border-[#ded8cc] bg-white px-6 py-16 text-center">
             <Home className="mx-auto mb-3 h-10 w-10 text-[#c8c0b4]" />
             <p className="font-semibold text-[#172124]">Todavía no cargaste propiedades.</p>
@@ -643,12 +728,84 @@ export default function AdminServices() {
                       )}
                       {property.status === "hidden" ? "Mostrar" : "Ocultar"}
                     </button>
+
+                    <button
+                      type="button"
+                      onClick={() => void archiveProperty(property)}
+                      disabled={archiveActionId === property.id}
+                      className="inline-flex items-center gap-2 h-9 rounded-[7px] whitespace-nowrap px-3 text-sm font-medium border border-[#ded8cc] bg-white text-[#465153] hover:border-amber-400 hover:bg-amber-50 hover:text-amber-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                    >
+                      {archiveActionId === property.id ? (
+                        <Loader2 className="h-4 w-4 animate-spin" />
+                      ) : (
+                        <Archive className="h-4 w-4" />
+                      )}
+                      Archivar
+                    </button>
                   </div>
                 </article>
               );
             })}
           </div>
-        )}
+        ))}
+
+        {view === "archived" && (archivedProperties.length === 0 ? (
+          <div className="rounded-xl border-2 border-dashed border-[#ded8cc] bg-white px-6 py-16 text-center">
+            <Archive className="mx-auto mb-3 h-10 w-10 text-[#c8c0b4]" />
+            <p className="font-semibold text-[#172124]">No hay propiedades archivadas.</p>
+            <p className="mt-1 text-sm text-[#465153]">
+              Las propiedades que archives desde el listado aparecerán aquí.
+            </p>
+          </div>
+        ) : (
+          <div className="space-y-3">
+            {archivedProperties.map((property) => {
+              const isRestoring = archiveActionId === property.id;
+              const coverImage = property.images[0]?.url ?? null;
+              return (
+                <article key={property.id} className="rounded-xl border border-[#ded8cc] bg-white p-5 opacity-80">
+                  <div className="flex gap-4">
+                    {coverImage ? (
+                      <div className="hidden shrink-0 overflow-hidden rounded-[8px] sm:block">
+                        <img src={coverImage} alt={property.title} className="h-20 w-28 object-cover" />
+                      </div>
+                    ) : null}
+                    <div className="min-w-0 flex-1">
+                      <div className="mb-2 flex flex-wrap items-center gap-2">
+                        <span className="rounded-md bg-[#9ca3af] px-3 py-1 text-[11px] font-black uppercase tracking-[0.14em] text-white">
+                          Archivada
+                        </span>
+                        <span className="rounded-md bg-[#f0ede6] px-3 py-1 text-[11px] font-black uppercase tracking-[0.14em] text-[#465153]">
+                          {getOperationLabel(property.operation)}
+                        </span>
+                      </div>
+                      <h2 className="text-lg font-black text-[#172124]">{property.title}</h2>
+                      <p className="mt-1 text-sm text-[#465153]">
+                        {property.location} | {property.propertyType}
+                      </p>
+                      <p className="mt-1 text-sm font-semibold text-[#172124]">{property.price}</p>
+                    </div>
+                  </div>
+                  <div className="mt-4 border-t border-[#ded8cc] pt-4">
+                    <button
+                      type="button"
+                      onClick={() => void restoreProperty(property)}
+                      disabled={isRestoring}
+                      className="inline-flex items-center gap-2 h-9 rounded-[7px] whitespace-nowrap px-3 text-sm font-medium border border-[#ded8cc] bg-white text-[#172124] hover:border-[#12383d] hover:bg-[#eef4f2] hover:text-[#12383d] transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                    >
+                      {isRestoring ? (
+                        <Loader2 className="h-4 w-4 animate-spin" />
+                      ) : (
+                        <RotateCcw className="h-4 w-4" />
+                      )}
+                      Restaurar
+                    </button>
+                  </div>
+                </article>
+              );
+            })}
+          </div>
+        ))}
 
         <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
           <DialogContent className="flex max-h-[90vh] max-w-4xl flex-col gap-0 overflow-hidden p-0">

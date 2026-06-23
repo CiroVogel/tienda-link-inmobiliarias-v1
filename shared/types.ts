@@ -8,7 +8,7 @@ export * from "./_core/errors";
 
 export type PropertyOperation = "sale" | "rent";
 
-export type PropertyStatus = "available" | "reserved" | "sold" | "rented" | "hidden";
+export type PropertyStatus = "available" | "reserved" | "sold" | "rented" | "hidden" | "archived";
 
 export type VisitRequestInput = {
   slug: string;

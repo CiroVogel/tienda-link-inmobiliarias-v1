@@ -108,7 +108,7 @@ const slugSchema = z
   .regex(/^[a-z0-9-]+$/, "Slug inválido: solo letras minúsculas, números y guiones");
 
 const propertyOperationSchema = z.enum(["sale", "rent"]);
-const propertyStatusSchema = z.enum(["available", "reserved", "sold", "rented", "hidden"]);
+const propertyStatusSchema = z.enum(["available", "reserved", "sold", "rented", "hidden", "archived"]);
 const propertyDispositionSchema = z.enum(propertyDispositionOptions);
 const propertyOrientationSchema = z.enum(propertyOrientationOptions);
 const visitRequestStatusSchema = z.enum([
