@@ -1,15 +1,20 @@
 import { useState } from "react";
-import { CheckCircle2, Mail, MessageCircle, Phone, User } from "lucide-react";
+import { Bath, BedDouble, CheckCircle2, Mail, MapPin, MessageCircle, Phone, Ruler, User } from "lucide-react";
 import { Link, useParams } from "wouter";
 import { toast } from "sonner";
 import { trpc } from "@/lib/trpc";
 import { usePublicProperty } from "@/lib/propertyData";
 import {
+  getOperationLabel,
   getPropertyCoverImage,
   getStatusLabel,
   isPropertyRequestable,
   realEstateProfile,
 } from "@/lib/realEstateDemo";
+
+function getOperationPriceLabel(operation: string): string {
+  return operation === "sale" ? "Precio de venta" : "Precio de alquiler";
+}
 import { usePageMeta } from "@/lib/seo";
 import { PublicHeader } from "@/components/public/PublicHeader";
 import { PublicFooter } from "@/components/public/PublicFooter";
@@ -132,25 +137,90 @@ export default function Booking() {
       />
 
       <main className="mx-auto grid max-w-4xl gap-6 px-5 py-6 md:grid-cols-[0.9fr_1.1fr] md:py-8">
-        <aside className="self-start bg-white">
+        <aside className="self-start overflow-hidden rounded-[16px] border border-[#ded8cc] bg-[#fffdf8] shadow-[0_12px_30px_rgba(25,31,28,0.06)]">
           <img
             src={coverImage}
             alt={property.title}
             className="aspect-[4/3] w-full object-cover"
           />
-          <div className="border border-t-0 border-[#ded8cc] p-5">
-            <p className="mb-2 text-xs font-bold uppercase tracking-[0.16em] text-[#6a716f]">
-              {getStatusLabel(property.status)}
-            </p>
-            <h1 className="text-2xl font-black leading-tight text-zinc-950">
+          <div className="p-5">
+            {/* Badge de operación */}
+            <div className="mb-4">
+              <span className="rounded-[6px] bg-[#12383d] px-3 py-1.5 text-xs font-bold tracking-[0.12em] text-[#fffdf8]">
+                {getOperationLabel(property.operation)}
+              </span>
+            </div>
+
+            {/* Título */}
+            <h1 className="text-[1.45rem] font-bold leading-[1.15] text-zinc-950 sm:text-[1.65rem]">
               {property.title}
             </h1>
-            <p className="mt-2 text-sm text-[#6a716f]">{property.location}</p>
-            <p className="mt-4 text-xl font-black text-zinc-950">{property.price}</p>
+
+            {/* Tipo de propiedad */}
+            {property.propertyType ? (
+              <p className="mt-1.5 text-[0.8rem] font-medium text-[#465153]">
+                {property.propertyType}
+              </p>
+            ) : null}
+
+            {/* Ubicación */}
+            <p className="mt-2 flex items-center gap-1.5 text-sm font-medium text-[#465153]">
+              <MapPin className="h-4 w-4 shrink-0 text-[#6a716f]" />
+              {property.location}
+            </p>
+
+            {/* Placa de precio */}
+            <div className="mt-5 w-fit rounded-[12px] bg-[#12383d] px-5 py-4 shadow-[0_10px_24px_rgba(18,56,61,0.14)]">
+              <p className="text-[0.65rem] font-bold uppercase leading-none tracking-[0.14em] text-[#9ecfd3]">
+                {getOperationPriceLabel(property.operation)}
+              </p>
+              <p className="mt-1.5 text-[1.4rem] font-black leading-tight text-[#fffdf8]">
+                {property.price}
+              </p>
+            </div>
+
+            {/* Datos rápidos */}
+            {(property.areaM2 || property.bedrooms || (property.bathrooms && property.bathrooms > 0)) ? (
+              <div className="mt-5 border-t border-[#ece6dd] pt-4">
+                <div className={`grid gap-x-4 gap-y-3 ${
+                  [property.areaM2, property.bedrooms, property.bathrooms && property.bathrooms > 0 ? property.bathrooms : null].filter(Boolean).length >= 3
+                    ? "grid-cols-3"
+                    : "grid-cols-2"
+                }`}>
+                  {property.areaM2 ? (
+                    <div className="flex items-start gap-1.5">
+                      <Ruler className="mt-0.5 h-4 w-4 shrink-0 text-[#6a716f]" />
+                      <span className="min-w-0 leading-tight">
+                        <span className="block text-[0.82rem] font-semibold text-zinc-800">{property.areaM2} m²</span>
+                        <span className="block text-[0.68rem] font-medium text-[#465153]">Superficie</span>
+                      </span>
+                    </div>
+                  ) : null}
+                  {property.bedrooms ? (
+                    <div className="flex items-start gap-1.5">
+                      <BedDouble className="mt-0.5 h-4 w-4 shrink-0 text-[#6a716f]" />
+                      <span className="min-w-0 leading-tight">
+                        <span className="block text-[0.82rem] font-semibold text-zinc-800">{property.bedrooms}</span>
+                        <span className="block text-[0.68rem] font-medium text-[#465153]">{property.bedrooms === 1 ? "Dormitorio" : "Dormitorios"}</span>
+                      </span>
+                    </div>
+                  ) : null}
+                  {property.bathrooms && property.bathrooms > 0 ? (
+                    <div className="flex items-start gap-1.5">
+                      <Bath className="mt-0.5 h-4 w-4 shrink-0 text-[#6a716f]" />
+                      <span className="min-w-0 leading-tight">
+                        <span className="block text-[0.82rem] font-semibold text-zinc-800">{property.bathrooms}</span>
+                        <span className="block text-[0.68rem] font-medium text-[#465153]">{property.bathrooms === 1 ? "Baño" : "Baños"}</span>
+                      </span>
+                    </div>
+                  ) : null}
+                </div>
+              </div>
+            ) : null}
           </div>
         </aside>
 
-        <section className="border border-[#ded8cc] bg-white p-5 md:p-7">
+        <section className="rounded-[16px] border border-[#ded8cc] bg-[#fffdf8] p-5 shadow-[0_12px_30px_rgba(25,31,28,0.05)] md:p-7">
           {reference ? (
             <div className="flex min-h-[420px] flex-col justify-center">
               <CheckCircle2 className="mb-5 h-12 w-12 text-emerald-600" />
@@ -213,7 +283,7 @@ export default function Booking() {
                     <input
                       value={form.name}
                       onChange={(event) => setForm((current) => ({ ...current, name: event.target.value }))}
-                      className="h-12 w-full border border-[#ded8cc] bg-white pl-10 pr-3 text-sm outline-none focus:border-[#0f646a]"
+                      className="h-12 w-full rounded-[6px] border border-[#ded8cc] bg-white pl-10 pr-3 text-sm outline-none focus:border-[#0f646a]"
                       placeholder="Tu nombre y apellido"
                       disabled={!requestable}
                     />
@@ -229,7 +299,7 @@ export default function Booking() {
                     <input
                       value={form.whatsapp}
                       onChange={(event) => setForm((current) => ({ ...current, whatsapp: event.target.value }))}
-                      className="h-12 w-full border border-[#ded8cc] bg-white pl-10 pr-3 text-sm outline-none focus:border-[#0f646a]"
+                      className="h-12 w-full rounded-[6px] border border-[#ded8cc] bg-white pl-10 pr-3 text-sm outline-none focus:border-[#0f646a]"
                       placeholder="+54 9 341 000 0000"
                       disabled={!requestable}
                     />
@@ -246,7 +316,7 @@ export default function Booking() {
                       type="email"
                       value={form.email}
                       onChange={(event) => setForm((current) => ({ ...current, email: event.target.value }))}
-                      className="h-12 w-full border border-[#ded8cc] bg-white pl-10 pr-3 text-sm outline-none focus:border-[#0f646a]"
+                      className="h-12 w-full rounded-[6px] border border-[#ded8cc] bg-white pl-10 pr-3 text-sm outline-none focus:border-[#0f646a]"
                       placeholder="tu@email.com"
                       disabled={!requestable}
                     />
@@ -260,7 +330,7 @@ export default function Booking() {
                   <textarea
                     value={form.message}
                     onChange={(event) => setForm((current) => ({ ...current, message: event.target.value }))}
-                    className="min-h-28 w-full resize-none border border-[#ded8cc] bg-white px-3 py-3 text-sm outline-none focus:border-[#0f646a]"
+                    className="min-h-28 w-full resize-none rounded-[6px] border border-[#ded8cc] bg-white px-3 py-3 text-sm outline-none focus:border-[#0f646a]"
                     disabled={!requestable}
                   />
                 </label>
