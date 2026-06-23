@@ -160,8 +160,7 @@ function Hero({
           className="absolute inset-0 h-full w-full object-cover object-center"
         />
       ) : null}
-      <div className="absolute inset-0 bg-gradient-to-r from-black/68 via-black/48 to-black/18" />
-      <div className="absolute inset-0 bg-black/8" />
+      <div className="absolute inset-0 bg-gradient-to-r from-black/52 via-black/30 to-black/8" />
 
       <div className="relative mx-auto flex min-h-[500px] max-w-[1440px] items-start px-5 pb-16 pt-32 sm:min-h-[560px] sm:pt-36 lg:min-h-[610px] lg:items-stretch lg:pb-20 lg:pt-40 lg:px-10">
         <div className="max-w-2xl lg:flex lg:flex-col">
