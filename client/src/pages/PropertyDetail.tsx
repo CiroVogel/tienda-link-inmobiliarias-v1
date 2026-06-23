@@ -261,7 +261,7 @@ export default function PropertyDetail() {
             type="button"
             className="group block w-full cursor-zoom-in"
             aria-label="Ampliar imagen"
-            onClick={() => setModalOpen(true)}
+            onClick={() => { setZoom(false); setModalOpen(true); }}
           >
             <img
               src={galleryImages[selectedImage] ?? galleryImages[0]}
@@ -318,11 +318,15 @@ export default function PropertyDetail() {
               inset: 0,
               left: 0,
               top: 0,
+              right: 0,
+              bottom: 0,
               width: "100vw",
-              height: "100vh",
+              height: "100dvh",
               maxWidth: "none",
               maxHeight: "none",
               transform: "none",
+              padding: 0,
+              border: 0,
               borderRadius: 0,
               boxShadow: "none",
               background: "#000",
@@ -340,8 +344,8 @@ export default function PropertyDetail() {
             {/* Capa oscura */}
             <div className="absolute inset-0 bg-black/50" aria-hidden="true" />
 
-            {/* Layout */}
-            <div className="relative flex h-full flex-col">
+            {/* Layout — absolute para ignorar el grid base del DialogContent */}
+            <div className="absolute inset-0 z-10 flex flex-col">
               {/* Barra superior */}
               <div className="flex shrink-0 items-center justify-between px-4 pb-2 pt-4">
                 <button
@@ -367,19 +371,25 @@ export default function PropertyDetail() {
                 </DialogClose>
               </div>
 
-              {/* Área de imagen */}
-              <div className="flex flex-1 items-center justify-center overflow-auto">
-                <img
-                  src={galleryImages[selectedImage]}
-                  alt={`${property.title} foto ${selectedImage + 1}`}
-                  onClick={() => setZoom((z) => !z)}
-                  className={`object-contain transition-all duration-300 ${
-                    zoom
-                      ? "max-h-none max-w-none w-[180vw] cursor-zoom-out"
-                      : "max-h-[calc(100dvh-7rem)] max-w-[96vw] cursor-zoom-in"
-                  }`}
-                />
-              </div>
+              {/* Área de imagen — normal */}
+              {!zoom ? (
+                <div className="flex flex-1 items-center justify-center p-4 md:p-8">
+                  <img
+                    src={galleryImages[selectedImage]}
+                    alt={`${property.title} foto ${selectedImage + 1}`}
+                    className="h-auto w-auto max-h-[calc(100dvh-7rem)] max-w-[96vw] object-contain"
+                  />
+                </div>
+              ) : (
+                /* Área de imagen — ampliada */
+                <div className="flex flex-1 items-start justify-center overflow-auto p-4">
+                  <img
+                    src={galleryImages[selectedImage]}
+                    alt={`${property.title} foto ${selectedImage + 1}`}
+                    className="h-auto max-w-none w-[180vw] object-contain"
+                  />
+                </div>
+              )}
 
               {/* Barra inferior — flechas */}
               {galleryImages.length > 1 ? (
