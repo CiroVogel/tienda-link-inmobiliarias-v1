@@ -30,7 +30,7 @@ export function PublicHeader({
         {/* Centro — marca */}
         <Link href={`/${slug}`}>
           <span className="flex min-w-0 items-center justify-center gap-2.5">
-            <span className="flex h-9 w-9 shrink-0 items-center justify-center overflow-hidden rounded-[8px] border border-[#d8d1c4] bg-[#fffdf8]/85 text-sm font-bold text-[#12383d] shadow-[0_8px_20px_rgba(25,31,28,0.08)]">
+            <span className="flex h-10 w-10 shrink-0 items-center justify-center overflow-hidden rounded-[8px] border border-[#d8d1c4] bg-[#fffdf8]/85 text-sm font-bold text-[#12383d] shadow-[0_8px_20px_rgba(25,31,28,0.08)]">
               {brandImageUrl ? (
                 <img
                   src={brandImageUrl}

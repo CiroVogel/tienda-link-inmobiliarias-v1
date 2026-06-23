@@ -170,7 +170,7 @@ export function PropertyCard({
 
           {/* Logo de inmobiliaria — cuadrado con fallback a inicial */}
           <div className="absolute bottom-3 left-3">
-            <span className="flex h-10 w-10 shrink-0 items-center justify-center overflow-hidden rounded-[8px] border border-[#d8d1c4] bg-[#fffdf8]/90 text-sm font-bold text-[#12383d] shadow-[0_8px_20px_rgba(25,31,28,0.08)]">
+            <span className="flex h-14 w-14 shrink-0 items-center justify-center overflow-hidden rounded-[8px] border border-[#d8d1c4] bg-[#fffdf8]/90 text-base font-bold text-[#12383d] shadow-[0_8px_20px_rgba(25,31,28,0.08)]">
               {logoUrl ? (
                 <img
                   src={logoUrl}

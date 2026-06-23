@@ -49,7 +49,7 @@ function Header({
       <div className="mx-auto flex h-16 max-w-[1440px] items-center justify-between gap-4 px-5 lg:px-10">
         <Link href={`/${slug}`}>
           <span className="flex items-center gap-3">
-            <span className="flex h-9 w-9 shrink-0 items-center justify-center overflow-hidden rounded-[8px] border border-[#d8d1c4] bg-[#fffdf8]/85 text-sm font-bold text-[#12383d] shadow-[0_8px_20px_rgba(25,31,28,0.08)]">
+            <span className="flex h-10 w-10 shrink-0 items-center justify-center overflow-hidden rounded-[8px] border border-[#d8d1c4] bg-[#fffdf8]/85 text-sm font-bold text-[#12383d] shadow-[0_8px_20px_rgba(25,31,28,0.08)]">
               {brandImageUrl ? (
                 <img
                   src={brandImageUrl}
