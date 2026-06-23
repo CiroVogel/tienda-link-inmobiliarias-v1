@@ -365,48 +365,40 @@ export default function PropertyDetail() {
 
         {/* Card editorial */}
         <div className="mt-6 rounded-[16px] border border-[#ded8cc] bg-[#fffdf8] p-5 sm:p-7">
-            {/* Operación y disponibilidad */}
-            <div className="mb-4 flex flex-wrap gap-2">
+            {/* Badge de operación */}
+            <div className="mb-4">
               <span className="rounded-[5px] bg-[#12383d] px-3 py-2 text-xs font-black uppercase tracking-[0.14em] text-white">
                 {getOperationLabel(property.operation)}
               </span>
-              <span
-                className={`rounded-[5px] px-3 py-2 text-xs font-black uppercase tracking-[0.14em] ${
-                  property.status === "available"
-                    ? "bg-emerald-100 text-emerald-800"
-                    : "bg-[#ece6dd] text-[#6a716f]"
-                }`}
-              >
-                {getStatusLabel(property.status)}
-              </span>
             </div>
 
-            {/* Título */}
-            <h1 className="text-[2rem] font-bold leading-tight tracking-tight text-zinc-950 sm:text-[2.2rem]">
-              {property.title}
-            </h1>
+            {/* Título + precio responsive */}
+            <div className="flex flex-col gap-5 sm:flex-row sm:items-end sm:justify-between sm:gap-6">
+              {/* Columna editorial */}
+              <div className="min-w-0">
+                <h1 className="text-[1.65rem] font-bold leading-[1.12] tracking-tight text-zinc-950 sm:text-[1.9rem]">
+                  {property.title}
+                </h1>
+                {property.propertyType ? (
+                  <p className="mt-2 text-[0.8rem] font-medium text-[#465153]">
+                    {property.propertyType}
+                  </p>
+                ) : null}
+                <p className="mt-2 flex items-center gap-2 text-sm font-medium text-[#465153]">
+                  <MapPin className="h-4 w-4 shrink-0 text-[#6a716f]" />
+                  {property.address}, {property.location}
+                </p>
+              </div>
 
-            {/* Tipo de propiedad */}
-            {property.propertyType ? (
-              <p className="mt-2 text-[0.8rem] font-medium text-[#465153]">
-                {property.propertyType}
-              </p>
-            ) : null}
-
-            {/* Ubicación */}
-            <p className="mt-2 flex items-center gap-2 text-sm font-medium text-[#465153]">
-              <MapPin className="h-4 w-4 shrink-0 text-[#6a716f]" />
-              {property.address}, {property.location}
-            </p>
-
-            {/* Precio */}
-            <div className="mt-5">
-              <p className="text-[10px] font-semibold uppercase leading-none tracking-wide text-[#465153]">
-                {getOperationPriceLabel(property.operation)}
-              </p>
-              <p className="mt-1 text-[1.9rem] font-black leading-tight text-zinc-950">
-                {property.price}
-              </p>
+              {/* Bloque de precio */}
+              <div className="w-fit shrink-0 rounded-[12px] bg-[#12383d] px-5 py-4 shadow-[0_10px_24px_rgba(18,56,61,0.14)]">
+                <p className="text-[0.65rem] font-bold uppercase leading-none tracking-[0.14em] text-[#9ecfd3]">
+                  {getOperationPriceLabel(property.operation)}
+                </p>
+                <p className="mt-1.5 text-[1.5rem] font-black leading-tight text-[#fffdf8]">
+                  {property.price}
+                </p>
+              </div>
             </div>
 
             {/* Datos rápidos */}
