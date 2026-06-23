@@ -252,64 +252,54 @@ export default function PropertyDetail() {
       />
 
       <main className="mx-auto max-w-6xl px-5 py-8 md:py-10">
-        <section className="grid gap-6 lg:grid-cols-[0.95fr_1.05fr]">
-          <div>
-            {/* Imagen principal + lightbox trigger */}
-            <div className="relative overflow-hidden bg-[#ece7dc]">
+        {/* Foto principal */}
+        <div className="relative overflow-hidden rounded-[16px] border border-[#ded8cc] bg-[#ece7dc]">
+          <button
+            type="button"
+            className="group block w-full cursor-zoom-in"
+            aria-label="Ampliar imagen"
+            onClick={() => setModalOpen(true)}
+          >
+            <img
+              src={galleryImages[selectedImage] ?? galleryImages[0]}
+              alt={property.title}
+              className="aspect-[4/3] w-full object-cover md:aspect-[16/9]"
+            />
+            {galleryImages.length > 1 ? (
+              <span className="absolute bottom-3 left-3 flex items-center gap-1.5 rounded-[5px] bg-[#12383d]/85 px-3 py-2 text-[11px] font-black uppercase tracking-[0.12em] text-white backdrop-blur-sm transition group-hover:bg-[#12383d]">
+                <Images className="h-3.5 w-3.5" />
+                Ver fotos · {galleryImages.length}
+              </span>
+            ) : null}
+          </button>
+        </div>
+
+        {/* Tira de miniaturas */}
+        {galleryImages.length > 1 ? (
+          <div className="mt-3 flex gap-2 overflow-x-auto pb-1 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+            {galleryImages.map((image, index) => (
               <button
+                key={image}
                 type="button"
-                className="group block w-full cursor-zoom-in"
-                aria-label="Ampliar imagen"
-                onClick={() => setModalOpen(true)}
+                onClick={() => setSelectedImage(index)}
+                className={`shrink-0 overflow-hidden rounded-[8px] ${
+                  selectedImage === index
+                    ? "border-2 border-[#12383d]"
+                    : "border border-[#ded8cc]"
+                }`}
+                aria-label={`Ver foto ${index + 1}`}
               >
                 <img
-                  src={galleryImages[selectedImage] ?? galleryImages[0]}
-                  alt={property.title}
-                  className="aspect-[4/3] w-full object-cover"
+                  src={image}
+                  alt={`${property.title} foto ${index + 1}`}
+                  className="h-20 w-28 object-cover"
                 />
-                {galleryImages.length > 1 ? (
-                  <span className="absolute bottom-3 left-3 flex items-center gap-1.5 rounded-[5px] bg-[#12383d]/85 px-3 py-2 text-[11px] font-black uppercase tracking-[0.12em] text-white backdrop-blur-sm transition group-hover:bg-[#12383d]">
-                    <Images className="h-3.5 w-3.5" />
-                    Ver fotos · {galleryImages.length}
-                  </span>
-                ) : null}
               </button>
-            </div>
+            ))}
+          </div>
+        ) : null}
 
-            {/* Thumbnails — ocultos si hay 1 sola imagen */}
-            <div
-              className={
-                galleryImages.length <= 1
-                  ? "hidden"
-                  : galleryImages.length === 2
-                  ? "mt-3 grid grid-cols-2 gap-3"
-                  : galleryImages.length === 3
-                  ? "mt-3 grid grid-cols-3 gap-3"
-                  : galleryImages.length === 4
-                  ? "mt-3 grid grid-cols-2 gap-3 sm:grid-cols-4"
-                  : "mt-3 grid grid-cols-2 gap-3 sm:grid-cols-3"
-              }
-            >
-              {galleryImages.map((image, index) => (
-                <button
-                  key={image}
-                  type="button"
-                  onClick={() => setSelectedImage(index)}
-                  className={`overflow-hidden border ${
-                    selectedImage === index ? "border-[#12383d]" : "border-[#ded8cc]"
-                  }`}
-                  aria-label={`Ver foto ${index + 1}`}
-                >
-                  <img
-                    src={image}
-                    alt={`${property.title} foto ${index + 1}`}
-                    className="aspect-[4/3] w-full object-cover"
-                  />
-                </button>
-              ))}
-            </div>
-
-            {/* Lightbox */}
+        {/* Lightbox */}
             <Dialog open={modalOpen} onOpenChange={setModalOpen}>
               <DialogContent
                 showCloseButton={false}
@@ -372,9 +362,9 @@ export default function PropertyDetail() {
                 </div>
               </DialogContent>
             </Dialog>
-          </div>
 
-          <aside>
+        {/* Card editorial */}
+        <div className="mt-6 rounded-[16px] border border-[#ded8cc] bg-[#fffdf8] p-5 sm:p-7">
             {/* Operación y disponibilidad */}
             <div className="mb-4 flex flex-wrap gap-2">
               <span className="rounded-[5px] bg-[#12383d] px-3 py-2 text-xs font-black uppercase tracking-[0.14em] text-white">
@@ -439,6 +429,7 @@ export default function PropertyDetail() {
                 </div>
               </div>
             ) : null}
+        </div>
 
             {/* Detalles técnicos */}
             {hasDetailedBlock ? (
@@ -585,8 +576,6 @@ export default function PropertyDetail() {
                     : "Compartir"}
               </button>
             </div>
-          </aside>
-        </section>
       </main>
       <PublicFooter
         slug={safeSlug}
