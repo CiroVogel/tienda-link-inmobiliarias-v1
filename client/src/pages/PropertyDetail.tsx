@@ -431,34 +431,33 @@ export default function PropertyDetail() {
             ) : null}
         </div>
 
-            {/* Detalles técnicos */}
-            {hasDetailedBlock ? (
-              <div className="mt-5 border-t border-[#ded8cc] pt-5">
-                <p className="mb-3 text-xs font-bold uppercase tracking-[0.18em] text-[#465153]">
-                  Detalles de la propiedad
+        {/* Grid P2: contenido editorial + panel de consulta */}
+        <div className="mt-8 grid gap-8 lg:grid-cols-[minmax(0,1fr)_340px] lg:items-start">
+
+          {/* Columna de contenido principal */}
+          <div className="order-2 min-w-0 lg:order-1">
+
+            {/* Descripción */}
+            <div>
+              <p className="mb-4 text-xs font-bold uppercase tracking-[0.18em] text-[#465153]">
+                Descripción
+              </p>
+              <p className="whitespace-pre-line text-[0.95rem] leading-7 text-[#3a3a3a]">
+                {property.description}
+              </p>
+            </div>
+
+            {/* Características */}
+            {(selectedDetailedFeatureGroups.length > 0 || hasFreeFeatures) ? (
+              <div className="mt-7 border-t border-[#ded8cc] pt-7">
+                <p className="mb-4 text-xs font-bold uppercase tracking-[0.18em] text-[#465153]">
+                  Características
                 </p>
-
-                {detailItems.length > 0 ? (
-                  <div>
-                    {detailItems.map((item, index) => (
-                      <div
-                        key={item.label}
-                        className={`flex items-baseline justify-between gap-4 py-2.5 ${
-                          index < detailItems.length - 1 ? "border-b border-[#ece6dd]" : ""
-                        }`}
-                      >
-                        <span className="text-sm text-[#465153]">{item.label}</span>
-                        <span className="text-sm font-semibold text-zinc-950">{item.value}</span>
-                      </div>
-                    ))}
-                  </div>
-                ) : null}
-
                 {selectedDetailedFeatureGroups.length > 0 ? (
-                  <div className="mt-4 grid gap-4">
+                  <div className="grid gap-4">
                     {selectedDetailedFeatureGroups.map((group) => (
                       <div key={group.title}>
-                        <p className="mb-2 text-xs font-bold uppercase tracking-[0.18em] text-[#465153]">
+                        <p className="mb-2 text-xs font-bold uppercase tracking-[0.14em] text-[#6a716f]">
                           {group.title}
                         </p>
                         <div className="flex flex-wrap gap-2">
@@ -475,76 +474,101 @@ export default function PropertyDetail() {
                     ))}
                   </div>
                 ) : null}
+                {hasFreeFeatures ? (
+                  <div className={selectedDetailedFeatureGroups.length > 0 ? "mt-4" : ""}>
+                    <div className="flex flex-wrap gap-2">
+                      {property.features.map((feature) => (
+                        <span
+                          key={feature}
+                          className="rounded-full border border-[#ded8cc] bg-[#fffdf8] px-3 py-1.5 text-sm text-[#3a3a3a]"
+                        >
+                          {feature}
+                        </span>
+                      ))}
+                    </div>
+                  </div>
+                ) : null}
               </div>
             ) : null}
 
-            {/* Características libres */}
-            {hasFreeFeatures ? (
-              <div className="mt-5 border-t border-[#ded8cc] pt-5">
-                <p className="mb-3 text-xs font-bold uppercase tracking-[0.18em] text-[#465153]">
-                  Características
+            {/* Detalles de la propiedad */}
+            {detailItems.length > 0 ? (
+              <div className="mt-7 border-t border-[#ded8cc] pt-7">
+                <p className="mb-4 text-xs font-bold uppercase tracking-[0.18em] text-[#465153]">
+                  Detalles de la propiedad
                 </p>
-                <div className="flex flex-wrap gap-2">
-                  {property.features.map((feature) => (
-                    <span
-                      key={feature}
-                      className="rounded-full border border-[#ded8cc] bg-[#fffdf8] px-3 py-1.5 text-sm text-[#3a3a3a]"
-                    >
-                      {feature}
-                    </span>
+                <div className="grid gap-x-8 sm:grid-cols-2">
+                  {detailItems.map((item) => (
+                    <div key={item.label} className="border-b border-[#ece6dd] py-3">
+                      <span className="block text-[0.7rem] font-bold uppercase tracking-[0.14em] text-[#465153]">
+                        {item.label}
+                      </span>
+                      <span className="block text-[0.95rem] font-semibold text-zinc-950">
+                        {item.value}
+                      </span>
+                    </div>
                   ))}
                 </div>
               </div>
             ) : null}
 
-            {/* Descripción */}
-            <div className="mt-5 border-t border-[#ded8cc] pt-5">
-              <p className="mb-3 text-xs font-bold uppercase tracking-[0.18em] text-[#465153]">
-                Descripción
-              </p>
-              <div className="border-l-2 border-[#ded8cc] pl-5">
-                <p className="whitespace-pre-line text-[0.95rem] leading-7 text-[#3a3a3a]">{property.description}</p>
+          </div>
+
+          {/* Panel de consulta */}
+          <aside className="order-1 rounded-[16px] border border-[#ded8cc] bg-[#fffdf8] p-5 shadow-[0_12px_30px_rgba(25,31,28,0.06)] sm:p-6 lg:order-2 lg:sticky lg:top-[86px] lg:self-start">
+
+            {/* Encabezado de inmobiliaria */}
+            <div className="mb-5 flex items-center gap-3">
+              <span className="flex h-10 w-10 shrink-0 items-center justify-center overflow-hidden rounded-[8px] border border-[#d8d1c4] bg-[#fffdf8] text-sm font-bold text-[#12383d]">
+                {brandImageUrl ? (
+                  <img src={brandImageUrl} alt={businessName} className="h-full w-full object-contain" />
+                ) : (
+                  <span aria-hidden="true">{businessName.trim().charAt(0).toUpperCase()}</span>
+                )}
+              </span>
+              <div className="min-w-0">
+                <p className="text-[0.7rem] font-bold uppercase tracking-[0.14em] text-[#465153]">
+                  Contacto
+                </p>
+                <p className="truncate text-[0.9rem] font-semibold text-zinc-950">
+                  {businessName}
+                </p>
               </div>
             </div>
 
-            {/* Contacto */}
-            <div className="mt-5 border-t border-[#ded8cc] pt-5">
-              <p className="mb-3 text-xs font-bold uppercase tracking-[0.18em] text-[#465153]">
-                Consulta directa con {businessName}
-              </p>
-              <div>
-                {phone || profileWhatsapp ? (
-                  <div className="flex items-center gap-3 border-b border-[#ece6dd] py-3">
-                    <Phone className="h-4 w-4 shrink-0 text-[#6a716f]" />
-                    <span className="text-sm text-[#3a3a3a]">{phone || profileWhatsapp}</span>
-                  </div>
-                ) : null}
-                {email ? (
-                  <div className="flex items-center gap-3 border-b border-[#ece6dd] py-3">
-                    <Mail className="h-4 w-4 shrink-0 text-[#6a716f]" />
-                    <span className="text-sm text-[#3a3a3a]">{email}</span>
-                  </div>
-                ) : null}
-                {address ? (
-                  <div className="flex items-center gap-3 border-b border-[#ece6dd] py-3">
-                    <MapPin className="h-4 w-4 shrink-0 text-[#6a716f]" />
-                    <span className="text-sm text-[#3a3a3a]">{address}</span>
-                  </div>
-                ) : null}
-              </div>
+            {/* Datos de contacto */}
+            <div className="mb-5">
+              {phone || profileWhatsapp ? (
+                <div className="flex items-center gap-3 border-b border-[#ece6dd] py-3">
+                  <Phone className="h-4 w-4 shrink-0 text-[#6a716f]" />
+                  <span className="text-sm text-[#3a3a3a]">{phone || profileWhatsapp}</span>
+                </div>
+              ) : null}
+              {email ? (
+                <div className="flex items-center gap-3 border-b border-[#ece6dd] py-3">
+                  <Mail className="h-4 w-4 shrink-0 text-[#6a716f]" />
+                  <span className="text-sm text-[#3a3a3a]">{email}</span>
+                </div>
+              ) : null}
+              {address ? (
+                <div className="flex items-center gap-3 border-b border-[#ece6dd] py-3">
+                  <MapPin className="h-4 w-4 shrink-0 text-[#6a716f]" />
+                  <span className="text-sm text-[#3a3a3a]">{address}</span>
+                </div>
+              ) : null}
             </div>
 
-            {/* Botones */}
-            <div className="mt-6 flex flex-col gap-3 sm:flex-row">
+            {/* Botones de acción */}
+            <div className="flex flex-col gap-3">
               {requestable ? (
                 <Link href={`/${safeSlug}/solicitar-visita/${property.id}`}>
-                  <span className="inline-flex items-center justify-center gap-2 rounded-[5px] bg-[#12383d] px-6 py-3 text-xs font-black uppercase tracking-[0.16em] text-white shadow-sm transition hover:bg-[#0f646a]">
+                  <span className="inline-flex w-full items-center justify-center gap-2 rounded-[5px] bg-[#12383d] px-6 py-3 text-xs font-black uppercase tracking-[0.16em] text-white shadow-sm transition hover:bg-[#0f646a]">
                     Solicitar visita
                     <HomeIcon className="h-4 w-4" />
                   </span>
                 </Link>
               ) : (
-                <span className="inline-flex items-center justify-center rounded-[5px] border border-[#ded8cc] px-6 py-3 text-xs font-black uppercase tracking-[0.16em] text-[#6a716f]">
+                <span className="inline-flex w-full items-center justify-center rounded-[5px] border border-[#ded8cc] px-6 py-3 text-xs font-black uppercase tracking-[0.16em] text-[#6a716f]">
                   No disponible para visita
                 </span>
               )}
@@ -554,15 +578,13 @@ export default function PropertyDetail() {
                   href={buildWhatsappHref(profileWhatsapp, property.title)}
                   target="_blank"
                   rel="noreferrer"
-                  className="inline-flex items-center justify-center gap-2 rounded-[5px] border border-[#cfc7b8] bg-[#fffdf8] px-6 py-3 text-xs font-black uppercase tracking-[0.16em] text-[#12383d] transition hover:border-[#0f646a] hover:bg-[#eef4f2]"
+                  className="inline-flex w-full items-center justify-center gap-2 rounded-[5px] border border-[#cfc7b8] bg-[#fffdf8] px-6 py-3 text-xs font-black uppercase tracking-[0.16em] text-[#12383d] transition hover:border-[#0f646a] hover:bg-[#eef4f2]"
                 >
                   WhatsApp
                   <MessageCircle className="h-4 w-4" />
                 </a>
               ) : null}
-            </div>
 
-            <div className="mt-2">
               <button
                 type="button"
                 onClick={() => { void handleShare(); }}
@@ -576,6 +598,9 @@ export default function PropertyDetail() {
                     : "Compartir"}
               </button>
             </div>
+
+          </aside>
+        </div>
       </main>
       <PublicFooter
         slug={safeSlug}
